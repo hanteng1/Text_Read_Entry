@@ -7,10 +7,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.SyncStateContract;
+import android.util.Log;
 
 import com.eschao.android.widget.pageflip.PageFlip;
+import com.eschao.android.widget.pageflip.PageFlipException;
 
 import java.util.concurrent.locks.ReentrantLock;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Created by hanteng on 2017-05-30.
@@ -46,7 +51,134 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
                 .enableAutoPage(isAuto);
         setEGLContextClientVersion(2);
 
-        
+        // init others
+        mPageNo = 1;
+        mDrawLock = new ReentrantLock();
+        mPageRender = new SinglePageRender(context, mPageFlip,
+                mHandler, mPageNo);
+        // configure render
+        setRenderer(this);
+        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
+
+    }
+
+    public boolean isAutoPageEnabled(){
+        return mPageFlip.isAutoPageEnabled();
+    }
+
+    public void enableAutoPage(boolean enable) {
+        if (mPageFlip.enableAutoPage(enable)) {
+            try {
+                mDrawLock.lock();
+                if (mPageFlip.getSecondPage() != null &&
+                        mPageRender instanceof SinglePageRender) {
+                    mPageRender = new DoublePageRender(getContext(),
+                            mPageFlip,
+                            mHandler,
+                            mPageNo);
+                    mPageRender.onSurfaceChanged(mPageFlip.getSurfaceWidth(),
+                            mPageFlip.getSurfaceHeight());
+                }
+                else if (mPageFlip.getSecondPage() == null &&
+                        mPageRender instanceof DoublePageRender) {
+                    mPageRender = new SinglePageRender(getContext(),
+                            mPageFlip,
+                            mHandler,
+                            mPageNo);
+                    mPageRender.onSurfaceChanged(mPageFlip.getSurfaceWidth(),
+                            mPageFlip.getSurfaceHeight());
+                }
+                requestRender();
+            }
+            finally {
+                mDrawLock.unlock();
+            }
+        }
+    }
+
+    public int getAnimateDuration(){
+        return mDuration;
+    }
+
+    public void setAnimateDuration(int duration)
+    {
+        mDuration = duration;
+    }
+
+    public int getPixelsOfMesh()
+    {
+        return mPageFlip.getPixelsOfMesh();
+    }
+
+    public void onFingerDown(float x, float y)
+    {
+
+    }
+
+    public void onFingerMove(float x, float y)
+    {
+
+    }
+
+    public void onFingerUp(float x, float y)
+    {
+
+    }
+
+    @Override
+    public void onDrawFrame(GL10 gl)
+    {
+        try {
+            mDrawLock.lock();
+            if (mPageRender != null)
+            {
+                mPageRender.onDrawFrame();
+            }
+        }finally {
+            mDrawLock.unlock();
+        }
+    }
+
+    @Override
+    public void onSurfaceChanged(GL10 gl, int width, int height)
+    {
+        try{
+            mPageFlip.onSurfaceChanged(width, height);
+
+            int pageNo = mPageRender.getPageNo();
+            if(mPageFlip.getSecondPage() != null && width > height)
+            {
+                if (!(mPageRender instanceof DoublePageRender)) {
+                    mPageRender.release();
+                    mPageRender = new DoublePageRender(getContext(),
+                            mPageFlip,
+                            mHandler,
+                            pageNo);
+                }
+            }else if(!(mPageRender instanceof SinglePageRender)){
+                mPageRender.release();
+                mPageRender = new SinglePageRender(getContext(),
+                        mPageFlip,
+                        mHandler,
+                        pageNo);
+            }
+
+            mPageRender.onSurfaceChanged(width, height);
+        }catch (PageFlipException e)
+        {
+            Log.e(TAG, "Failed to run PageFlipRender:onSurfaceChanged");
+        }
+    }
+
+    @Override
+    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+        try {
+            mPageFlip.onSurfaceCreated();
+        }
+        catch (PageFlipException e) {
+            Log.e(TAG, "Failed to run PageFlipRender:onSurfaceCreated");
+        }
     }
 
     private void newHandler()
