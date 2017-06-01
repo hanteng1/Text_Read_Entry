@@ -26,7 +26,7 @@ public class SinglePageRender extends PageRender{
     public void onDrawFrame() {
         // 1. delete unused textures
         mPageFlip.deleteUnusedTextures();
-        Page page = mPageFlip.getFirstPage();
+        Page page = mPageFlip.getFirstPage(); //there is only one page in single page mode
 
         // 2. handle drawing command triggered from finger moving and animating
         if (mDrawCommand == DRAW_MOVING_FRAME ||
@@ -85,7 +85,7 @@ public class SinglePageRender extends PageRender{
         Page page = mPageFlip.getFirstPage();
         mBitmap = Bitmap.createBitmap((int)page.width(), (int)page.height(),
                 Bitmap.Config.ARGB_8888);
-        mCanvas.setBitmap(mBitmap);
+        mCanvas.setBitmap(mBitmap); //specifiy the bitmap for the canvas to draw into
         LoadBitmapTask.get(mContext).set(width, height, 1);
     }
 
@@ -118,16 +118,16 @@ public class SinglePageRender extends PageRender{
         return false;
     }
 
-    private void drawPage(int number) {
+    private void drawPage(int number) {  //create a new page texture (either first one or second one) when necessary/not set
         final int width = mCanvas.getWidth();
         final int height = mCanvas.getHeight();
         Paint p = new Paint();
         p.setFilterBitmap(true);
 
         // 1. draw background bitmap
-        Bitmap background = LoadBitmapTask.get(mContext).getBitmap();
+        Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
         Rect rect = new Rect(0, 0, width, height);
-        mCanvas.drawBitmap(background, null, rect, p);
+        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
         background.recycle();
         background = null;
 

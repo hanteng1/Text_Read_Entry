@@ -24,29 +24,29 @@ package com.eschao.android.widget.pageflip;
 public final class GLViewRect {
 
     // view left
-    float left;
+    public float left;
     // view right
-    float right;
+    public float right;
     // view top
-    float top;
+    public float top;
     // view bottom
-    float bottom;
+    public float bottom;
     // view width
-    float width;
+    public float width;
     // view height
-    float height;
+    public float height;
     // view half width
-    float halfW;
+    public float halfW;
     // view half height
-    float halfH;
+    public float halfH;
     // view margin left
-    float marginL;
+    public float marginL;
     // view margin right
-    float marginR;
+    public float marginR;
     // openGL surface width, it should be >= view width
-    float surfaceW;
+    public float surfaceW;
     // openGL surface height, it should be >= view height
-    float surfaceH;
+    public float surfaceH;
 
     /**
      * Default constructor

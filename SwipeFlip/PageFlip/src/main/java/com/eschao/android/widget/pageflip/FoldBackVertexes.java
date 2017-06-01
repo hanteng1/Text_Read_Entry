@@ -31,7 +31,7 @@ import static android.opengl.GLES20.glUniformMatrix4fv;
  *
  * @author eschao
  */
-final class FoldBackVertexes extends Vertexes {
+public final class FoldBackVertexes extends Vertexes {
 
     private final static String TAG = "FoldBackVertexes";
 

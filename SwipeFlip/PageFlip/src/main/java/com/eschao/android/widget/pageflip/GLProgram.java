@@ -36,16 +36,16 @@ import static android.opengl.GLES20.glUseProgram;
 public class GLProgram {
 
     // invalid GL getShaderRef including program reference and variable location
-    protected final int INVALID_GL_HANDLE = -1;
+    public final int INVALID_GL_HANDLE = -1;
 
     // GLSL program reference
-    protected int mProgramRef;
+    public int mProgramRef;
 
     // Vertex shader
-    protected GLShader mVertex;
+    public GLShader mVertex;
 
     // Fragment shader
-    protected GLShader mFragment;
+    public GLShader mFragment;
 
     public GLProgram() {
         mProgramRef = INVALID_GL_HANDLE;

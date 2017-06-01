@@ -32,7 +32,7 @@ import static android.opengl.GLES20.glVertexAttribPointer;
  * @author eschao
  */
 
-class Vertexes {
+public class Vertexes {
 
     private static final String TAG = "Vertexes";
 
@@ -43,10 +43,10 @@ class Vertexes {
     int mSizeOfPerVex;
 
     // vertex data array
-    float[] mVertexes;
+    public float[] mVertexes;
 
     // texture coordinates array
-    float[] mTextureCoords;
+    public float[] mTextureCoords;
 
     // float buffer for vertexes data and texture coordinates data
     FloatBuffer mVertexesBuf;

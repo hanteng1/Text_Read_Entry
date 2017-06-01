@@ -167,7 +167,7 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
             mDrawLock.lock();
             if (mPageRender != null)
             {
-                mPageRender.onDrawFrame();
+                mPageRender.onDrawFrame(); //for every frame
             }
         }finally {
             mDrawLock.unlock();

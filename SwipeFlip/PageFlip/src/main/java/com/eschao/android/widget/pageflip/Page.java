@@ -164,17 +164,17 @@ public class Page {
     };
 
     // page size
-    float left;
-    float right;
-    float top;
-    float bottom;
-    float width;
-    float height;
+    public float left;
+    public float right;
+    public float top;
+    public float bottom;
+    public float width;
+    public float height;
 
     // texture size for rendering page, normally they are same with page width
     // and height
-    float texWidth;
-    float texHeight;
+    public float texWidth;
+    public float texHeight;
 
     /**
      * <p>origin point and diagonal point</p>
@@ -186,8 +186,8 @@ public class Page {
      * </pre>
      * <p>if origin(x, y) is 1, the diagonal(x, y) is 0</p>
      */
-    GLPoint originP;
-    GLPoint diagonalP;
+    public GLPoint originP;
+    public GLPoint diagonalP;
 
     private GLPoint mXFoldP;
     private GLPoint mYFoldP;
@@ -427,7 +427,7 @@ public class Page {
      * @param y y coordinate
      * @return true if the point is in page
      */
-    boolean contains(float x, float y) {
+    public boolean contains(float x, float y) {
         return left < right && bottom < top &&
                left <= x && x < right &&
                bottom <= y && y < top;
@@ -440,7 +440,7 @@ public class Page {
      * @param ratio range ratio based on page width, start from OriginP.x
      * @return True if x is in specified range
      */
-    boolean isXInRange(float x, float ratio) {
+    public boolean isXInRange(float x, float ratio) {
         final float w = width * ratio;
         return originP.x < 0 ? x < (originP.x + w) : x > (originP.x - w);
     }
@@ -451,7 +451,7 @@ public class Page {
      * @param x x coordinate
      * @return true if given x is not in page
      */
-    boolean isXOutsidePage(float x) {
+    public boolean isXOutsidePage(float x) {
         return originP.x < 0 ? x > diagonalP.x : x < diagonalP.x;
     }
 
@@ -480,7 +480,7 @@ public class Page {
      * @param dy relative finger movement on Y axis
      * @return self
      */
-    Page setOriginAndDiagonalPoints(boolean hasSecondPage, float dy) {
+    public Page setOriginAndDiagonalPoints(boolean hasSecondPage, float dy) {
         if (hasSecondPage && left < 0) {
             originP.x = left;
             diagonalP.x = right;
@@ -512,7 +512,7 @@ public class Page {
     /**
      * Invert Y coordinate of original point and diagonal point
      */
-    void invertYOfOriginPoint() {
+    public void invertYOfOriginPoint() {
         float t = originP.y;
         originP.y = diagonalP.y;
         diagonalP.y = t;

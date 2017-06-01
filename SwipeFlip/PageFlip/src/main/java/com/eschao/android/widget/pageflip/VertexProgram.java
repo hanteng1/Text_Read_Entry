@@ -30,7 +30,7 @@ import static android.opengl.GLES20.glGetUniformLocation;
  *
  * @author eschao
  */
-class VertexProgram extends GLProgram {
+public class VertexProgram extends GLProgram {
 
     // variable names defined in GLSL scripts
     final static String VAR_MVP_MATRIX    = "u_MVPMatrix";
@@ -39,15 +39,15 @@ class VertexProgram extends GLProgram {
     final static String VAR_TEXTURE       = "u_texture";
 
     // universal model-view matrix
-    final static float[] MVMatrix = new float[16];
+    public final static float[] MVMatrix = new float[16];
     // universal model-view-project matrix
-    final static float[] MVPMatrix = new float[16];
+    public final static float[] MVPMatrix = new float[16];
 
     // variable handles after compiled & linked shader scripts
-    int mMVPMatrixLoc;
-    int mVertexPosLoc;
-    int mTexCoordLoc;
-    int mTextureLoc;
+    public int mMVPMatrixLoc;
+    public int mVertexPosLoc;
+    public int mTexCoordLoc;
+    public int mTextureLoc;
 
     public VertexProgram() {
         super();

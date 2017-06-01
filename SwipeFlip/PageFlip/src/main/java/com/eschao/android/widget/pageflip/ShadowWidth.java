@@ -21,7 +21,7 @@ package com.eschao.android.widget.pageflip;
  * @author eschao
  */
 
-final class ShadowWidth {
+public final class ShadowWidth {
 
     // minimal shadow width
     float mMin;

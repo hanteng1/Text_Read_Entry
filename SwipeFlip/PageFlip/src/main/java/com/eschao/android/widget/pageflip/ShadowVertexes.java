@@ -47,25 +47,25 @@ import static android.opengl.GLES20.glVertexAttribPointer;
  *
  * @author eschao
  */
-class ShadowVertexes {
+public class ShadowVertexes {
 
     // how many vertexes in vertex float buffer will be drawn on screen
-    int mVertexesSize;
+    public int mVertexesSize;
 
     // universal Z coordinate for all shadow vertex
     // we will enable DEPTH_TEST while drawing fold shadow to avoid some drawing
     // issue
-    float vertexZ;
+    public float vertexZ;
 
     // float array and float buffer for storing vertexes
-    float[] mVertexes;
-    FloatBuffer mVertexesBuffer;
+    public float[] mVertexes;
+    public FloatBuffer mVertexesBuffer;
 
     // shadow color
-    ShadowColor mColor;
+    public ShadowColor mColor;
 
     // the start position of backward vertexes
-    int mMaxBackward;
+    public int mMaxBackward;
 
     // reserve space between backward and forward index
     // need to preserver space for fold top edge shadow when compute fold edge
