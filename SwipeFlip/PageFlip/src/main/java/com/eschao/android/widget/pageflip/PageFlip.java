@@ -624,6 +624,10 @@ public class PageFlip {
             mStartTouchP.set(touchX, touchY);
             mTouchP.set(touchX, touchY);
             mFlipState = PageFlipState.BEGIN_FLIP;
+
+        }else
+        {
+
         }
     }
 
@@ -643,6 +647,8 @@ public class PageFlip {
         float dy = (touchY - mStartTouchP.y);
         float dx = (touchX - mStartTouchP.x);
 
+        //Log.d(TAG, "dx" + dx);
+
         final Page page = mPages[FIRST_PAGE];
         final GLPoint originP = page.originP;
         final GLPoint diagonalP = page.diagonalP;
@@ -650,6 +656,9 @@ public class PageFlip {
         // begin to move
         if (mFlipState == PageFlipState.BEGIN_FLIP &&
             (Math.abs(dx) > mViewRect.width * 0.05f)) {
+
+
+
             // set OriginP and DiagonalP points
             page.setOriginAndDiagonalPoints(mPages[SECOND_PAGE] != null, dy);
 
@@ -675,16 +684,23 @@ public class PageFlip {
             if (mPages[SECOND_PAGE] == null &&
                 dx > 0 &&
                 mListener != null &&
-                mListener.canFlipBackward()) {
+                mListener.canFlipBackward())
+            {
                 mStartTouchP.x = originP.x;
                 dx = (touchX - mStartTouchP.x);
                 mFlipState = PageFlipState.BACKWARD_FLIP;
+                Log.d(TAG, "back FLIP");
             }
             else if (mListener != null &&
                      mListener.canFlipForward() &&
-                     (dx < 0 && originP.x > 0 || dx > 0 && originP.x < 0)) {
+                     (dx < 0 && originP.x > 0 || dx > 0 && originP.x < 0))
+            {
                 mFlipState = PageFlipState.FORWARD_FLIP;
+                Log.d(TAG, "forward FLIP");
             }
+        }else
+        {
+
         }
 
         // in moving, compute the TouchXY

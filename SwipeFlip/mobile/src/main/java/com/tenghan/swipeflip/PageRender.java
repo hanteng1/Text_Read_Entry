@@ -39,7 +39,7 @@ public abstract class PageRender implements OnPageFlipListener{
         mPageNo = pageNo;
         mDrawCommand = DRAW_FULL_PAGE;
         mCanvas = new Canvas();
-        mPageFlip = pageFlip;
+        mPageFlip.setListener(this);
         mHandler = handler;
 
     }

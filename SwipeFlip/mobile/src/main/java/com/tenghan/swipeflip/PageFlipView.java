@@ -113,17 +113,51 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
 
     public void onFingerDown(float x, float y)
     {
-
+        if (!mPageFlip.isAnimating() &&
+                mPageFlip.getFirstPage() != null) {
+            mPageFlip.onFingerDown(x, y);
+        }
     }
 
     public void onFingerMove(float x, float y)
     {
-
+        if (mPageFlip.isAnimating()) {
+            // nothing to do during animating
+        }
+        else if (mPageFlip.canAnimate(x, y)) {
+            // if the point is out of current page, try to start animating
+            onFingerUp(x, y);
+        }
+        // move page by finger
+        else if (mPageFlip.onFingerMove(x, y)) {
+            try {
+                mDrawLock.lock();
+                if (mPageRender != null &&
+                        mPageRender.onFingerMove(x, y)) {
+                    requestRender();
+                }
+            }
+            finally {
+                mDrawLock.unlock();
+            }
+        }
     }
 
     public void onFingerUp(float x, float y)
     {
-
+        if (!mPageFlip.isAnimating()) {
+            mPageFlip.onFingerUp(x, y, mDuration);
+            try {
+                mDrawLock.lock();
+                if (mPageRender != null &&
+                        mPageRender.onFingerUp(x, y)) {
+                    requestRender();
+                }
+            }
+            finally {
+                mDrawLock.unlock();
+            }
+        }
     }
 
     @Override

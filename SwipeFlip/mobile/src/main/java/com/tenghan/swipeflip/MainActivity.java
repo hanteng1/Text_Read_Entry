@@ -6,10 +6,12 @@ a good demo to follow: https://www.youtube.com/watch?v=rVyBwz1-AiE
 
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
+import android.nfc.Tag;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +24,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     PageFlipView mPageFlipView;
     GestureDetector mGestureDetector;
+
+    private final static String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
