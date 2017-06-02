@@ -37,10 +37,10 @@ public class Vertexes {
     private static final String TAG = "Vertexes";
 
     // how many vertexes in vertex float buffer will be drawn on screen
-    int mVertexesSize;
+    public int mVertexesSize;
 
     // how many float data is used for every vertex
-    int mSizeOfPerVex;
+    public int mSizeOfPerVex;
 
     // vertex data array
     public float[] mVertexes;
@@ -53,7 +53,7 @@ public class Vertexes {
     FloatBuffer mTextureCoordsBuf;
 
     // next index when add vertex to float array
-    int mNext;
+    public int mNext;
 
 
     /**

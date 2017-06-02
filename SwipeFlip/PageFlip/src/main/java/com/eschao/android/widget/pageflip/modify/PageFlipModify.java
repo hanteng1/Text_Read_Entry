@@ -103,7 +103,7 @@ public class PageFlipModify {
     private final static int FIRST_PAGE = 0;
     private final static int SECOND_PAGE = 1;
     private int pageIndex;
-    private final static int PAGE_SIZE = 10;
+    private final static int PAGE_SIZE = 1; //for testing
     private final static int MANY_PAGE_MODE = 1;
 
     // view size
@@ -210,11 +210,8 @@ public class PageFlipModify {
     private Scroller mScroller;
     private Context mContext;
 
-    // pages and page mode
-    // in single page mode, there is only one page in the index 0
-    // in double pages mode, there are two pages, the first one is always active
-    // page which is receiving finger events, for example: finger down/move/up
-    private Page mPages[];
+    // pages and page mode, many pages, default 10
+    private PageModify mPages[];
     private int mPageMode;
 
     // is clicking to flip page
@@ -231,7 +228,9 @@ public class PageFlipModify {
     public PageFlipModify(Context context) {
         mContext = context;
         mScroller = new Scroller(context);
+
         mFlipState = PageFlipState.END_FLIP;
+
         mIsVertical = false;
         mViewRect = new GLViewRect();
         mPixelsOfMesh = DEFAULT_MESH_VERTEX_PIXELS;
@@ -241,7 +240,7 @@ public class PageFlipModify {
         mWidthRationOfClickToFlip = WIDTH_RATIO_OF_CLICK_TO_FLIP;
 
         // init pages
-        mPages = new Page[PAGE_SIZE];
+        mPages = new PageModify[PAGE_SIZE];
         mPageMode = MANY_PAGE_MODE;
 
         // key points
@@ -280,79 +279,8 @@ public class PageFlipModify {
                 FOLD_BASE_SHADOW_END_ALPHA);
     }
 
-    /**
-     * Enable/disable auto page mode
-     * <p>
-     * The default value is single page mode, which means there is only one page
-     * no matter what the screen is portrait or landscape. If set mode with auto
-     * page, it will automatically detect screen mode and choose single or
-     * double pages to render the whole screen.
-     * </p>
-     *
-     * @param isAuto true if set mode with auto page
-     * @return true if pages are recreated and need to render page
-     */
-    public boolean enableAutoPage(boolean isAuto) {
-        int newMode = isAuto ? AUTO_PAGE_MODE : SINGLE_PAGE_MODE;
-        if (mPageMode != newMode) {
-            mPageMode = newMode;
 
-            // check if we need to re-create pages
-            if ((newMode == AUTO_PAGE_MODE &&
-                    mViewRect.surfaceW > mViewRect.surfaceH &&
-                    mPages[SECOND_PAGE] == null) ||
-                    (newMode == SINGLE_PAGE_MODE &&
-                            mPages[SECOND_PAGE] != null)) {
 
-                createPages();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Is auto page mode enabled?
-     *
-     * @return true if auto page mode is enabled
-     */
-    public boolean isAutoPageEnabled() {
-        return mPageMode == AUTO_PAGE_MODE;
-    }
-
-    /**
-     * Enable/disable clicking to flip page
-     * <p>
-     * By default, the page flipping will only be triggered by finger.
-     * Through this function to enable clicking, you can start flipping
-     * page with finger click.
-     * </p>
-     *
-     * @param enable true if enable it
-     * @return self
-     */
-    public PageFlipModify enableClickToFlip(boolean enable) {
-        mIsClickToFlip = enable;
-        return this;
-    }
-
-    /**
-     * Set width ratio of clicking to flip, the default is 0.5f
-     * <p>Which area the finger is clicking on will trigger a flip forward or
-     * backward</p>
-     *
-     * @param ratio width ratio of clicking to flip, is (0 ... 0.5]
-     * @return self
-     */
-    public PageFlipModify setWidthRatioOfClickToFlip(float ratio) {
-        if (ratio <= 0 || ratio > 0.5f) {
-            throw new IllegalArgumentException("Invalid ratio value: " + ratio);
-        }
-
-        mWidthRationOfClickToFlip = ratio;
-        return this;
-    }
 
     /**
      * Set listener for page flip
@@ -567,28 +495,19 @@ public class PageFlipModify {
      * Create pages
      */
     private void createPages() {
-        // release textures hold in pages
-        if (mPages[FIRST_PAGE] != null) {
-            mPages[FIRST_PAGE].deleteAllTextures();
+
+        for(int itrp = 0;  itrp < PAGE_SIZE; itrp++)
+        {
+            // release textures hold in pages
+            if(mPages[itrp] != null) {
+                mPages[itrp].deleteAllTextures();
+            }
+
+            //create new pages
+            mPages[itrp] = new PageModify(mViewRect.left, mViewRect.right,
+                    mViewRect.top, mViewRect.bottom);
         }
 
-        if (mPages[SECOND_PAGE] != null) {
-            mPages[SECOND_PAGE].deleteAllTextures();
-        }
-
-        // landscape
-        if (mPageMode == AUTO_PAGE_MODE &&
-                mViewRect.surfaceW > mViewRect.surfaceH) {
-            mPages[FIRST_PAGE] = new Page(mViewRect.left, 0,
-                    mViewRect.top, mViewRect.bottom);
-            mPages[SECOND_PAGE] = new Page(0, mViewRect.right,
-                    mViewRect.top, mViewRect.bottom);
-        }
-        else {
-            mPages[FIRST_PAGE] = new Page(mViewRect.left, mViewRect.right,
-                    mViewRect.top, mViewRect.bottom);
-            mPages[SECOND_PAGE] = null;
-        }
     }
 
     /**
@@ -606,15 +525,6 @@ public class PageFlipModify {
         boolean isContained = false;
         if (mPages[FIRST_PAGE].contains(touchX, touchY)) {
             isContained = true;
-        }
-        else if (mPages[SECOND_PAGE] != null &&
-                mPages[SECOND_PAGE].contains(touchX, touchY)) {
-            // in double pages, the first page is always active page which touch
-            // event is happening on
-            isContained = true;
-            Page p = mPages[SECOND_PAGE];
-            mPages[SECOND_PAGE] = mPages[FIRST_PAGE];
-            mPages[FIRST_PAGE] = p;
         }
 
         // point is contained, ready to flip
@@ -650,7 +560,7 @@ public class PageFlipModify {
 
         //Log.d(TAG, "dx" + dx);
 
-        final Page page = mPages[FIRST_PAGE];
+        final PageModify page = mPages[FIRST_PAGE];
         final GLPoint originP = page.originP;
         final GLPoint diagonalP = page.diagonalP;
 
@@ -658,10 +568,8 @@ public class PageFlipModify {
         if (mFlipState == PageFlipState.BEGIN_FLIP &&
                 (Math.abs(dx) > mViewRect.width * 0.05f)) {
 
-
-
             // set OriginP and DiagonalP points
-            page.setOriginAndDiagonalPoints(mPages[SECOND_PAGE] != null, dy);
+            page.setOriginAndDiagonalPoints(dy);
 
             // compute max degree between X axis and line from TouchP to OriginP
             // and max degree between X axis and line from TouchP to
