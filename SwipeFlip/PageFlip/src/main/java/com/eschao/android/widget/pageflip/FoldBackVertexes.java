@@ -134,7 +134,6 @@ public final class FoldBackVertexes extends Vertexes {
 
     public void draw(FoldBackVertexProgram program,
                      PageModify page,
-                     boolean hasSecondPage,
                      int gradientShadowId) {
         glUniformMatrix4fv(program.mMVPMatrixLoc, 1, false,
                 VertexProgram.MVPMatrix, 0);
@@ -155,14 +154,14 @@ public final class FoldBackVertexes extends Vertexes {
         // it is the next page content texture and should be drawn in the same
         // order with the first texture, so the value is set 1. For computing
         // details, please see the shader script.
-        glUniform1f(program.mTexXOffsetLoc, hasSecondPage ? 1.0f : 0);
+        glUniform1f(program.mTexXOffsetLoc, 0);
 
         // set mask color and alpha
         glUniform4f(program.mMaskColorLoc,
                 page.maskColor[0][0],
                 page.maskColor[0][1],
                 page.maskColor[0][2],
-                hasSecondPage ? 0 : mMaskAlpha);
+                mMaskAlpha);
 
         // draw triangles
         drawWith(GL_TRIANGLE_STRIP,

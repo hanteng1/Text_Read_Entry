@@ -101,7 +101,6 @@ public class PageFlipModify {
 
     // pages and index
     private final static int FIRST_PAGE = 0;
-    private final static int SECOND_PAGE = 1;
     private int pageIndex;
     private final static int PAGE_SIZE = 1; //for testing
     private final static int MANY_PAGE_MODE = 1;
@@ -590,7 +589,7 @@ public class PageFlipModify {
             }
 
             // determine if it is moving backward or forward
-            if (mPages[SECOND_PAGE] == null &&
+            if (
                     dx > 0 &&
                     mListener != null &&
                     mListener.canFlipBackward())
@@ -700,7 +699,7 @@ public class PageFlipModify {
         final PageModify page = mPages[FIRST_PAGE];
         final GLPoint originP = page.originP;
         final GLPoint diagonalP = page.diagonalP;
-        final boolean hasSecondPage = mPages[SECOND_PAGE] != null;
+
         Point start = new Point((int)mTouchP.x, (int)mTouchP.y);
         Point end = new Point(0, 0);
 
@@ -711,7 +710,7 @@ public class PageFlipModify {
                 end.x = (int)originP.x;
                 mFlipState = PageFlipState.RESTORE_FLIP;
             }
-            else if (hasSecondPage && originP.x < 0) {
+            else if (originP.x < 0) {
                 end.x = (int)(diagonalP.x + page.width);
             }
             else {
@@ -783,7 +782,6 @@ public class PageFlipModify {
         PageModify page = mPages[FIRST_PAGE];
         GLPoint originP = page.originP;
         GLPoint diagonalP = page.diagonalP;
-        final boolean hasSecondPage = mPages[SECOND_PAGE] != null;
 
         // forward and backward flip have different degree
         float tanOfForwardAngle = MAX_TAN_OF_FORWARD_FLIP;
@@ -795,7 +793,7 @@ public class PageFlipModify {
         }
 
         // backward flip
-        if (!hasSecondPage &&
+        if (
                 x < diagonalP.x + page.width * mWidthRationOfClickToFlip &&
                 mListener != null &&
                 mListener.canFlipBackward()) {
@@ -825,7 +823,7 @@ public class PageFlipModify {
 
             // compute end.x
             // left page in double page mode
-            if (hasSecondPage && originP.x < 0) {
+            if (originP.x < 0) {
                 end.x = (int)(diagonalP.x + page.width);
             }
             // right page in double page mode
@@ -877,42 +875,10 @@ public class PageFlipModify {
                 computeKeyVertexesWhenSlope();
             }
 
-            // in double page mode
-            if (mPages[SECOND_PAGE] != null) {
-                // if the xFoldP1.x is outside page width, need to limit
-                // xFoldP1.x is in page.width and recompute new key points so
-                // that the page flip is still going forward
-                if (page.isXOutsidePage(mXFoldP1.x)) {
-                    mXFoldP1.x = diagonalP.x;
-                    float cosA = (mTouchP.x - originP.x) / mLenOfTouchOrigin;
-                    float ratio = 1 - page.width * Math.abs(cosA) /
-                            mLenOfTouchOrigin;
-                    mR = (float)(mLenOfTouchOrigin * (1 - 2 * ratio) / Math.PI);
-                    mXFoldP0.x = mLenOfTouchOrigin * ratio / cosA + originP.x;
 
-                    if (mIsVertical) {
-                        mYFoldP0.x = mXFoldP0.x;
-                        mYFoldP1.x = mXFoldP1.x;
-                    }
-                    else {
-                        mYFoldP1.y = originP.y + (mXFoldP1.x - originP.x)
-                                / mKValue;
-                        mYFoldP0.y = originP.y + (mXFoldP0.x - originP.x)
-                                / mKValue;
-                    }
-
-                    // re-compute mesh count
-                    float len = Math.abs(mMiddleP.x - mXFoldP0.x);
-                    if (mMeshCount > len) {
-                        mMeshCount = (int)len;
-                    }
-                    isAnimating = mMeshCount > 0 &&
-                            Math.abs(mXFoldP0.x - diagonalP.x) >= 2;
-                }
-            }
             // in single page mode, check if the whole fold page is outside the
             // screen and animating should be stopped
-            else if (mFlipState == PageFlipState.FORWARD_FLIP) {
+            if (mFlipState == PageFlipState.FORWARD_FLIP) {
                 float r = (float)(mLenOfTouchOrigin * mSemiPerimeterRatio /
                         Math.PI);
                 float x = (mYFoldP1.y - diagonalP.y) * mKValue + r;
@@ -1007,14 +973,12 @@ public class PageFlipModify {
      */
     public void drawFlipFrame() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        final boolean hasSecondPage = mPages[SECOND_PAGE] != null;
 
         // 1. draw back of fold page
         glUseProgram(mFoldBackVertexProgram.mProgramRef);
         glActiveTexture(GL_TEXTURE0);
         mFoldBackVertexes.draw(mFoldBackVertexProgram,
                 mPages[FIRST_PAGE],
-                hasSecondPage,
                 mGradientShadowTextureID);
 
         // 2. draw unfold page and front of fold page
