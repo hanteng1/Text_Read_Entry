@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.eschao.android.widget.pageflip.Page;
 import com.eschao.android.widget.pageflip.PageFlip;
@@ -20,12 +21,15 @@ import com.eschao.android.widget.pageflip.modify.PageModify;
 
 public class SinglePageRender extends PageRender{
 
+    private final static String TAG = "SinglePageRender";
+
     public SinglePageRender(Context context, PageFlipModify pageFlip,
                             Handler handler, int pageNo) {
         super(context, pageFlip, handler, pageNo);
     }
 
     public void onDrawFrame() {
+
         // 1. delete unused textures
         mPageFlip.deleteUnusedTextures();
         PageModify page = mPageFlip.getFirstPage(); //there is only one page in single page mode

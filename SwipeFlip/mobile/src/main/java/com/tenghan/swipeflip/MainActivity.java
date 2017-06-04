@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            mPageFlipView.onFingerUp(event.getX(), event.getY());
+            //mPageFlipView.onFingerUp(event.getX(), event.getY());
             return true;
         }
 
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
                             float distanceY) {
-        mPageFlipView.onFingerMove(e2.getX(), e2.getY());
+        //mPageFlipView.onFingerMove(e2.getX(), e2.getY());
         return true;
     }
 

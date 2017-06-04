@@ -53,7 +53,7 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
 
         setEGLContextClientVersion(2);
 
-        // init others
+        // create render
         mPageNo = 1;
         mDrawLock = new ReentrantLock();
         mPageRender = new SinglePageRender(context, mPageFlip,
@@ -62,6 +62,8 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         // configure render
         setRenderer(this);
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
+
 
 
     }
@@ -85,6 +87,10 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         if (!mPageFlip.isAnimating() &&
                 mPageFlip.getFirstPage() != null) {
             mPageFlip.onFingerDown(x, y);
+
+
+            mPageFlip.onFingerMove(x - 20.0f, y - 20.0f);
+            mPageFlip.onFingerMove(x - 40.0f, y - 40.0f);
         }
     }
 
@@ -159,6 +165,10 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
             }
 
             mPageRender.onSurfaceChanged(width, height);
+
+
+
+
         }catch (PageFlipException e)
         {
             Log.e(TAG, "Failed to run PageFlipRender:onSurfaceChanged");
