@@ -11,6 +11,8 @@ import android.os.Message;
 import com.eschao.android.widget.pageflip.Page;
 import com.eschao.android.widget.pageflip.PageFlip;
 import com.eschao.android.widget.pageflip.PageFlipState;
+import com.eschao.android.widget.pageflip.modify.PageFlipModify;
+import com.eschao.android.widget.pageflip.modify.PageModify;
 
 /**
  * Created by hanteng on 2017-05-30.
@@ -18,7 +20,7 @@ import com.eschao.android.widget.pageflip.PageFlipState;
 
 public class SinglePageRender extends PageRender{
 
-    public SinglePageRender(Context context, PageFlip pageFlip,
+    public SinglePageRender(Context context, PageFlipModify pageFlip,
                             Handler handler, int pageNo) {
         super(context, pageFlip, handler, pageNo);
     }
@@ -26,7 +28,7 @@ public class SinglePageRender extends PageRender{
     public void onDrawFrame() {
         // 1. delete unused textures
         mPageFlip.deleteUnusedTextures();
-        Page page = mPageFlip.getFirstPage(); //there is only one page in single page mode
+        PageModify page = mPageFlip.getFirstPage(); //there is only one page in single page mode
 
         // 2. handle drawing command triggered from finger moving and animating
         if (mDrawCommand == DRAW_MOVING_FRAME ||
@@ -35,10 +37,10 @@ public class SinglePageRender extends PageRender{
             if (mPageFlip.getFlipState() == PageFlipState.FORWARD_FLIP) {
                 // check if second texture of first page is valid, if not,
                 // create new one
-                if (!page.isSecondTextureSet()) {
-                    drawPage(mPageNo + 1);
-                    page.setSecondTexture(mBitmap);
-                }
+                //if (!page.isSecondTextureSet()) {
+                //    drawPage(mPageNo + 1);  //the drawpage function is actually just creating texture
+                //    page.setSecondTexture(mBitmap);
+                //}
             }
             // in backward flip, check first texture of first page is valid
             else if (!page.isFirstTextureSet()) {
@@ -82,7 +84,7 @@ public class SinglePageRender extends PageRender{
 
         // create bitmap and canvas for page
         //mBackgroundBitmap = background;
-        Page page = mPageFlip.getFirstPage();
+        PageModify page = mPageFlip.getFirstPage();
         mBitmap = Bitmap.createBitmap((int)page.width(), (int)page.height(),
                 Bitmap.Config.ARGB_8888);
         mCanvas.setBitmap(mBitmap); //specifiy the bitmap for the canvas to draw into
@@ -103,12 +105,21 @@ public class SinglePageRender extends PageRender{
                 // update page number for backward flip
                 if (state == PageFlipState.END_WITH_BACKWARD) {
                     // don't do anything on page number since mPageNo is always
+                    //should add the page to front
+
                     // represents the FIRST_TEXTURE no;
+
+
+
                 }
                 // update page number and switch textures for forward flip
                 else if (state == PageFlipState.END_WITH_FORWARD) {
-                    mPageFlip.getFirstPage().setFirstTextureWithSecond();
-                    mPageNo++;
+                    //mPageFlip.getFirstPage().setFirstTextureWithSecond();
+
+                    //should delete the front page
+
+
+                    //mPageNo++;
                 }
 
                 mDrawCommand = DRAW_FULL_PAGE;
@@ -167,7 +178,7 @@ public class SinglePageRender extends PageRender{
     public boolean canFlipBackward()
     {
         if(mPageNo > 1) {
-            mPageFlip.getFirstPage().setSecondTextureWithFirst();
+            //mPageFlip.getFirstPage().setSecondTextureWithFirst();
             return true;
         }
         else{

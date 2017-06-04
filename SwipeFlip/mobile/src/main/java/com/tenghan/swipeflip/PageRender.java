@@ -7,6 +7,7 @@ import android.os.Handler;
 
 import com.eschao.android.widget.pageflip.OnPageFlipListener;
 import com.eschao.android.widget.pageflip.PageFlip;
+import com.eschao.android.widget.pageflip.modify.PageFlipModify;
 
 /**
  * Created by hanteng on 2017-05-30.
@@ -30,9 +31,9 @@ public abstract class PageRender implements OnPageFlipListener{
     Bitmap mBackgroundBitmap;
     Context mContext;
     Handler mHandler;
-    PageFlip mPageFlip;
+    PageFlipModify mPageFlip;
 
-    public PageRender(Context context, PageFlip pageFlip, Handler handler, int pageNo)
+    public PageRender(Context context, PageFlipModify pageFlip, Handler handler, int pageNo)
     {
         mContext = context;
         mPageFlip = pageFlip;

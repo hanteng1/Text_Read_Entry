@@ -33,7 +33,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         //setContentView(R.layout.activity_main);
 
         mPageFlipView = new PageFlipView(this);
+
         setContentView(mPageFlipView);
+
         mGestureDetector = new GestureDetector(this, this);
 
         if(Build.VERSION.SDK_INT < 16)
@@ -68,46 +70,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.optionmenus, menu);
-
-        int duration = mPageFlipView.getAnimateDuration();
-        if (duration == 1000) {
-            menu.findItem(R.id.animation_1s).setChecked(true);
-        }
-        else if (duration == 2000) {
-            menu.findItem(R.id.animation_2s).setChecked(true);
-        }
-        else if (duration == 5000) {
-            menu.findItem(R.id.animation_5s).setChecked(true);
-        }
-
-        if (mPageFlipView.isAutoPageEnabled()) {
-            menu.findItem(R.id.auoto_page).setChecked(true);
-        }
-        else {
-            menu.findItem(R.id.single_page).setChecked(true);
-        }
-
-        SharedPreferences pref = PreferenceManager
-                .getDefaultSharedPreferences(this);
-        int pixels = pref.getInt("MeshPixels", mPageFlipView.getPixelsOfMesh());
-        switch (pixels) {
-            case 2:
-                menu.findItem(R.id.mesh_2p).setChecked(true);
-                break;
-            case 5:
-                menu.findItem(R.id.mesh_5p).setChecked(true);
-                break;
-            case 10:
-                menu.findItem(R.id.mesh_10p).setChecked(true);
-                break;
-            case 20:
-                menu.findItem(R.id.mesh_20p).setChecked(true);
-                break;
-            default:
-                break;
-        }
 
         return true;
     }
@@ -115,63 +77,14 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        boolean isHandled = true;
-        SharedPreferences pref = PreferenceManager
-                .getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = pref.edit();
-        switch (item.getItemId()) {
-            case R.id.animation_1s:
-                mPageFlipView.setAnimateDuration(1000);
-                editor.putInt(Constants.PREF_DURATION, 1000);
-                break;
-            case R.id.animation_2s:
-                mPageFlipView.setAnimateDuration(2000);
-                editor.putInt(Constants.PREF_DURATION, 2000);
-                break;
-            case R.id.animation_5s:
-                mPageFlipView.setAnimateDuration(5000);
-                editor.putInt(Constants.PREF_DURATION, 5000);
-                break;
-            case R.id.auoto_page:
-                mPageFlipView.enableAutoPage(true);
-                editor.putBoolean(Constants.PREF_PAGE_MODE, true);
-                break;
-            case R.id.single_page:
-                mPageFlipView.enableAutoPage(false);
-                editor.putBoolean(Constants.PREF_PAGE_MODE, false);
-                break;
-            case R.id.mesh_2p:
-                editor.putInt(Constants.PREF_MESH_PIXELS, 2);
-                break;
-            case R.id.mesh_5p:
-                editor.putInt(Constants.PREF_MESH_PIXELS, 5);
-                break;
-            case R.id.mesh_10p:
-                editor.putInt(Constants.PREF_MESH_PIXELS, 10);
-                break;
-            case R.id.mesh_20p:
-                editor.putInt(Constants.PREF_MESH_PIXELS, 20);
-                break;
-            case R.id.about_menu:
-                showAbout();
-                return true;
-            default:
-                isHandled = false;
-                break;
-        }
 
-        if (isHandled) {
-            item.setChecked(true);
-            editor.apply();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            mPageFlipView.onFingerUp(event.getX(), event.getY());
+            //mPageFlipView.onFingerUp(event.getX(), event.getY());
             return true;
         }
 
@@ -180,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onDown(MotionEvent e) {
-        mPageFlipView.onFingerDown(e.getX(), e.getY());
+        //mPageFlipView.onFingerDown(e.getX(), e.getY());
         return true;
     }
 
@@ -198,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
                             float distanceY) {
-        mPageFlipView.onFingerMove(e2.getX(), e2.getY());
+        //mPageFlipView.onFingerMove(e2.getX(), e2.getY());
         return true;
     }
 
@@ -208,18 +121,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     public boolean onSingleTapUp(MotionEvent e) {
         return false;
-    }
-
-    private void showAbout() {
-        View aboutView = getLayoutInflater().inflate(R.layout.about, null,
-                false);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setIcon(R.mipmap.ic_launcher);
-        builder.setTitle(R.string.app_name);
-        builder.setView(aboutView);
-        builder.create();
-        builder.show();
     }
 
 }

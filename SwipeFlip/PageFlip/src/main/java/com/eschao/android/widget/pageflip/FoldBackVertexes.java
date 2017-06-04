@@ -17,6 +17,8 @@ package com.eschao.android.widget.pageflip;
 
 import android.opengl.GLES20;
 
+import com.eschao.android.widget.pageflip.modify.PageModify;
+
 import static android.opengl.GLES20.GL_TEXTURE_2D;
 import static android.opengl.GLES20.GL_TRIANGLE_STRIP;
 import static android.opengl.GLES20.glActiveTexture;
@@ -128,5 +130,43 @@ public final class FoldBackVertexes extends Vertexes {
         drawWith(GL_TRIANGLE_STRIP,
                  program.mVertexPosLoc,
                  program.mTexCoordLoc);
+    }
+
+    public void draw(FoldBackVertexProgram program,
+                     PageModify page,
+                     boolean hasSecondPage,
+                     int gradientShadowId) {
+        glUniformMatrix4fv(program.mMVPMatrixLoc, 1, false,
+                VertexProgram.MVPMatrix, 0);
+
+        // load fold back texture
+        glBindTexture(GL_TEXTURE_2D, page.getBackTextureID());
+        glUniform1i(program.mTextureLoc, 0);
+
+        // load gradient shadow texture
+        glActiveTexture(GLES20.GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, gradientShadowId);
+        glUniform1i(program.mShadowLoc, 1);
+
+        // set x offset of texture coordinate. In single page mode, the value is
+        // set 0 to draw the back texture with x coordinate inversely against
+        // the first texture since they are using the same texture, but in
+        // double page mode, the back texture is different with the first one,
+        // it is the next page content texture and should be drawn in the same
+        // order with the first texture, so the value is set 1. For computing
+        // details, please see the shader script.
+        glUniform1f(program.mTexXOffsetLoc, hasSecondPage ? 1.0f : 0);
+
+        // set mask color and alpha
+        glUniform4f(program.mMaskColorLoc,
+                page.maskColor[0][0],
+                page.maskColor[0][1],
+                page.maskColor[0][2],
+                hasSecondPage ? 0 : mMaskAlpha);
+
+        // draw triangles
+        drawWith(GL_TRIANGLE_STRIP,
+                program.mVertexPosLoc,
+                program.mTexCoordLoc);
     }
 }

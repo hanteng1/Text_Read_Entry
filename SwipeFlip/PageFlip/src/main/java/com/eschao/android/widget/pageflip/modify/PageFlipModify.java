@@ -697,7 +697,7 @@ public class PageFlipModify {
         touchX = mViewRect.toOpenGLX(touchX);
         touchY = mViewRect.toOpenGLY(touchY);
 
-        final Page page = mPages[FIRST_PAGE];
+        final PageModify page = mPages[FIRST_PAGE];
         final GLPoint originP = page.originP;
         final GLPoint diagonalP = page.diagonalP;
         final boolean hasSecondPage = mPages[SECOND_PAGE] != null;
@@ -736,7 +736,7 @@ public class PageFlipModify {
         else if (mFlipState == PageFlipState.BEGIN_FLIP) {
             mIsVertical = false;
             mFlipState = PageFlipState.END_FLIP;
-            page.setOriginAndDiagonalPoints(hasSecondPage, -touchY);
+            page.setOriginAndDiagonalPoints(-touchY);
 
             // if enable clicking to flip, compute scroller points for animation
             if (mIsClickToFlip && Math.abs(touchX - mStartTouchP.x) < 2) {
@@ -780,7 +780,7 @@ public class PageFlipModify {
     private void computeScrollPointsForClickingFlip(float x,
                                                     Point start,
                                                     Point end) {
-        Page page = mPages[FIRST_PAGE];
+        PageModify page = mPages[FIRST_PAGE];
         GLPoint originP = page.originP;
         GLPoint diagonalP = page.diagonalP;
         final boolean hasSecondPage = mPages[SECOND_PAGE] != null;
@@ -842,7 +842,7 @@ public class PageFlipModify {
      * @return true animating is continue or it is stopped
      */
     public boolean animating() {
-        final Page page = mPages[FIRST_PAGE];
+        final PageModify page = mPages[FIRST_PAGE];
         final GLPoint originP = page.originP;
         final GLPoint diagonalP = page.diagonalP;
 
@@ -990,32 +990,16 @@ public class PageFlipModify {
      *
      * @return flip state, See {@link PageFlipState}
      */
-    public Page getFirstPage() {
+    public PageModify getFirstPage() {
         return mPages[FIRST_PAGE];
     }
 
-    /**
-     * Get the second page
-     * <p>
-     * Second page is only valid in double page mode, if it is null, that means
-     * there is only one page for whole screen whatever the screen is portrait
-     * or landscape
-     * </p>
-     *
-     * @return the second page, null if no second page
-     */
-    public Page getSecondPage() {
-        return mPages[SECOND_PAGE];
-    }
 
     /**
      * Delete unused textures
      */
     public void deleteUnusedTextures() {
         mPages[FIRST_PAGE].deleteUnusedTextures();
-        if (mPages[SECOND_PAGE] != null) {
-            mPages[SECOND_PAGE].deleteUnusedTextures();
-        }
     }
 
     /**
@@ -1038,9 +1022,6 @@ public class PageFlipModify {
         glActiveTexture(GL_TEXTURE0);
         mPages[FIRST_PAGE].drawFrontPage(mVertexProgram,
                 mFoldFrontVertexes);
-        if (hasSecondPage) {
-            mPages[SECOND_PAGE].drawFullPage(mVertexProgram, true);
-        }
 
         // 3. draw edge and base shadow of fold parts
         glUseProgram(mShadowVertexProgram.mProgramRef);
@@ -1059,12 +1040,8 @@ public class PageFlipModify {
         glActiveTexture(GL_TEXTURE0);
 
         // 1. draw first page
-        mPages[FIRST_PAGE].drawFullPage(mVertexProgram, true);
+        mPages[FIRST_PAGE].drawFullPage(mVertexProgram);
 
-        // 2. draw second page if have
-        if (mPages[SECOND_PAGE] != null) {
-            mPages[SECOND_PAGE].drawFullPage(mVertexProgram, true);
-        }
     }
 
     /**
@@ -1156,7 +1133,7 @@ public class PageFlipModify {
         float x = mMiddleP.x;
         float stepX = (mMiddleP.x - mXFoldP0.x) / mMeshCount;
 
-        final Page page = mPages[FIRST_PAGE];
+        final PageModify page = mPages[FIRST_PAGE];
         final float oY = page.originP.y;
         final float dY = page.diagonalP.y;
         final float cDY = page.diagonalP.texY;
@@ -1502,7 +1479,7 @@ public class PageFlipModify {
      * Compute vertexes when page flip is slope
      */
     private void computeVertexesWhenSlope() {
-        final Page page = mPages[FIRST_PAGE];
+        final PageModify page = mPages[FIRST_PAGE];
         final float oX = page.originP.x;
         final float oY = page.originP.y;
         final float dY = page.diagonalP.y;

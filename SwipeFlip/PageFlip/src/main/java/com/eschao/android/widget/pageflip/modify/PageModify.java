@@ -99,7 +99,7 @@ public class PageModify {
     private int mApexOrderIndex;
 
     // mask color of back texture
-    float[][] maskColor;
+    public float[][] maskColor;
 
     // texture(front, back and second) ids allocated by OpenGL
     private int[] mTexIDs;
@@ -221,7 +221,7 @@ public class PageModify {
      *
      * @return back texture id, If it is not set, return the first texture id
      */
-    int getBackTextureID() {
+    public int getBackTextureID() {
         // In single page mode, the back texture is same with the first texture
         if (mTexIDs[BACK_TEXTURE_ID] == INVALID_TEXTURE_ID) {
             return mTexIDs[FIRST_TEXTURE_ID];
@@ -443,7 +443,7 @@ public class PageModify {
     /**
      * Draw full page with given texture id
      */
-    private void drawFullPage(VertexProgram program, int textureID) {
+    public void drawFullPage(VertexProgram program, int textureID) {
         glBindTexture(GL_TEXTURE_2D, textureID);
         glUniform1i(program.mTextureLoc, 0);
 

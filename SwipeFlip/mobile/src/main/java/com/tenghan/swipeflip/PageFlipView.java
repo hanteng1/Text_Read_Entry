@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.eschao.android.widget.pageflip.PageFlip;
 import com.eschao.android.widget.pageflip.PageFlipException;
+import com.eschao.android.widget.pageflip.modify.PageFlipModify;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -28,7 +29,7 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
     int mPageNo;
     int mDuration;
     Handler mHandler;
-    PageFlip mPageFlip;
+    PageFlipModify mPageFlip;
     PageRender mPageRender;
     ReentrantLock mDrawLock;
 
@@ -37,18 +38,19 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         super(context);
         newHandler();
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        mDuration = pref.getInt(Constants.PREF_DURATION, 1000);
-        int pixelsOfMesh = pref.getInt(Constants.PREF_MESH_PIXELS, 10);
-        boolean isAuto = pref.getBoolean(Constants.PREF_PAGE_MODE, true);
+        mDuration = 1000;
+        int pixelsOfMesh = 10;
+        boolean isAuto = false;
+
 
         //create pageflip
-        mPageFlip = new PageFlip(context);
+        mPageFlip = new PageFlipModify(context);
         mPageFlip.setSemiPerimeterRatio(0.8f)
                 .setShadowWidthOfFoldEdges(5, 60, 0.3f)
                 .setShadowWidthOfFoldBase(5, 80, 0.4f)
-                .setPixelsOfMesh(pixelsOfMesh)
-                .enableAutoPage(isAuto);
+                .setPixelsOfMesh(pixelsOfMesh);
+
+
         setEGLContextClientVersion(2);
 
         // init others
@@ -56,45 +58,12 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         mDrawLock = new ReentrantLock();
         mPageRender = new SinglePageRender(context, mPageFlip,
                 mHandler, mPageNo);
+
         // configure render
         setRenderer(this);
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
 
-    }
-
-    public boolean isAutoPageEnabled(){
-        return mPageFlip.isAutoPageEnabled();
-    }
-
-    public void enableAutoPage(boolean enable) {
-        if (mPageFlip.enableAutoPage(enable)) {
-            try {
-                mDrawLock.lock();
-                if (mPageFlip.getSecondPage() != null &&
-                        mPageRender instanceof SinglePageRender) {
-                    mPageRender = new DoublePageRender(getContext(),
-                            mPageFlip,
-                            mHandler,
-                            mPageNo);
-                    mPageRender.onSurfaceChanged(mPageFlip.getSurfaceWidth(),
-                            mPageFlip.getSurfaceHeight());
-                }
-                else if (mPageFlip.getSecondPage() == null &&
-                        mPageRender instanceof DoublePageRender) {
-                    mPageRender = new SinglePageRender(getContext(),
-                            mPageFlip,
-                            mHandler,
-                            mPageNo);
-                    mPageRender.onSurfaceChanged(mPageFlip.getSurfaceWidth(),
-                            mPageFlip.getSurfaceHeight());
-                }
-                requestRender();
-            }
-            finally {
-                mDrawLock.unlock();
-            }
-        }
     }
 
     public int getAnimateDuration(){
@@ -181,16 +150,7 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
             mPageFlip.onSurfaceChanged(width, height);
 
             int pageNo = mPageRender.getPageNo();
-            if(mPageFlip.getSecondPage() != null && width > height)
-            {
-                if (!(mPageRender instanceof DoublePageRender)) {
-                    mPageRender.release();
-                    mPageRender = new DoublePageRender(getContext(),
-                            mPageFlip,
-                            mHandler,
-                            pageNo);
-                }
-            }else if(!(mPageRender instanceof SinglePageRender)){
+            if(!(mPageRender instanceof SinglePageRender)){
                 mPageRender.release();
                 mPageRender = new SinglePageRender(getContext(),
                         mPageFlip,

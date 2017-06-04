@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.eschao.android.widget.pageflip.PageFlip;
+import com.eschao.android.widget.pageflip.modify.PageFlipModify;
 
 /**
  * Created by hanteng on 2017-06-01.
@@ -12,7 +13,7 @@ import com.eschao.android.widget.pageflip.PageFlip;
 
 public class SinglePageNoSecTexRender extends PageRender {
 
-    public SinglePageNoSecTexRender(Context context, PageFlip pageFlip,
+    public SinglePageNoSecTexRender(Context context, PageFlipModify pageFlip,
                                     Handler handler, int pageNo) {
         super(context, pageFlip, handler, pageNo);
     }
@@ -27,7 +28,7 @@ public class SinglePageNoSecTexRender extends PageRender {
     }
 
     public boolean onEndedDrawing(int what) {
-
+        return false;
     }
 
     private void drawPage(int number) {
@@ -36,11 +37,11 @@ public class SinglePageNoSecTexRender extends PageRender {
 
     public boolean canFlipForward()
     {
-
+        return false;
     }
 
     public boolean canFlipBackward()
     {
-
+        return false;
     }
 }
