@@ -65,10 +65,10 @@ public final class LoadBitmapTask implements Runnable {
         Bitmap b = null;
         synchronized (this) {
             if (mQueue.size() > 0) {
-                b = mQueue.pop();
+                b = mQueue.pop();  //grab a texture from the queue
             }
 
-            notify();
+            notify();  //awaking the thread?
         }
 
         if (b == null) {
@@ -184,7 +184,7 @@ public final class LoadBitmapTask implements Runnable {
                 if (size < 1) {
                     for (int i = 0; i < mQueueMaxSize; ++i) {
                         Log.d(TAG, "Load Queue:" + i + " in background!");
-                        mQueue.push(getRandomBitmap());
+                        mQueue.push(getRandomBitmap());  //prepare the textures in a queue
                     }
                 }
 

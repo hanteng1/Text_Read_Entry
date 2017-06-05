@@ -25,7 +25,7 @@ public abstract class PageRender implements OnPageFlipListener{
     final static int MAX_PAGES = 30;
 
     int mPageNo;
-    int mDrawCommand;
+    int mDrawCommand;  //indicate the drawing state
     Bitmap mBitmap;
     Canvas mCanvas;
     Bitmap mBackgroundBitmap;
@@ -38,7 +38,7 @@ public abstract class PageRender implements OnPageFlipListener{
         mContext = context;
         mPageFlip = pageFlip;
         mPageNo = pageNo;
-        mDrawCommand = DRAW_FULL_PAGE;
+        mDrawCommand = DRAW_MOVING_FRAME; // DRAW_FULL_PAGE;
         mCanvas = new Canvas();
         mPageFlip.setListener(this);
         mHandler = handler;

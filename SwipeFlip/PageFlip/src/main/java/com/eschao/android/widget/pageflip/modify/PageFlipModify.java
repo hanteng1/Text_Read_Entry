@@ -510,7 +510,7 @@ public class PageFlipModify {
 
 
         //initialize status
-        //onInitFlipStatus(50.0f, 50.0f);
+        onInitFlipStatus(-350.0f, 0);
 
         //Log.d(TAG, "check piont");
 
@@ -550,7 +550,7 @@ public class PageFlipModify {
             mMaxT2DAngleTan = -mMaxT2DAngleTan;
         }
 
-        mFlipState = PageFlipState.FORWARD_FLIP;
+        mFlipState = PageFlipState.FORWARD_FLIP;  //this is important to set
 
 
         // in moving, compute the TouchXY
@@ -647,9 +647,6 @@ public class PageFlipModify {
             mStartTouchP.set(touchX, touchY);
             mTouchP.set(touchX, touchY);
             mFlipState = PageFlipState.BEGIN_FLIP;
-
-        }else
-        {
 
         }
     }

@@ -63,9 +63,6 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         setRenderer(this);
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
-
-
-
     }
 
     public int getAnimateDuration(){
@@ -88,9 +85,8 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
                 mPageFlip.getFirstPage() != null) {
             mPageFlip.onFingerDown(x, y);
 
-
-            mPageFlip.onFingerMove(x - 20.0f, y - 20.0f);
-            mPageFlip.onFingerMove(x - 40.0f, y - 40.0f);
+            //onFingerMove(x - 20.0f, y - 20.0f);
+            //onFingerMove(x - 40.0f, y - 40.0f);
         }
     }
 
@@ -150,7 +146,7 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
     }
 
     @Override
-    public void onSurfaceChanged(GL10 gl, int width, int height)
+    public void onSurfaceChanged(GL10 gl, int width, int height)  //called when surface is created and when the surface is changed
     {
         try{
             mPageFlip.onSurfaceChanged(width, height);
@@ -166,9 +162,6 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
 
             mPageRender.onSurfaceChanged(width, height);
 
-
-
-
         }catch (PageFlipException e)
         {
             Log.e(TAG, "Failed to run PageFlipRender:onSurfaceChanged");
@@ -176,7 +169,7 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
     }
 
     @Override
-    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+    public void onSurfaceCreated(GL10 gl, EGLConfig config) {  //called when the gl thread starts
         try {
             mPageFlip.onSurfaceCreated();
         }
@@ -196,11 +189,13 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
                       try{
                           mDrawLock.lock();
                           if(mPageRender != null && mPageRender.onEndedDrawing(msg.arg1)){
-                              requestRender();
+                              requestRender();  //this is not called until the animating is done
                           }
                       }
                       finally {
                           mDrawLock.unlock();
+
+                          //this is after the initial render
                       }
                       break;
                   default:

@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
 
+
+
     }
 
     @Override
@@ -93,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onDown(MotionEvent e) {
-        mPageFlipView.onFingerDown(e.getX(), e.getY());
+        //mPageFlipView.onFingerDown(e.getX(), e.getY());
         return true;
     }
 

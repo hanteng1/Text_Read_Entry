@@ -28,6 +28,18 @@ public class SinglePageRender extends PageRender{
         super(context, pageFlip, handler, pageNo);
     }
 
+    //what about loading textures first, then we can get rid of the mDrawCommand thing
+    private void LoadTextures(){
+        mPageFlip.deleteUnusedTextures();
+        PageModify page = mPageFlip.getFirstPage();
+
+        if(!page.isFirstTextureSet())
+        {
+            loadPage(1);
+            page.setFirstTexture(mBitmap);
+        }
+    }
+
     public void onDrawFrame() {
 
         // 1. delete unused textures
@@ -48,21 +60,21 @@ public class SinglePageRender extends PageRender{
             }
             // in backward flip, check first texture of first page is valid
             else if (!page.isFirstTextureSet()) {
-                drawPage(--mPageNo);
-                page.setFirstTexture(mBitmap);
+                loadPage(--mPageNo);
+                page.setFirstTexture(mBitmap);  //the texture on the canvas, thus the canvas in the render is used to create textures in the format of bitmap
             }
 
             // draw frame for page flip
-            mPageFlip.drawFlipFrame();
+            mPageFlip.drawFlipFrame();  //see the difference
         }
         // draw stationary page without flipping
         else if (mDrawCommand == DRAW_FULL_PAGE) {
             if (!page.isFirstTextureSet()) {
-                drawPage(mPageNo);
+                loadPage(mPageNo);
                 page.setFirstTexture(mBitmap);
             }
 
-            mPageFlip.drawPageFrame();
+            mPageFlip.drawPageFrame();  //see the difference
         }
 
         // 3. send message to main thread to notify drawing is ended so that
@@ -93,18 +105,19 @@ public class SinglePageRender extends PageRender{
                 Bitmap.Config.ARGB_8888);
         mCanvas.setBitmap(mBitmap); //specifiy the bitmap for the canvas to draw into
         LoadBitmapTask.get(mContext).set(width, height, 1);
+
+        LoadTextures();
+
     }
 
-    public boolean onEndedDrawing(int what) {
+    public boolean onEndedDrawing(int what) {  //this is called with handler event, to examine whether the animating is done, return true only if the animating the done
         if (what == DRAW_ANIMATING_FRAME) {
             boolean isAnimating = mPageFlip.animating();
             // continue animating
             if (isAnimating) {
                 mDrawCommand = DRAW_ANIMATING_FRAME;
                 return true;
-            }
-            // animation is finished
-            else {
+            } else {
                 final PageFlipState state = mPageFlip.getFlipState();
                 // update page number for backward flip
                 if (state == PageFlipState.END_WITH_BACKWARD) {
@@ -133,20 +146,20 @@ public class SinglePageRender extends PageRender{
         return false;
     }
 
-    private void drawPage(int number) {  //create a new page texture (either first one or second one) when necessary/not set
+    private void loadPage(int number) {  //create a new page texture (either first one or second one) when necessary/not set
         final int width = mCanvas.getWidth();
         final int height = mCanvas.getHeight();
         Paint p = new Paint();
         p.setFilterBitmap(true);
 
-        // 1. draw background bitmap
+        // 1. load/draw background bitmap
         Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
         Rect rect = new Rect(0, 0, width, height);
         mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
         background.recycle();
         background = null;
 
-        // 2. draw page number
+        // 2. load/draw page number
         int fontSize = calcFontSize(80);
         p.setColor(Color.WHITE);
         p.setStrokeWidth(1);
