@@ -56,7 +56,7 @@ public final class LoadBitmapTask implements Runnable {
 
         // init all available bitmaps
         mPortraitBGs = new int[][] {
-                new int[] {R.drawable.p1_480}
+                new int[] {R.drawable.p2_480}
         };
     }
 
@@ -150,7 +150,9 @@ public final class LoadBitmapTask implements Runnable {
 
         mPreRandomNo = newNo;
         int resId = mPortraitBGs[mBGSizeIndex][newNo];
+
         Bitmap b = BitmapFactory.decodeResource(mResources, resId);
+        /*
         if (mIsLandscape) {
             Matrix matrix = new Matrix();
             matrix.postRotate(90);
@@ -158,7 +160,7 @@ public final class LoadBitmapTask implements Runnable {
                     matrix, true);
             b.recycle();
             return lb;
-        }
+        }*/
 
         return b;
     }

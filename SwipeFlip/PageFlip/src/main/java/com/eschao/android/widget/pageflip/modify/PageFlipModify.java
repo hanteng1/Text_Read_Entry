@@ -508,9 +508,8 @@ public class PageFlipModify {
 
         }
 
-
         //initialize status
-        onInitFlipStatus(-350.0f, 0);
+        onInitFlipStatus(-150.0f, -30.0f);
 
         //Log.d(TAG, "check piont");
 

@@ -22,6 +22,8 @@ import com.eschao.android.widget.pageflip.modify.PageModify;
 public class SinglePageRender extends PageRender{
 
     private final static String TAG = "SinglePageRender";
+    private final static String[] Alphabet = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+
 
     public SinglePageRender(Context context, PageFlipModify pageFlip,
                             Handler handler, int pageNo) {
@@ -161,30 +163,16 @@ public class SinglePageRender extends PageRender{
 
         // 2. load/draw page number
         int fontSize = calcFontSize(80);
-        p.setColor(Color.WHITE);
+        p.setColor(Color.GRAY);
         p.setStrokeWidth(1);
         p.setAntiAlias(true);
-        p.setShadowLayer(5.0f, 8.0f, 8.0f, Color.BLACK);
+        //p.setShadowLayer(5.0f, 8.0f, 8.0f, Color.BLACK);
         p.setTextSize(fontSize);
-        String text = String.valueOf(number);
+        String text = Alphabet[number];
         float textWidth = p.measureText(text);
         float y = height - p.getTextSize() - 20;
         mCanvas.drawText(text, (width - textWidth) / 2, y, p);
 
-        if (number <= 1) {
-            String firstPage = "The First Page";
-            p.setTextSize(calcFontSize(16));
-            float w = p.measureText(firstPage);
-            float h = p.getTextSize();
-            mCanvas.drawText(firstPage, (width - w) / 2, y + 5 + h, p);
-        }
-        else if (number >= MAX_PAGES) {
-            String lastPage = "The Last Page";
-            p.setTextSize(calcFontSize(16));
-            float w = p.measureText(lastPage);
-            float h = p.getTextSize();
-            mCanvas.drawText(lastPage, (width - w) / 2, y + 5 + h, p);
-        }
     }
 
     public boolean canFlipForward()
