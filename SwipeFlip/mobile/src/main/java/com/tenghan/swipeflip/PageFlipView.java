@@ -33,7 +33,7 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         super(context);
         newHandler();
 
-        mDuration = 1000;
+        mDuration = 10000;  //an interesting number to try
         int pixelsOfMesh = 10;
         boolean isAuto = false;
 
@@ -112,11 +112,14 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
     public void autoFingerUp(float x, float y)
     {
         if (!mPageFlip.isAnimating()) {
+
+
             mPageFlip.onFingerUp(x, y, mDuration);
             try {
                 mDrawLock.lock();
                 if (mPageRender != null &&
                         mPageRender.onFingerUp(x, y)) {
+
                     requestRender();
                 }
             }

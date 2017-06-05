@@ -867,8 +867,8 @@ public class PageFlipModify {
      * @return true if animation is started or animation is not triggered
      */
     public boolean onFingerUp(float touchX, float touchY, int duration) {
-        touchX = mViewRect.toOpenGLX(touchX);
-        touchY = mViewRect.toOpenGLY(touchY);
+        //touchX = mViewRect.toOpenGLX(touchX);
+        //touchY = mViewRect.toOpenGLY(touchY);
 
         final PageModify page = mPages[FIRST_PAGE];
         final GLPoint originP = page.originP;
@@ -914,6 +914,7 @@ public class PageFlipModify {
             // if enable clicking to flip, compute scroller points for animation
             if (mIsClickToFlip && Math.abs(touchX - mStartTouchP.x) < 2) {
                 computeScrollPointsForClickingFlip(touchX, start, end);
+
             }
         }
 

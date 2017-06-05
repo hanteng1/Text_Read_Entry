@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Handler;
+import android.util.Log;
 
 import com.eschao.android.widget.pageflip.OnPageFlipListener;
 
@@ -70,8 +71,10 @@ public abstract class PageRender implements OnPageFlipListener{
 
     public boolean onFingerUp(float x, float y)
     {
+
         if(mPageFlip.animating())  //when finger up, auto check the animation progress
         {
+
             mDrawCommand = DRAW_ANIMATING_FRAME;
             return true;
         }
