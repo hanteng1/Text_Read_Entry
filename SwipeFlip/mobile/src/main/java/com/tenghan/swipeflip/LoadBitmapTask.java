@@ -56,7 +56,7 @@ public final class LoadBitmapTask implements Runnable {
 
         // init all available bitmaps
         mPortraitBGs = new int[][] {
-                new int[] {R.drawable.p2_480}
+                new int[] {R.drawable.p1_480}
         };
     }
 

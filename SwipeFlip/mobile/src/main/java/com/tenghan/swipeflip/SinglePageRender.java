@@ -76,7 +76,8 @@ public class SinglePageRender extends PageRender{
                 page.setFirstTexture(mBitmap);
             }
 
-            mPageFlip.drawPageFrame();  //see the difference
+            //mPageFlip.drawPageFrame();  //see the difference
+            mPageFlip.drawTranslateFrame();
         }
 
         // 3. send message to main thread to notify drawing is ended so that

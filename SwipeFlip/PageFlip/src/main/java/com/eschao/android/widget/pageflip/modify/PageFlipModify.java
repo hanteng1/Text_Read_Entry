@@ -2,6 +2,7 @@ package com.eschao.android.widget.pageflip.modify;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.opengl.Matrix;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.opengl.GLUtils;
@@ -13,7 +14,6 @@ import com.eschao.android.widget.pageflip.FoldBackVertexes;
 import com.eschao.android.widget.pageflip.GLPoint;
 import com.eschao.android.widget.pageflip.GLViewRect;
 import com.eschao.android.widget.pageflip.OnPageFlipListener;
-import com.eschao.android.widget.pageflip.Page;
 import com.eschao.android.widget.pageflip.PageFlipException;
 import com.eschao.android.widget.pageflip.PageFlipState;
 import com.eschao.android.widget.pageflip.PageFlipUtils;
@@ -509,7 +509,7 @@ public class PageFlipModify {
         }
 
         //initialize status
-        onInitFlipStatus(-150.0f, -30.0f);
+        //onInitFlipStatus(-150.0f, -30.0f);
 
         //Log.d(TAG, "check piont");
 
@@ -1116,6 +1116,42 @@ public class PageFlipModify {
         mPages[FIRST_PAGE].drawFullPage(mVertexProgram);
 
     }
+
+    /**
+     * Draw frame with position translated page
+     */
+    public void drawTranslateFrame(){
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glUseProgram(mVertexProgram.mProgramRef);
+
+        //apply transfer to mvpmatrix
+        Matrix.translateM(mVertexProgram.MVPMatrix, 0, -20.0f, 0.0f, 0.0f);
+
+        glUniformMatrix4fv(mVertexProgram.mMVPMatrixLoc, 1, false,
+                VertexProgram.MVPMatrix, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+
+        // 1. draw first page
+        mPages[FIRST_PAGE].drawFullPage(mVertexProgram);
+    }
+
+    /**
+     * Draw frame with roated frame
+     */
+    public void drawRotateFrame()
+    {
+
+    }
+
+    /**
+     * Draw frame with zoomed frame
+     */
+    public void drawZoomFrame()
+    {
+
+    }
+
 
     /**
      * Compute max mesh count and allocate vertexes buffer
