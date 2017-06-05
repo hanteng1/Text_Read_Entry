@@ -42,14 +42,12 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         int pixelsOfMesh = 10;
         boolean isAuto = false;
 
-
         //create pageflip
         mPageFlip = new PageFlipModify(context);
         mPageFlip.setSemiPerimeterRatio(0.8f)
                 .setShadowWidthOfFoldEdges(5, 60, 0.3f)
                 .setShadowWidthOfFoldBase(5, 80, 0.4f)
                 .setPixelsOfMesh(pixelsOfMesh);
-
 
         setEGLContextClientVersion(2);
 

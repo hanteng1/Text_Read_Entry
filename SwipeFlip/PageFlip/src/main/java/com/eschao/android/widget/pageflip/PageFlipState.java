@@ -21,6 +21,13 @@ package com.eschao.android.widget.pageflip;
  * @author eschao
  */
 public enum PageFlipState {
+    //translate and rotation
+    BEGIN_TRANSLATE,
+    FORWARD_TRANSLATE,
+    BACKWARD_TRANSLATE,
+
+
+    //flip
     BEGIN_FLIP,
     FORWARD_FLIP,
     BACKWARD_FLIP,

@@ -159,6 +159,10 @@ public class PageFlipModify {
     private PointF mXFoldP0;
     private PointF mXFoldP1;
 
+
+    private float mTransOffX;  //<0 means translate towards left
+
+
     //            ^ Y
     //   mTouchP  |
     //        +   |
@@ -645,7 +649,9 @@ public class PageFlipModify {
             mLastTouchP.set(touchX, touchY);
             mStartTouchP.set(touchX, touchY);
             mTouchP.set(touchX, touchY);
-            mFlipState = PageFlipState.BEGIN_FLIP;
+            //mFlipState = PageFlipState.BEGIN_FLIP;
+
+            mFlipState = PageFlipState.BEGIN_TRANSLATE;  //get ready to translate
 
         }
     }
@@ -662,7 +668,6 @@ public class PageFlipModify {
         touchX = mViewRect.toOpenGLX(touchX);
         touchY = mViewRect.toOpenGLY(touchY);
 
-        // compute moving distance (dx, dy)
         float dy = (touchY - mStartTouchP.y);
         float dx = (touchX - mStartTouchP.x);
 
@@ -671,6 +676,39 @@ public class PageFlipModify {
         final PageModify page = mPages[FIRST_PAGE];
         final GLPoint originP = page.originP;
         final GLPoint diagonalP = page.diagonalP;
+
+        page.setOriginAndDiagonalPoints(1); //set bottom left as original point,, for now
+
+        //begin to translate
+        if(mFlipState == PageFlipState.BEGIN_TRANSLATE &&
+                (Math.abs(dx) > mViewRect.width * 0.05f))
+        {
+            //is ready to translate
+            // determine if it is moving backward or forward
+            if(dx < 0 && originP.x > 0 || dx > 0 && originP.x < 0){
+                //has to be moving from right to left
+                mFlipState = PageFlipState.FORWARD_TRANSLATE;
+            }
+
+        }
+
+        //in translating
+        if(mFlipState == PageFlipState.FORWARD_TRANSLATE)
+        {
+            //using sequential
+            dy = (touchY - mLastTouchP.y);
+            dx = (touchX - mLastTouchP.x);
+
+            //set the value of translate offset
+            mTransOffX = dx * 1.2f;   //has to be negative
+
+            mLastTouchP.set(touchX, touchY);
+            return true;
+
+        }
+
+
+
 
         // begin to move
         if (mFlipState == PageFlipState.BEGIN_FLIP &&
@@ -1125,7 +1163,7 @@ public class PageFlipModify {
         glUseProgram(mVertexProgram.mProgramRef);
 
         //apply transfer to mvpmatrix
-        Matrix.translateM(mVertexProgram.MVPMatrix, 0, -20.0f, 0.0f, 0.0f);
+        Matrix.translateM(mVertexProgram.MVPMatrix, 0, mTransOffX, 0.0f, 0.0f);
 
         glUniformMatrix4fv(mVertexProgram.mMVPMatrixLoc, 1, false,
                 VertexProgram.MVPMatrix, 0);
