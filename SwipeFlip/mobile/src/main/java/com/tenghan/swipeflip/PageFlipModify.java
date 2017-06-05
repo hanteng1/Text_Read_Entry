@@ -215,7 +215,7 @@ public class PageFlipModify {
     private Context mContext;
 
     // pages and page mode, many pages, default 10
-    private PageModify mPages[];
+    private PageModify mPages[];  //now  try with 10
     private int mPageMode;
 
     // is clicking to flip page
@@ -244,10 +244,11 @@ public class PageFlipModify {
         mWidthRationOfClickToFlip = WIDTH_RATIO_OF_CLICK_TO_FLIP;
 
         // init pages
-        mPages = new PageModify[PAGE_SIZE];
+        mPages = new PageModify[PAGE_SIZE];  //10 for now
         mPageMode = MANY_PAGE_MODE;
 
         // key points
+        //these points can be the same for all
         mMiddleP = new PointF();
         mYFoldP = new PointF();
         mYFoldP0 = new PointF();
@@ -510,118 +511,6 @@ public class PageFlipModify {
                     mViewRect.top, mViewRect.bottom);
 
         }
-
-        //initialize status
-        //onInitFlipStatus(-150.0f, -30.0f);
-
-        //Log.d(TAG, "check piont");
-
-    }
-
-    //initialize page flip status
-    public boolean onInitFlipStatus(float dx, float dy) {
-
-        // compute moving distance (dx, dy)
-        //float dy = (touchY - mStartTouchP.y);  //>0 means finger moving upwards, using gl coordinates
-        //float dx = (touchX - mStartTouchP.x);
-
-        //Log.d(TAG, "dx" + dx);
-        mMaxT2OAngleTan = 0f;
-        mMaxT2DAngleTan = 0f;
-        mLastTouchP.set(0, 0);
-        mStartTouchP.set(0, 0);
-        mTouchP.set(0, 0);
-
-
-        final PageModify page = mPages[FIRST_PAGE];
-        final GLPoint originP = page.originP;
-        final GLPoint diagonalP = page.diagonalP;
-
-        page.setOriginAndDiagonalPoints(1); //set bottom left as original point
-
-
-        float y2o = Math.abs((page.bottom - page.top) / 2 - originP.y);  //the order cant be wrong
-        float y2d = Math.abs((page.bottom - page.top) / 2  - diagonalP.y);
-        mMaxT2OAngleTan = computeTanOfCurlAngle(y2o);
-        mMaxT2DAngleTan = computeTanOfCurlAngle(y2d);
-        if ((originP.y < 0 && page.right > 0) ||
-                (originP.y > 0 && page.right <= 0)) {
-            mMaxT2OAngleTan = -mMaxT2OAngleTan;
-        }
-        else {
-            mMaxT2DAngleTan = -mMaxT2DAngleTan;
-        }
-
-        mFlipState = PageFlipState.FORWARD_FLIP;  //this is important to set
-
-
-        // in moving, compute the TouchXY
-
-
-            // check if page is flipping vertically
-            mIsVertical = Math.abs(dy) <= 1f;
-
-            // multiply a factor to make sure the touch point is always head of
-            // finger point
-            if (PageFlipState.FORWARD_FLIP == mFlipState) {
-                dx *= 1.2f;
-            }
-            else {
-                dx *= 1.1f;
-            }
-
-            // moving direction is changed:
-            // 1. invert max curling angle
-            // 2. invert Y of original point and diagonal point
-            if ((dy < 0 && originP.y < 0) || (dy > 0 && originP.y > 0)) {
-                float t = mMaxT2DAngleTan;
-                mMaxT2DAngleTan = mMaxT2OAngleTan;
-                mMaxT2OAngleTan = t;
-                page.invertYOfOriginPoint();
-            }
-
-            // compute new TouchP.y
-            float maxY = dx * mMaxT2OAngleTan;
-            if (Math.abs(dy) > Math.abs(maxY)) {
-                dy = maxY;
-            }
-
-            // check if XFoldX1 is outside page width, if yes, recompute new
-            // TouchP.y to assure the XFoldX1 is in page width
-            float t2oK = dy / dx;
-            float xTouchX = dx + dy * t2oK;
-            float xRatio = (1 + mSemiPerimeterRatio) * 0.5f;
-            float xFoldX1 = xRatio * xTouchX;
-            if (Math.abs(xFoldX1) + 2 >= page.width) {
-                float dy2 = ((diagonalP.x - originP.x) / xRatio - dx) * dx;
-                // ignore current moving if we can't get a valid dy, for example
-                // , in double pages mode, when finger is moving from the one
-                // page to another page, the dy2 is negative and should be
-                // ignored
-                if (dy2 < 0) {
-                    return false;
-                }
-
-                double t = Math.sqrt(dy2);
-                if (originP.y > 0) {
-                    t = -t;
-                    dy = (int)Math.ceil(t);
-                }
-                else {
-                    dy = (int)Math.floor(t);
-                }
-            }
-
-            // set touchP(x, y) and middleP(x, y)
-           // mLastTouchP.set(touchX, touchY);
-            mTouchP.set(dx + originP.x, dy + originP.y);
-            mMiddleP.x = (mTouchP.x + originP.x) * 0.5f;
-            mMiddleP.y = (mTouchP.y + originP.y) * 0.5f;
-
-            // continue to compute points to drawing flip
-            computeVertexesAndBuildPage();
-            return true;
-
     }
 
     /**
