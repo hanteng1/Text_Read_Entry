@@ -1,4 +1,4 @@
-package com.eschao.android.widget.pageflip.modify;
+package com.tenghan.swipeflip;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -22,6 +22,7 @@ import com.eschao.android.widget.pageflip.ShadowVertexes;
 import com.eschao.android.widget.pageflip.ShadowWidth;
 import com.eschao.android.widget.pageflip.VertexProgram;
 import com.eschao.android.widget.pageflip.Vertexes;
+import com.eschao.android.widget.pageflip.modify.PageModify;
 
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
@@ -281,8 +282,6 @@ public class PageFlipModify {
                 FOLD_BASE_SHADOW_END_COLOR,
                 FOLD_BASE_SHADOW_END_ALPHA);
     }
-
-
 
 
     /**
@@ -710,48 +709,8 @@ public class PageFlipModify {
                 return true;
             }else if(Math.abs(dx) > mViewRect.width * 0.05f)
             {
-                //reverse swipe, get ready to flip
-                mFlipState = PageFlipState.ANIMATING_FLIP;  //should start animating
-                // compute max degree between X axis and line from TouchP to OriginP
-                // and max degree between X axis and line from TouchP to
-                // (OriginP.x, DiagonalP.Y)
-                float y2o = Math.abs(mStartTouchP.y - originP.y);
-                float y2d = Math.abs(mStartTouchP.y - diagonalP.y);
-                mMaxT2OAngleTan = computeTanOfCurlAngle(y2o);
-                mMaxT2DAngleTan = computeTanOfCurlAngle(y2d);
-
-                // moving at the top and bottom screen have different tan value of
-                // angle
-                if ((originP.y < 0 && page.right > 0) ||
-                        (originP.y > 0 && page.right <= 0)) {
-                    mMaxT2OAngleTan = -mMaxT2OAngleTan;
-                }
-                else {
-                    mMaxT2DAngleTan = -mMaxT2DAngleTan;
-                }
-
-                //enter the animation stage
-                Point start = new Point((int)mTouchP.x, (int)mTouchP.y);
-                Point end = new Point(0, 0);
-
-                mIsVertical = false;
-                mFlipState = PageFlipState.END_FLIP;
-                page.setOriginAndDiagonalPoints(-touchY);
-
-                mIsClickToFlip = true;
-
-                computeScrollPointsForClickingFlip(touchX, start, end);
-
-                if (mFlipState == PageFlipState.FORWARD_FLIP ||
-                        mFlipState == PageFlipState.BACKWARD_FLIP ||
-                        mFlipState == PageFlipState.RESTORE_FLIP) {
-                    mScroller.startScroll(start.x, start.y,
-                            end.x - start.x, end.y - start.y,
-                            1000);
-
-
-                    animating();
-                }
+                //switch to flip animation
+                setAutoFlip();
 
             }
 
@@ -759,7 +718,7 @@ public class PageFlipModify {
 
 
 
-
+        /*
 
         // begin to move
         if (mFlipState == PageFlipState.BEGIN_FLIP &&
@@ -878,8 +837,26 @@ public class PageFlipModify {
             return true;
         }
 
+        */
+
         return false;
     }
+
+    /**
+     * Setup for auto flip
+     * now its forward flip
+     */
+    public void setAutoFlip()
+    {
+        final PageModify page = mPages[FIRST_PAGE];
+        onFingerDown(mStartTouchP.x, mStartTouchP.y);
+        mFlipState = PageFlipState.BEGIN_FLIP;
+
+        //trigger the finger up event from the MainActivity
+        MainActivity.getSharedInstance().mPageFlipView.autoFingerUp(mStartTouchP.x, mStartTouchP.y);
+
+    }
+
 
     /**
      * Handle finger up event
@@ -952,6 +929,8 @@ public class PageFlipModify {
 
         return false;
     }
+
+
 
     /**
      * Check finger point to see if it can trigger a flip animation

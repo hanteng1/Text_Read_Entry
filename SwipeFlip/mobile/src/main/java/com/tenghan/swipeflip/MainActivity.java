@@ -27,10 +27,22 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     private final static String TAG = "MainActivity";
 
+    public static MainActivity instance;
+    public static MainActivity getSharedInstance()
+    {
+        if(instance == null)
+        {
+            instance = new MainActivity();
+        }
+        return instance;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_main);
+        instance = this;
 
         mPageFlipView = new PageFlipView(this);
 

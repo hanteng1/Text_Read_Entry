@@ -3,9 +3,6 @@ package com.tenghan.swipeflip;
 import android.content.Context;
 import android.os.Handler;
 
-import com.eschao.android.widget.pageflip.PageFlip;
-import com.eschao.android.widget.pageflip.modify.PageFlipModify;
-
 /**
  * Created by hanteng on 2017-06-01.
  * Single page render without doing the second texture

@@ -1,17 +1,12 @@
 package com.tenghan.swipeflip;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
-import android.provider.SyncStateContract;
 import android.util.Log;
 
-import com.eschao.android.widget.pageflip.PageFlip;
 import com.eschao.android.widget.pageflip.PageFlipException;
-import com.eschao.android.widget.pageflip.modify.PageFlipModify;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -110,6 +105,11 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
     }
 
     public void onFingerUp(float x, float y) // will auto check the animation first
+    {
+        //do nothing for now
+    }
+
+    public void autoFingerUp(float x, float y)
     {
         if (!mPageFlip.isAnimating()) {
             mPageFlip.onFingerUp(x, y, mDuration);

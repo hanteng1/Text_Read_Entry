@@ -7,12 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
-import com.eschao.android.widget.pageflip.Page;
-import com.eschao.android.widget.pageflip.PageFlip;
 import com.eschao.android.widget.pageflip.PageFlipState;
-import com.eschao.android.widget.pageflip.modify.PageFlipModify;
 import com.eschao.android.widget.pageflip.modify.PageModify;
 
 /**

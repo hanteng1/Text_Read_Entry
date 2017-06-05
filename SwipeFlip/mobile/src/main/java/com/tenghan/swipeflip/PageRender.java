@@ -6,8 +6,6 @@ import android.graphics.Canvas;
 import android.os.Handler;
 
 import com.eschao.android.widget.pageflip.OnPageFlipListener;
-import com.eschao.android.widget.pageflip.PageFlip;
-import com.eschao.android.widget.pageflip.modify.PageFlipModify;
 
 /**
  * Created by hanteng on 2017-05-30.
