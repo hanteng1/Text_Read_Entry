@@ -26,6 +26,7 @@ public enum PageFlipState {
     FORWARD_TRANSLATE,
     BACKWARD_TRANSLATE,
 
+    ANIMATING_FLIP,
 
     //flip
     BEGIN_FLIP,

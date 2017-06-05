@@ -677,13 +677,15 @@ public class PageFlipModify {
         final GLPoint originP = page.originP;
         final GLPoint diagonalP = page.diagonalP;
 
-        page.setOriginAndDiagonalPoints(1); //set bottom left as original point,, for now
+
 
         //begin to translate
         if(mFlipState == PageFlipState.BEGIN_TRANSLATE &&
                 (Math.abs(dx) > mViewRect.width * 0.05f))
         {
             //is ready to translate
+            page.setOriginAndDiagonalPoints(1); //set bottom left as original point,, for now
+
             // determine if it is moving backward or forward
             if(dx < 0 && originP.x > 0 || dx > 0 && originP.x < 0){
                 //has to be moving from right to left
@@ -699,13 +701,62 @@ public class PageFlipModify {
             dy = (touchY - mLastTouchP.y);
             dx = (touchX - mLastTouchP.x);
 
-            //set the value of translate offset
-            mTransOffX = dx * 1.2f;   //has to be negative
+            if(dx <= 0)
+            {
+                //set the value of translate offset
+                mTransOffX = dx * 1.2f;   //has to be negative
 
-            mLastTouchP.set(touchX, touchY);
-            return true;
+                mLastTouchP.set(touchX, touchY);
+                return true;
+            }else if(Math.abs(dx) > mViewRect.width * 0.05f)
+            {
+                //reverse swipe, get ready to flip
+                mFlipState = PageFlipState.ANIMATING_FLIP;  //should start animating
+                // compute max degree between X axis and line from TouchP to OriginP
+                // and max degree between X axis and line from TouchP to
+                // (OriginP.x, DiagonalP.Y)
+                float y2o = Math.abs(mStartTouchP.y - originP.y);
+                float y2d = Math.abs(mStartTouchP.y - diagonalP.y);
+                mMaxT2OAngleTan = computeTanOfCurlAngle(y2o);
+                mMaxT2DAngleTan = computeTanOfCurlAngle(y2d);
+
+                // moving at the top and bottom screen have different tan value of
+                // angle
+                if ((originP.y < 0 && page.right > 0) ||
+                        (originP.y > 0 && page.right <= 0)) {
+                    mMaxT2OAngleTan = -mMaxT2OAngleTan;
+                }
+                else {
+                    mMaxT2DAngleTan = -mMaxT2DAngleTan;
+                }
+
+                //enter the animation stage
+                Point start = new Point((int)mTouchP.x, (int)mTouchP.y);
+                Point end = new Point(0, 0);
+
+                mIsVertical = false;
+                mFlipState = PageFlipState.END_FLIP;
+                page.setOriginAndDiagonalPoints(-touchY);
+
+                mIsClickToFlip = true;
+
+                computeScrollPointsForClickingFlip(touchX, start, end);
+
+                if (mFlipState == PageFlipState.FORWARD_FLIP ||
+                        mFlipState == PageFlipState.BACKWARD_FLIP ||
+                        mFlipState == PageFlipState.RESTORE_FLIP) {
+                    mScroller.startScroll(start.x, start.y,
+                            end.x - start.x, end.y - start.y,
+                            1000);
+
+
+                    animating();
+                }
+
+            }
 
         }
+
 
 
 
@@ -754,6 +805,8 @@ public class PageFlipModify {
                 Log.d(TAG, "forward FLIP");
             }
         }
+
+
 
         // in moving, compute the TouchXY
         if (mFlipState == PageFlipState.FORWARD_FLIP ||
@@ -849,7 +902,7 @@ public class PageFlipModify {
 
         // forward flipping
         if (mFlipState == PageFlipState.FORWARD_FLIP) {
-            // can't going forward, restore current page
+            // can't go forward, restore current page
             if (page.isXInRange(touchX, WIDTH_RATIO_OF_RESTORE_FLIP)) {
                 end.x = (int)originP.x;
                 mFlipState = PageFlipState.RESTORE_FLIP;

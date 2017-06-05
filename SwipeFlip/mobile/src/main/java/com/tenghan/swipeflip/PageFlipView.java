@@ -82,9 +82,6 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         if (!mPageFlip.isAnimating() &&
                 mPageFlip.getFirstPage() != null) {
             mPageFlip.onFingerDown(x, y);
-
-            //onFingerMove(x - 20.0f, y - 20.0f);
-            //onFingerMove(x - 40.0f, y - 40.0f);
         }
     }
 
@@ -112,7 +109,7 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         }
     }
 
-    public void onFingerUp(float x, float y)
+    public void onFingerUp(float x, float y) // will auto check the animation first
     {
         if (!mPageFlip.isAnimating()) {
             mPageFlip.onFingerUp(x, y, mDuration);

@@ -72,7 +72,7 @@ public abstract class PageRender implements OnPageFlipListener{
 
     public boolean onFingerUp(float x, float y)
     {
-        if(mPageFlip.animating())
+        if(mPageFlip.animating())  //when finger up, auto check the animation progress
         {
             mDrawCommand = DRAW_ANIMATING_FRAME;
             return true;
