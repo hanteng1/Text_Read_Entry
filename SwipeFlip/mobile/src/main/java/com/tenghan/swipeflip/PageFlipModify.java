@@ -14,6 +14,7 @@ import com.eschao.android.widget.pageflip.FoldBackVertexes;
 import com.eschao.android.widget.pageflip.GLPoint;
 import com.eschao.android.widget.pageflip.GLViewRect;
 import com.eschao.android.widget.pageflip.OnPageFlipListener;
+import com.eschao.android.widget.pageflip.Page;
 import com.eschao.android.widget.pageflip.PageFlipException;
 import com.eschao.android.widget.pageflip.PageFlipState;
 import com.eschao.android.widget.pageflip.PageFlipUtils;
@@ -51,6 +52,9 @@ import static android.opengl.GLES20.glViewport;
  */
 
 public class PageFlipModify {
+
+    //global variables and parameters
+
 
     final static String TAG = "PageFlipModify";
 
@@ -103,7 +107,7 @@ public class PageFlipModify {
     // pages and index
     private final static int FIRST_PAGE = 0;
     private int pageIndex;
-    private final static int PAGE_SIZE = 1; //for testing
+    public final static int PAGE_SIZE = 2; // 2 for testing
     private final static int MANY_PAGE_MODE = 1;
 
     // view size
@@ -123,6 +127,11 @@ public class PageFlipModify {
     private PointF mStartTouchP;
     // the middle point between touch point and origin point
     private PointF mMiddleP;
+
+
+    //variables for each single page
+    //some variables can be put to the page class
+    //this class is just a controller, that corresponds to user input
 
     // from 2D perspective, the line will intersect Y axis and X axis that being
     // through middle point and perpendicular to the line which is from touch
@@ -161,8 +170,7 @@ public class PageFlipModify {
     private PointF mXFoldP1;
 
 
-    private float mTransOffX;  //<0 means translate towards left
-
+    private float mTransOffX[];  //<0 means translate towards left
 
     //            ^ Y
     //   mTouchP  |
@@ -202,7 +210,7 @@ public class PageFlipModify {
     private ShadowVertexes mFoldBaseShadow;
 
     // Shader program for openGL drawing
-    private VertexProgram mVertexProgram;
+    //private VertexProgram mVertexProgram;
     private FoldBackVertexProgram mFoldBackVertexProgram;
     private ShadowVertexProgram mShadowVertexProgram;
 
@@ -215,8 +223,7 @@ public class PageFlipModify {
     private Context mContext;
 
     // pages and page mode, many pages, default 10
-    private PageModify mPages[];  //now  try with 10
-    private int mPageMode;
+    public PageModify mPages[];  //now  try with 10
 
     // is clicking to flip page
     private boolean mIsClickToFlip;
@@ -245,7 +252,9 @@ public class PageFlipModify {
 
         // init pages
         mPages = new PageModify[PAGE_SIZE];  //10 for now
-        mPageMode = MANY_PAGE_MODE;
+
+        //init parameters
+        mTransOffX = new float[PAGE_SIZE];
 
         // key points
         //these points can be the same for all
@@ -265,7 +274,7 @@ public class PageFlipModify {
         mFoldBaseShadowWidth = new ShadowWidth(2, 40, 0.4f);
 
         // init shader program
-        mVertexProgram = new VertexProgram();
+        //mVertexProgram = new VertexProgram();
         mFoldBackVertexProgram = new FoldBackVertexProgram();
         mShadowVertexProgram = new ShadowVertexProgram();
 
@@ -460,9 +469,15 @@ public class PageFlipModify {
         glClearDepthf(1.0f);
         glEnable(GL_DEPTH_TEST);
 
+        /*
+
         try {
             // init shader programs
-            mVertexProgram.init(mContext);
+            for(int itrp=0; itrp<PAGE_SIZE; itrp++)
+            {
+                mPages[itrp].mVertexProgram.init(mContext);
+            }
+
             mFoldBackVertexProgram.init(mContext);
             mShadowVertexProgram.init(mContext);
 
@@ -470,11 +485,16 @@ public class PageFlipModify {
             createGradientShadowTexture();
         }
         catch (PageFlipException e) {
-            mVertexProgram.delete();
+            for(int itrp=0; itrp<PAGE_SIZE; itrp++)
+            {
+                mPages[itrp].mVertexProgram.delete();
+            }
             mFoldBackVertexProgram.delete();
             mShadowVertexProgram.delete();
             throw e;
         }
+
+        */
     }
 
     /**
@@ -486,12 +506,21 @@ public class PageFlipModify {
      */
     public void onSurfaceChanged(int width, int height) throws
             PageFlipException {
+
+
         mViewRect.set(width, height);
         glViewport(0, 0, width, height);
-        mVertexProgram.initMatrix(-mViewRect.halfW, mViewRect.halfW,
-                -mViewRect.halfH, mViewRect.halfH);
+
+        /*
+        for(int itrp=0; itrp<PAGE_SIZE; itrp++)
+        {
+            mPages[itrp].mVertexProgram.initMatrix(-mViewRect.halfW, mViewRect.halfW,
+                    -mViewRect.halfH, mViewRect.halfH);
+        }*/
+
         computeMaxMeshCount();
         createPages();
+
     }
 
     /**
@@ -510,6 +539,17 @@ public class PageFlipModify {
             mPages[itrp] = new PageModify(mViewRect.left, mViewRect.right,
                     mViewRect.top, mViewRect.bottom);
 
+            try{
+                mPages[itrp].mVertexProgram.init(mContext);
+
+            }
+            catch (PageFlipException e)
+            {
+                mPages[itrp].mVertexProgram.delete();
+            }
+
+            mPages[itrp].mVertexProgram.initMatrix(-mViewRect.halfW, mViewRect.halfW,
+                    -mViewRect.halfH, mViewRect.halfH);
         }
     }
 
@@ -565,16 +605,14 @@ public class PageFlipModify {
         final GLPoint originP = page.originP;
         final GLPoint diagonalP = page.diagonalP;
 
-
-
-        //begin to translate
+        //begin translating
         if(mFlipState == PageFlipState.BEGIN_TRANSLATE &&
-                (Math.abs(dx) > mViewRect.width * 0.05f))
+                (Math.abs(dx) > mViewRect.width * 0.05f))  //finger move threshold
         {
             //is ready to translate
             page.setOriginAndDiagonalPoints(1); //set bottom left as original point,, for now
 
-            // determine if it is moving backward or forward
+            // determine if it is moving backward or forward[
             if(dx < 0 && originP.x > 0 || dx > 0 && originP.x < 0){
                 //has to be moving from right to left
                 mFlipState = PageFlipState.FORWARD_TRANSLATE;
@@ -591,8 +629,12 @@ public class PageFlipModify {
 
             if(dx <= 0)
             {
-                //set the value of translate offset
-                mTransOffX = dx * 1.2f;   //has to be negative
+                //set the value of translate offset, used for drawing process
+                //mTransOffX = dx * 1.2f;   //has to be negative
+                for(int itrp = 0; itrp < PAGE_SIZE; itrp++)
+                {
+                    mTransOffX[itrp] = dx * (1.2f - 0.1f * itrp);
+                }
 
                 mLastTouchP.set(touchX, touchY);
                 return true;
@@ -604,8 +646,6 @@ public class PageFlipModify {
             }
 
         }
-
-
 
         /*
 
@@ -1029,6 +1069,10 @@ public class PageFlipModify {
         return mPages[FIRST_PAGE];
     }
 
+    public PageModify[] getPages(){
+        return mPages;
+    }
+
 
     /**
      * Delete unused textures
@@ -1051,15 +1095,25 @@ public class PageFlipModify {
                 mGradientShadowTextureID);
 
         // 2. draw unfold page and front of fold page
-        glUseProgram(mVertexProgram.mProgramRef);
-        glActiveTexture(GL_TEXTURE0);
-        mPages[FIRST_PAGE].drawFrontPage(mVertexProgram,
-                mFoldFrontVertexes);
+        for(int itrp=0; itrp<PAGE_SIZE; itrp++)
+        {
+            glUseProgram(mPages[itrp].mVertexProgram.mProgramRef);
+            glActiveTexture(GL_TEXTURE0);
+            mPages[itrp].drawFrontPage(mPages[itrp].mVertexProgram,
+                    mFoldFrontVertexes);
+        }
 
         // 3. draw edge and base shadow of fold parts
         glUseProgram(mShadowVertexProgram.mProgramRef);
         mFoldBaseShadow.draw(mShadowVertexProgram);
         mFoldEdgesShadow.draw(mShadowVertexProgram);
+
+
+        //current edges and shadow drawings is only rendering 1 page
+        //saying, the first page
+        //need to extend it to multiple the pages
+        //saying, the pages that are on flipping state
+
     }
 
     /**
@@ -1067,13 +1121,17 @@ public class PageFlipModify {
      */
     public void drawPageFrame() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glUseProgram(mVertexProgram.mProgramRef);
-        glUniformMatrix4fv(mVertexProgram.mMVPMatrixLoc, 1, false,
-                VertexProgram.MVPMatrix, 0);
-        glActiveTexture(GL_TEXTURE0);
 
-        // 1. draw first page
-        mPages[FIRST_PAGE].drawFullPage(mVertexProgram);
+        for(int itrp=0; itrp<PAGE_SIZE; itrp++)
+        {
+            glUseProgram(mPages[itrp].mVertexProgram.mProgramRef);
+            glUniformMatrix4fv(mPages[itrp].mVertexProgram.mMVPMatrixLoc, 1, false,
+                    mPages[itrp].mVertexProgram.MVPMatrix, 0);
+            glActiveTexture(GL_TEXTURE0);
+
+            // 1. draw front page
+            mPages[itrp].drawFullPage(mPages[itrp].mVertexProgram);
+        }
 
     }
 
@@ -1082,18 +1140,19 @@ public class PageFlipModify {
      */
     public void drawTranslateFrame(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glUseProgram(mVertexProgram.mProgramRef);
 
-        //apply transfer to mvpmatrix
-        Matrix.translateM(mVertexProgram.MVPMatrix, 0, mTransOffX, 0.0f, 0.0f);
+        for(int itrp = 0; itrp < PAGE_SIZE; itrp++)
+        {
+            glUseProgram( mPages[itrp].mVertexProgram.mProgramRef);
 
-        glUniformMatrix4fv(mVertexProgram.mMVPMatrixLoc, 1, false,
-                VertexProgram.MVPMatrix, 0);
+            Matrix.translateM(mPages[itrp].mVertexProgram.MVPMatrix, 0, mTransOffX[FIRST_PAGE], 0.0f, 0.0f);
+            glUniformMatrix4fv(mPages[itrp].mVertexProgram.mMVPMatrixLoc, 1, false,
+                    mPages[itrp].mVertexProgram.MVPMatrix, 0);
 
-        glActiveTexture(GL_TEXTURE0);
+            glActiveTexture(GL_TEXTURE0);
+            mPages[itrp].drawFullPage(mPages[itrp].mVertexProgram);
 
-        // 1. draw first page
-        mPages[FIRST_PAGE].drawFullPage(mVertexProgram);
+        }
     }
 
     /**

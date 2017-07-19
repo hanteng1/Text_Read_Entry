@@ -47,7 +47,7 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         setEGLContextClientVersion(2);
 
         // create render
-        mPageNo = 1;
+        mPageNo = mPageFlip.PAGE_SIZE;  //need to change, should equal to Page_Size in mPageFlip
         mDrawLock = new ReentrantLock();
         mPageRender = new SinglePageRender(context, mPageFlip,
                 mHandler, mPageNo);

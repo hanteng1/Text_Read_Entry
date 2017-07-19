@@ -22,7 +22,7 @@ public final class LoadBitmapTask implements Runnable {
     final static int SMALL_BG = 0;
     final static int MEDIUM_BG = 1;
     final static int LARGE_BG = 2;
-    final static int BG_COUNT = 1;
+    final static int BG_COUNT = 2;
 
     int mBGSizeIndex;
     int mQueueMaxSize;
@@ -51,12 +51,12 @@ public final class LoadBitmapTask implements Runnable {
         mThread = null;
         mPreRandomNo = 0;
         mIsLandscape = false;
-        mQueueMaxSize = 1;
+        mQueueMaxSize = 2;
         mQueue = new LinkedList<Bitmap>();
 
         // init all available bitmaps
         mPortraitBGs = new int[][] {
-                new int[] {R.drawable.p2_480}
+                new int[] {R.drawable.p2_480, R.drawable.p1_480}
         };
     }
 
@@ -67,7 +67,6 @@ public final class LoadBitmapTask implements Runnable {
             if (mQueue.size() > 0) {
                 b = mQueue.pop();  //grab a texture from the queue
             }
-
             notify();  //awaking the thread?
         }
 
@@ -144,9 +143,9 @@ public final class LoadBitmapTask implements Runnable {
 
     private Bitmap getRandomBitmap() {
         int newNo = mPreRandomNo;
-        //while (newNo == mPreRandomNo) {
-          //  newNo = mBGRandom.nextInt(BG_COUNT);
-        //}
+        while (newNo == mPreRandomNo) {
+            newNo = mBGRandom.nextInt(BG_COUNT);
+        }
 
         mPreRandomNo = newNo;
         int resId = mPortraitBGs[mBGSizeIndex][newNo];

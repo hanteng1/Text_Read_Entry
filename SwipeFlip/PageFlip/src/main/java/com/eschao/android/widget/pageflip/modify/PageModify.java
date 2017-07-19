@@ -47,7 +47,7 @@ import static android.opengl.GLES20.glVertexAttribPointer;
 public class PageModify {
 
     private final static int TEXTURE_SIZE = 2;
-    private final static int FIRST_TEXTURE_ID = 0;
+    private final static int FRONT_TEXTURE_ID = 0;
     private final static int BACK_TEXTURE_ID = 1;
     private final static int INVALID_TEXTURE_ID = -1;
 
@@ -108,6 +108,9 @@ public class PageModify {
     // actual size of mUnusedTexIDs
     private int mUnusedTexSize;
 
+    //position and state control variables
+    public VertexProgram mVertexProgram;
+
     /**
      * Constructor
      */
@@ -148,6 +151,8 @@ public class PageModify {
         mUnusedTexIDs = new int[] {INVALID_TEXTURE_ID,
                 INVALID_TEXTURE_ID};
 
+        mVertexProgram = new VertexProgram();
+
         createVertexesBuffer();
         buildVertexesOfFullPage();
     }
@@ -176,8 +181,8 @@ public class PageModify {
      *
      * @return true if the first texture is set
      */
-    public boolean isFirstTextureSet() {
-        return mTexIDs[FIRST_TEXTURE_ID] != INVALID_TEXTURE_ID;
+    public boolean isFrontTextureSet() {
+        return mTexIDs[FRONT_TEXTURE_ID] != INVALID_TEXTURE_ID;
     }
 
 
@@ -208,9 +213,9 @@ public class PageModify {
      *
      * @return self
      */
-    public PageModify recycleFirstTexture() {
-        if (mTexIDs[FIRST_TEXTURE_ID] > INVALID_TEXTURE_ID) {
-            mUnusedTexIDs[mUnusedTexSize++] = mTexIDs[FIRST_TEXTURE_ID];
+    public PageModify recycleFrontTexture() {
+        if (mTexIDs[FRONT_TEXTURE_ID] > INVALID_TEXTURE_ID) {
+            mUnusedTexIDs[mUnusedTexSize++] = mTexIDs[FRONT_TEXTURE_ID];
         }
 
         return this;
@@ -224,7 +229,7 @@ public class PageModify {
     public int getBackTextureID() {
         // In single page mode, the back texture is same with the first texture
         if (mTexIDs[BACK_TEXTURE_ID] == INVALID_TEXTURE_ID) {
-            return mTexIDs[FIRST_TEXTURE_ID];
+            return mTexIDs[FRONT_TEXTURE_ID];
         }
         else {
             return mTexIDs[BACK_TEXTURE_ID];
@@ -355,7 +360,7 @@ public class PageModify {
      */
     public void deleteAllTextures() {
         glDeleteTextures(TEXTURE_SIZE, mTexIDs, 0);
-        mTexIDs[FIRST_TEXTURE_ID] = INVALID_TEXTURE_ID;
+        mTexIDs[FRONT_TEXTURE_ID] = INVALID_TEXTURE_ID;
         mTexIDs[BACK_TEXTURE_ID] = INVALID_TEXTURE_ID;
     }
 
@@ -364,16 +369,16 @@ public class PageModify {
      *
      * @param b Bitmap object for creating texture
      */
-    public void setFirstTexture(Bitmap b) {
+    public void setFrontTexture(Bitmap b) {
         // compute mask color
         int color = PageFlipUtils.computeAverageColor(b, 30);
-        maskColor[FIRST_TEXTURE_ID][0] = Color.red(color) / 255.0f;
-        maskColor[FIRST_TEXTURE_ID][1] = Color.green(color) / 255.0f;
-        maskColor[FIRST_TEXTURE_ID][2] = Color.blue(color) / 255.0f;
+        maskColor[FRONT_TEXTURE_ID][0] = Color.red(color) / 255.0f;
+        maskColor[FRONT_TEXTURE_ID][1] = Color.green(color) / 255.0f;
+        maskColor[FRONT_TEXTURE_ID][2] = Color.blue(color) / 255.0f;
 
-        glGenTextures(1, mTexIDs, FIRST_TEXTURE_ID);
+        glGenTextures(1, mTexIDs, FRONT_TEXTURE_ID);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, mTexIDs[FIRST_TEXTURE_ID]);
+        glBindTexture(GL_TEXTURE_2D, mTexIDs[FRONT_TEXTURE_ID]);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, b, 0);
@@ -420,7 +425,7 @@ public class PageModify {
         // 1. draw unfold part and curled part with the first texture
         glUniformMatrix4fv(program.mMVPMatrixLoc, 1, false,
                 VertexProgram.MVPMatrix, 0);
-        glBindTexture(GL_TEXTURE_2D, mTexIDs[FIRST_TEXTURE_ID]);
+        glBindTexture(GL_TEXTURE_2D, mTexIDs[FRONT_TEXTURE_ID]);
         glUniform1i(program.mTextureLoc, 0);
         vertexes.drawWith(GL_TRIANGLE_STRIP,
                 program.mVertexPosLoc,
@@ -436,8 +441,7 @@ public class PageModify {
      */
     public void drawFullPage(VertexProgram program) {
 
-        drawFullPage(program, mTexIDs[FIRST_TEXTURE_ID]);
-
+        drawFullPage(program, mTexIDs[FRONT_TEXTURE_ID]);
     }
 
     /**

@@ -29,12 +29,15 @@ public class SinglePageRender extends PageRender{
     //what about loading textures first, then we can get rid of the mDrawCommand thing
     private void LoadTextures(){
         mPageFlip.deleteUnusedTextures();
-        PageModify page = mPageFlip.getFirstPage();
+        PageModify[] pages = mPageFlip.getPages();
 
-        if(!page.isFirstTextureSet())
+        for(int itrp = 0; itrp < mPageFlip.PAGE_SIZE; itrp++)
         {
-            loadPage(1);
-            page.setFirstTexture(mBitmap);
+            if(!pages[itrp].isFrontTextureSet())
+            {
+                loadPage(mPageNo);
+                pages[itrp].setFrontTexture(mBitmap);
+            }
         }
     }
 
@@ -42,7 +45,8 @@ public class SinglePageRender extends PageRender{
 
         // 1. delete unused textures
         mPageFlip.deleteUnusedTextures();
-        PageModify page = mPageFlip.getFirstPage(); //there is only one page in single page mode
+        //PageModify page = mPageFlip.getFirstPage(); //there is only one page in single page mode
+        PageModify[] pages = mPageFlip.getPages();
 
         // 2. handle drawing command triggered from finger moving and animating
         if (mDrawCommand == DRAW_MOVING_FRAME ||
@@ -51,10 +55,13 @@ public class SinglePageRender extends PageRender{
             //is translating
             if(mPageFlip.getFlipState() == PageFlipState.FORWARD_TRANSLATE)
             {
-                if(!page.isFirstTextureSet())
+                for(int itrp = 0; itrp < mPageFlip.PAGE_SIZE; itrp++)
                 {
-                    loadPage(mPageNo);
-                    page.setFirstTexture(mBitmap);
+                    if(!pages[itrp].isFrontTextureSet())
+                    {
+                        loadPage(mPageNo);
+                        pages[itrp].setFrontTexture(mBitmap);
+                    }
                 }
 
                 mPageFlip.drawTranslateFrame();
@@ -71,10 +78,10 @@ public class SinglePageRender extends PageRender{
                     //}
                 }
                 // in backward flip, check first texture of first page is valid
-                else if (!page.isFirstTextureSet()) {
-                    loadPage(--mPageNo);
-                    page.setFirstTexture(mBitmap);  //the texture on the canvas, thus the canvas in the render is used to create textures in the format of bitmap
-                }
+                //else if (!page.isFirstTextureSet()) {
+                //    loadPage(--mPageNo);
+                //    page.setFirstTexture(mBitmap);  //the texture on the canvas, thus the canvas in the render is used to create textures in the format of bitmap
+                //}
 
                 // draw frame for page flip
                 mPageFlip.drawFlipFrame();  //see the difference
@@ -83,13 +90,16 @@ public class SinglePageRender extends PageRender{
         }
         // draw stationary page without flipping
         else if (mDrawCommand == DRAW_FULL_PAGE) {
-            if (!page.isFirstTextureSet()) {
-                loadPage(mPageNo);
-                page.setFirstTexture(mBitmap);
+
+            for(int itrp = 0; itrp < mPageFlip.PAGE_SIZE; itrp++)
+            {
+                if (!pages[itrp].isFrontTextureSet()) {
+                    loadPage(mPageNo);
+                    pages[itrp].setFrontTexture(mBitmap);
+                }
             }
 
             mPageFlip.drawPageFrame();  //see the difference
-            // mPageFlip.drawTranslateFrame();
         }
 
         // 3. send message to main thread to notify drawing is ended so that
