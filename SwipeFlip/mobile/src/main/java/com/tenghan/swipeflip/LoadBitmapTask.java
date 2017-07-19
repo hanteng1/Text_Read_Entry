@@ -22,7 +22,9 @@ public final class LoadBitmapTask implements Runnable {
     final static int SMALL_BG = 0;
     final static int MEDIUM_BG = 1;
     final static int LARGE_BG = 2;
-    final static int BG_COUNT = 2;
+
+
+    final static int BG_COUNT = 3;
 
     int mBGSizeIndex;
     int mQueueMaxSize;
@@ -51,12 +53,12 @@ public final class LoadBitmapTask implements Runnable {
         mThread = null;
         mPreRandomNo = 0;
         mIsLandscape = false;
-        mQueueMaxSize = 2;
+        mQueueMaxSize = BG_COUNT;
         mQueue = new LinkedList<Bitmap>();
 
         // init all available bitmaps
         mPortraitBGs = new int[][] {
-                new int[] {R.drawable.p2_480, R.drawable.p1_480}
+                new int[] {R.drawable.p2_480, R.drawable.p1_480, R.drawable.p1_480}
         };
     }
 

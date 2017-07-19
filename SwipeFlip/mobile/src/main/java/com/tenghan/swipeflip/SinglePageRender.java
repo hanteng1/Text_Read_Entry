@@ -41,6 +41,7 @@ public class SinglePageRender extends PageRender{
         }
     }
 
+    //this is calling the drawing functions
     public void onDrawFrame() {
 
         // 1. delete unused textures
