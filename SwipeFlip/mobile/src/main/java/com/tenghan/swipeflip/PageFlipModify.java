@@ -38,6 +38,7 @@ import static android.opengl.GLES20.glBindTexture;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glClearDepthf;
+import static android.opengl.GLES20.glDepthRangef;
 import static android.opengl.GLES20.glEnable;
 import static android.opengl.GLES20.glGenTextures;
 import static android.opengl.GLES20.glTexParameterf;
@@ -1194,20 +1195,45 @@ public class PageFlipModify {
     public void drawPageFrame() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        for(int itrp=0; itrp<PAGE_SIZE; itrp++)
+        /*
+        for(int itrp=2; itrp<PAGE_SIZE; itrp++)
         {
+            //glDepthRangef(0 + itrp/PAGE_SIZE, (itrp+1)/PAGE_SIZE );
             glUseProgram(mPages[itrp].mVertexProgram.mProgramRef);
 
-
-            Matrix.translateM(mPages[itrp].mVertexProgram.MVPMatrix, 0, -50.0f -10.0f * itrp, 0.0f, 0.0f);
+            Matrix.translateM(mPages[itrp].mVertexProgram.MVPMatrix, 0, -150.0f +50.0f * itrp, 0.0f, 0.0f);
 
             glUniformMatrix4fv(mPages[itrp].mVertexProgram.mMVPMatrixLoc, 1, false,
                     mPages[itrp].mVertexProgram.MVPMatrix, 0);
             glActiveTexture(GL_TEXTURE0);
 
             // 1. draw front page
-            mPages[itrp].drawFullPage(mPages[itrp].mVertexProgram);
+            mPages[itrp].drawFullPage();
         }
+
+        */
+
+        //test
+        glUseProgram(mPages[0].mVertexProgram.mProgramRef);
+
+        Matrix.translateM(mPages[0].mVertexProgram.MVPMatrix, 0, -150.0f +50.0f * 0, 0.0f, 0.0f);
+
+        glUniformMatrix4fv(mPages[0].mVertexProgram.mMVPMatrixLoc, 1, false,
+                mPages[0].mVertexProgram.MVPMatrix, 0);
+        glActiveTexture(GL_TEXTURE0);
+
+        // 1. draw front page
+        mPages[0].drawFullPage();
+
+
+        Matrix.translateM(mPages[0].mVertexProgram.MVPMatrix, 0, 0.0f, 0.0f, 0.0f);
+
+        glUniformMatrix4fv(mPages[0].mVertexProgram.mMVPMatrixLoc, 1, false,
+                mPages[0].mVertexProgram.MVPMatrix, 0);
+        glActiveTexture(GL_TEXTURE0);
+
+        mPages[1].drawFullPage(mPages[0].mVertexProgram);
+
 
     }
 
@@ -1217,6 +1243,7 @@ public class PageFlipModify {
     public void drawTranslateFrame(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        /*
         for(int itrp = 2; itrp < PAGE_SIZE; itrp++)
         {
             glUseProgram( mPages[itrp].mVertexProgram.mProgramRef);
@@ -1228,7 +1255,9 @@ public class PageFlipModify {
             glActiveTexture(GL_TEXTURE0);
             mPages[itrp].drawFullPage(mPages[itrp].mVertexProgram);
 
-        }
+        }*/
+
+
     }
 
     /**

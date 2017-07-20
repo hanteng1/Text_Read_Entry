@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.eschao.android.widget.pageflip.PageFlip;
 import com.eschao.android.widget.pageflip.PageFlipException;
 
 import java.util.concurrent.locks.ReentrantLock;
@@ -24,8 +25,10 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
     int mPageNo;
     int mDuration;
     Handler mHandler;
-    PageFlipModify mPageFlip;
-    PageRender mPageRender;
+    //PageFlipModify mPageFlip;
+    PageFlip mPageFlip;
+    //PageRender mPageRender;
+    TestPageRender mPageRender;
     ReentrantLock mDrawLock;
 
     public PageFlipView(Context context)
@@ -37,17 +40,11 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         int pixelsOfMesh = 10;
         boolean isAuto = false;
 
-        //create pageflip
-        mPageFlip = new PageFlipModify(context);
+
 
         /*
-        mPageFlip.setSemiPerimeterRatio(0.8f)
-                .setShadowWidthOfFoldEdges(5, 60, 0.3f)
-                .setShadowWidthOfFoldBase(5, 80, 0.4f)
-                .setPixelsOfMesh(pixelsOfMesh);
-
-        */
-
+        //create pageflip
+        mPageFlip = new PageFlipModify(context);
         setEGLContextClientVersion(2);
 
         // create render
@@ -55,6 +52,30 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         mDrawLock = new ReentrantLock();
         mPageRender = new SinglePageRender(context, mPageFlip,
                 mHandler, mPageNo);
+
+
+        */
+
+
+        //test
+        // create PageFlip
+        mPageFlip = new PageFlip(context);
+        mPageFlip.setSemiPerimeterRatio(0.8f)
+                .setShadowWidthOfFoldEdges(5, 60, 0.3f)
+                .setShadowWidthOfFoldBase(5, 80, 0.4f)
+                .setPixelsOfMesh(pixelsOfMesh)
+                .enableAutoPage(isAuto);
+        setEGLContextClientVersion(2);
+
+        // init others
+        mPageNo = 1;
+        mDrawLock = new ReentrantLock();
+
+        //mPageRender = new SinglePageRender(context, mPageFlip,
+        //        mHandler, mPageNo);
+        mPageRender = new TestSinglePageRender(context, mPageFlip,
+                        mHandler, mPageNo);
+
 
         // configure render
         setRenderer(this);
@@ -154,9 +175,20 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
             mPageFlip.onSurfaceChanged(width, height);
 
             int pageNo = mPageRender.getPageNo();
+
+
+            /*
             if(!(mPageRender instanceof SinglePageRender)){
                 mPageRender.release();
                 mPageRender = new SinglePageRender(getContext(),
+                        mPageFlip,
+                        mHandler,
+                        pageNo);
+            }*/
+
+            if(!(mPageRender instanceof TestSinglePageRender)){
+                mPageRender.release();
+                mPageRender = new TestSinglePageRender(getContext(),
                         mPageFlip,
                         mHandler,
                         pageNo);

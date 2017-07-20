@@ -636,19 +636,27 @@ public class Page {
         // 1. draw unfold part and curled part with the first texture
         glUniformMatrix4fv(program.mMVPMatrixLoc, 1, false,
                            VertexProgram.MVPMatrix, 0);
+
         glBindTexture(GL_TEXTURE_2D, mTexIDs[FIRST_TEXTURE_ID]);
+
         glUniform1i(program.mTextureLoc, 0);
+
         vertexes.drawWith(GL_TRIANGLE_STRIP,
                           program.mVertexPosLoc,
                           program.mTexCoordLoc,
                           0, mFrontVertexSize);
 
+
+
+        /*
         // 2. draw the second texture
         glBindTexture(GL_TEXTURE_2D, mTexIDs[SECOND_TEXTURE_ID]);
         glUniform1i(program.mTextureLoc, 0);
         glDrawArrays(GL_TRIANGLE_STRIP,
                      mFrontVertexSize,
                      vertexes.mVertexesSize - mFrontVertexSize);
+
+         */
     }
 
     /**

@@ -35,7 +35,7 @@ public class SinglePageRender extends PageRender{
         {
             if(!pages[itrp].isFrontTextureSet())
             {
-                loadPage(mPageNo);
+                loadPage(itrp);
                 pages[itrp].setFrontTexture(mBitmap);
             }
         }

@@ -566,6 +566,13 @@ public class PageModify {
 
     }
 
+
+
+    public void drawFullPage()
+    {
+        drawFullPage(mVertexProgram);
+    }
+
     /**
      * Draw full page
      *
