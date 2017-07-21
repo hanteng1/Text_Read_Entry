@@ -25,10 +25,10 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
     int mPageNo;
     int mDuration;
     Handler mHandler;
-    //PageFlipModify mPageFlip;
-    PageFlip mPageFlip;
-    //PageRender mPageRender;
-    TestPageRender mPageRender;
+    PageFlipModify mPageFlip;
+    //PageFlip mPageFlip;
+    PageRender mPageRender;
+    //TestPageRender mPageRender;
     ReentrantLock mDrawLock;
 
     public PageFlipView(Context context)
@@ -40,9 +40,6 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         int pixelsOfMesh = 10;
         boolean isAuto = false;
 
-
-
-        /*
         //create pageflip
         mPageFlip = new PageFlipModify(context);
         setEGLContextClientVersion(2);
@@ -53,10 +50,7 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         mPageRender = new SinglePageRender(context, mPageFlip,
                 mHandler, mPageNo);
 
-
-        */
-
-
+        /*
         //test
         // create PageFlip
         mPageFlip = new PageFlip(context);
@@ -66,15 +60,16 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
                 .setPixelsOfMesh(pixelsOfMesh)
                 .enableAutoPage(isAuto);
         setEGLContextClientVersion(2);
+        */
+
+
 
         // init others
         mPageNo = 1;
         mDrawLock = new ReentrantLock();
 
-        //mPageRender = new SinglePageRender(context, mPageFlip,
-        //        mHandler, mPageNo);
-        mPageRender = new TestSinglePageRender(context, mPageFlip,
-                        mHandler, mPageNo);
+        mPageRender = new SinglePageRender(context, mPageFlip, mHandler, mPageNo);
+        //mPageRender = new TestSinglePageRender(context, mPageFlip, mHandler, mPageNo);
 
 
         // configure render
@@ -176,16 +171,15 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
 
             int pageNo = mPageRender.getPageNo();
 
-
-            /*
             if(!(mPageRender instanceof SinglePageRender)){
                 mPageRender.release();
                 mPageRender = new SinglePageRender(getContext(),
                         mPageFlip,
                         mHandler,
                         pageNo);
-            }*/
+            }
 
+            /*
             if(!(mPageRender instanceof TestSinglePageRender)){
                 mPageRender.release();
                 mPageRender = new TestSinglePageRender(getContext(),
@@ -193,6 +187,8 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
                         mHandler,
                         pageNo);
             }
+
+            */
 
             mPageRender.onSurfaceChanged(width, height);
 
