@@ -33,11 +33,16 @@ public class TestSinglePageRender extends TestPageRender {
 
         // 1. delete unused textures
         mPageFlip.deleteUnusedTextures();
-        Page page = mPageFlip.getFirstPage();
+
+
+        Page firstPage = mPageFlip.getFirstPage();
+        Page secondPage = mPageFlip.getSecondPage();
 
         // 2. handle drawing command triggered from finger moving and animating
         if (mDrawCommand == DRAW_MOVING_FRAME ||
                 mDrawCommand == DRAW_ANIMATING_FRAME) {
+
+            /*
             // is forward flip
             if (mPageFlip.getFlipState() == PageFlipState.FORWARD_FLIP) {
                 // check if second texture of first page is valid, if not,
@@ -55,18 +60,24 @@ public class TestSinglePageRender extends TestPageRender {
 
             // draw frame for page flip
             mPageFlip.drawFlipFrame();
+
+            */
         }
         // draw stationary page without flipping
         else if (mDrawCommand == DRAW_FULL_PAGE) {
-            if (!page.isFirstTextureSet()) {
+
+
+            if (!firstPage.isFirstTextureSet()) {
                 drawPage(mPageNo);
-                page.setFirstTexture(mBitmap);
+                firstPage.setFirstTexture(mBitmap);
             }
 
-            if(!page.isSecondTextureSet()){
+            if(!secondPage.isFirstTextureSet()){
                 drawPage(mPageNo+1);
-                page.setSecondTexture(mBitmap);
+                secondPage.setFirstTexture(mBitmap);
             }
+
+
 
             mPageFlip.drawPageFrame();
         }

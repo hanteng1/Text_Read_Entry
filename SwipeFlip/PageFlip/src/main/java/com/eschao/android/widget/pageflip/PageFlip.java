@@ -585,15 +585,12 @@ public class PageFlip {
                                            mViewRect.top, mViewRect.bottom);
         }
         else {
-            //mPages[FIRST_PAGE] = new Page(mViewRect.left, mViewRect.right,
-            //                              mViewRect.top, mViewRect.bottom);
+            //mPages[FIRST_PAGE] = new Page(mViewRect.left, mViewRect.right, mViewRect.top, mViewRect.bottom);
             //mPages[SECOND_PAGE] = null;
 
 
-            mPages[FIRST_PAGE] = new Page(mViewRect.left, 0,
-                    mViewRect.top, mViewRect.bottom);
-            mPages[SECOND_PAGE] = new Page(0, mViewRect.right,
-                    mViewRect.top, mViewRect.bottom);
+            mPages[SECOND_PAGE] = new Page(mViewRect.left, 0, mViewRect.top, mViewRect.bottom);
+            mPages[FIRST_PAGE] = new Page(0, mViewRect.right, mViewRect.top, mViewRect.bottom);
         }
     }
 
@@ -1124,14 +1121,14 @@ public class PageFlip {
         final boolean hasSecondPage = mPages[SECOND_PAGE] != null;
 
         // 1. draw back of fold page
-        /*
+
         glUseProgram(mFoldBackVertexProgram.mProgramRef);
         glActiveTexture(GL_TEXTURE0);
         mFoldBackVertexes.draw(mFoldBackVertexProgram,
                                mPages[FIRST_PAGE],
                                hasSecondPage,
                                mGradientShadowTextureID);
-        */
+
         // 2. draw unfold page and front of fold page
         glUseProgram(mVertexProgram.mProgramRef);
 
@@ -1140,7 +1137,7 @@ public class PageFlip {
         //        mVertexProgram.MVPMatrix, 0);
 
         glActiveTexture(GL_TEXTURE0);
-        //mPages[FIRST_PAGE].drawFrontPage(mVertexProgram, mFoldFrontVertexes);
+        mPages[FIRST_PAGE].drawFrontPage(mVertexProgram, mFoldFrontVertexes);
 
         if (hasSecondPage) {
             //Matrix.translateM(mVertexProgram.MVPMatrix, 0, -50.0f, 0.0f, 0.0f);
@@ -1170,7 +1167,8 @@ public class PageFlip {
         glActiveTexture(GL_TEXTURE0);
 
         // 1. draw first page
-        //mPages[FIRST_PAGE].drawFullPage(mVertexProgram, true);
+        mPages[FIRST_PAGE].drawFullPage(mVertexProgram, true);
+
 
         // 2. draw second page if have
         if (mPages[SECOND_PAGE] != null) {

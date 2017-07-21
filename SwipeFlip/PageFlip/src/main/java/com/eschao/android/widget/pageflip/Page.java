@@ -646,9 +646,6 @@ public class Page {
                           program.mTexCoordLoc,
                           0, mFrontVertexSize);
 
-
-
-        /*
         // 2. draw the second texture
         glBindTexture(GL_TEXTURE_2D, mTexIDs[SECOND_TEXTURE_ID]);
         glUniform1i(program.mTextureLoc, 0);
@@ -656,7 +653,6 @@ public class Page {
                      mFrontVertexSize,
                      vertexes.mVertexesSize - mFrontVertexSize);
 
-         */
     }
 
     /**
