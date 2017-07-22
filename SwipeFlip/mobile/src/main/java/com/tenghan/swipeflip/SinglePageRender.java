@@ -95,7 +95,7 @@ public class SinglePageRender extends PageRender{
             for(int itrp = 0; itrp < mPageFlip.PAGE_SIZE; itrp++)
             {
                 if (!pages[itrp].isFrontTextureSet()) {
-                    loadPage(mPageNo);
+                    loadPage(itrp);
                     pages[itrp].setFrontTexture(mBitmap);
                 }
             }

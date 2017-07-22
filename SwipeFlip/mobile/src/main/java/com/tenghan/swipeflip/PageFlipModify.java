@@ -224,13 +224,14 @@ public class PageFlipModify {
     private ShadowVertexes mFoldEdgesShadow;
     private ShadowVertexes mFoldBaseShadow;
 
+
+*/
+
     // Shader program for openGL drawing
-    //private VertexProgram mVertexProgram;
+    //one for all page instances to keep efficiency
+    private VertexProgram mVertexProgram;
     private FoldBackVertexProgram mFoldBackVertexProgram;
     private ShadowVertexProgram mShadowVertexProgram;
-
-
-    */
 
 
     // is vertical page flip
@@ -300,9 +301,9 @@ public class PageFlipModify {
         //mFoldBaseShadowWidth = new ShadowWidth(2, 40, 0.4f);
 
         // init shader program
-        //mVertexProgram = new VertexProgram();
-        //mFoldBackVertexProgram = new FoldBackVertexProgram();
-        //mShadowVertexProgram = new ShadowVertexProgram();
+        mVertexProgram = new VertexProgram();
+        mFoldBackVertexProgram = new FoldBackVertexProgram();
+        mShadowVertexProgram = new ShadowVertexProgram();
 
         // init vertexes
         /*
@@ -506,15 +507,8 @@ public class PageFlipModify {
         glClearDepthf(1.0f);
         glEnable(GL_DEPTH_TEST);
 
-        /*
-
         try {
-            // init shader programs
-            for(int itrp=0; itrp<PAGE_SIZE; itrp++)
-            {
-                mPages[itrp].mVertexProgram.init(mContext);
-            }
-
+            mVertexProgram.init(mContext);
             mFoldBackVertexProgram.init(mContext);
             mShadowVertexProgram.init(mContext);
 
@@ -522,16 +516,13 @@ public class PageFlipModify {
             createGradientShadowTexture();
         }
         catch (PageFlipException e) {
-            for(int itrp=0; itrp<PAGE_SIZE; itrp++)
-            {
-                mPages[itrp].mVertexProgram.delete();
-            }
+
+            mVertexProgram.delete();
             mFoldBackVertexProgram.delete();
             mShadowVertexProgram.delete();
             throw e;
         }
 
-        */
     }
 
     /**
@@ -548,13 +539,7 @@ public class PageFlipModify {
         mViewRect.set(width, height);
         glViewport(0, 0, width, height);
 
-        /*
-        for(int itrp=0; itrp<PAGE_SIZE; itrp++)
-        {
-            mPages[itrp].mVertexProgram.initMatrix(-mViewRect.halfW, mViewRect.halfW,
-                    -mViewRect.halfH, mViewRect.halfH);
-        }*/
-
+        mVertexProgram.initMatrix(-mViewRect.halfW, mViewRect.halfW, -mViewRect.halfH, mViewRect.halfH);
 
         createPages();
         computeMaxMeshCount();
@@ -574,22 +559,27 @@ public class PageFlipModify {
             }
 
             //create new pages
-            mPages[itrp] = new PageModify(mViewRect.left, mViewRect.right,
+            //test
+            /*
+            if(itrp == 0)
+            {
+                mPages[itrp] = new PageModify(-100, mViewRect.right,
+                        mViewRect.top, mViewRect.bottom);
+
+                mPages[itrp].mViewRect.set(mViewRect.width/2 + 100, mViewRect.height);
+            }else
+            {
+                mPages[itrp] = new PageModify(mViewRect.left, 100,
+                        mViewRect.top, mViewRect.bottom);
+
+                mPages[itrp].mViewRect.set(mViewRect.width/2 + 100, mViewRect.height);
+            }*/
+
+            mPages[itrp] = new PageModify(0, mViewRect.right,
                     mViewRect.top, mViewRect.bottom);
 
-            mPages[itrp].mViewRect.set(mViewRect.width, mViewRect.height);
+            mPages[itrp].mViewRect.set(mViewRect.width/2, mViewRect.height);
 
-            try{
-                mPages[itrp].mVertexProgram.init(mContext);
-
-            }
-            catch (PageFlipException e)
-            {
-                mPages[itrp].mVertexProgram.delete();
-            }
-
-            mPages[itrp].mVertexProgram.initMatrix(-mViewRect.halfW, mViewRect.halfW,
-                    -mViewRect.halfH, mViewRect.halfH);
         }
 
         setSemiPerimeterRatio(0.8f);
@@ -1164,22 +1154,22 @@ public class PageFlipModify {
         {
 
             // 1. draw back of fold page
-            glUseProgram(mPages[itrp].mFoldBackVertexProgram.mProgramRef);
+            glUseProgram(mFoldBackVertexProgram.mProgramRef);
             glActiveTexture(GL_TEXTURE0);
-            mPages[itrp].mFoldBackVertexes.draw(mPages[itrp].mFoldBackVertexProgram,
+            mPages[itrp].mFoldBackVertexes.draw(mFoldBackVertexProgram,
                 mPages[FIRST_PAGE],
                 mGradientShadowTextureID);
 
             // 2. draw unfold page and front of fold page
-            glUseProgram(mPages[itrp].mVertexProgram.mProgramRef);
+            glUseProgram(mVertexProgram.mProgramRef);
             glActiveTexture(GL_TEXTURE0);
-            mPages[itrp].drawFrontPage(mPages[itrp].mVertexProgram,
+            mPages[itrp].drawFrontPage(mVertexProgram,
                     mPages[itrp].mFoldFrontVertexes);
 
             // 3. draw edge and base shadow of fold parts
-            glUseProgram(mPages[itrp].mShadowVertexProgram.mProgramRef);
-            mPages[itrp].mFoldBaseShadow.draw(mPages[itrp].mShadowVertexProgram);
-            mPages[itrp].mFoldEdgesShadow.draw(mPages[itrp].mShadowVertexProgram);
+            glUseProgram(mShadowVertexProgram.mProgramRef);
+            mPages[itrp].mFoldBaseShadow.draw(mShadowVertexProgram);
+            mPages[itrp].mFoldEdgesShadow.draw(mShadowVertexProgram);
 
         }
         //current edges and shadow drawings is only rendering 1 page
@@ -1195,21 +1185,17 @@ public class PageFlipModify {
     public void drawPageFrame() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        glUseProgram(mVertexProgram.mProgramRef);
+
         for(int itrp=0; itrp<PAGE_SIZE; itrp++)
         {
+            Matrix.translateM(mVertexProgram.MVPMatrix, 0, -50.0f, 0.0f, 0.0f);
 
-            glUseProgram(mPages[itrp].mVertexProgram.mProgramRef);
-
-            Matrix.translateM(mPages[itrp].mVertexProgram.MVPMatrix, 0, -50.0f -50.0f * itrp, 0.0f, 0.0f);
-
-            glUniformMatrix4fv(mPages[itrp].mVertexProgram.mMVPMatrixLoc, 1, false, mPages[itrp].mVertexProgram.MVPMatrix, 0);
+            glUniformMatrix4fv(mVertexProgram.mMVPMatrixLoc, 1, false, mVertexProgram.MVPMatrix, 0);
 
             glActiveTexture(GL_TEXTURE0);
 
-            // 1. draw front page
-            mPages[itrp].drawFullPage();
-
-
+            mPages[itrp].drawFullPage(mVertexProgram);
 
         }
 

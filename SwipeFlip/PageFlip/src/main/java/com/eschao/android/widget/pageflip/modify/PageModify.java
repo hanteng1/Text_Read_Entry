@@ -116,7 +116,7 @@ public class PageModify {
     private int mUnusedTexSize;
 
     //position and state control variables
-    public VertexProgram mVertexProgram;
+    //public VertexProgram mVertexProgram;
 
 
     //computing vertexes
@@ -147,8 +147,8 @@ public class PageModify {
     public ShadowVertexes mFoldEdgesShadow;
     public ShadowVertexes mFoldBaseShadow;
 
-    public FoldBackVertexProgram mFoldBackVertexProgram;
-    public ShadowVertexProgram mShadowVertexProgram;
+    //public FoldBackVertexProgram mFoldBackVertexProgram;
+    //public ShadowVertexProgram mShadowVertexProgram;
 
 
     private final static int FOLD_TOP_EDGE_SHADOW_VEX_COUNT = 22;
@@ -260,9 +260,9 @@ public class PageModify {
         mFoldEdgesShadowWidth = new ShadowWidth(5, 30, 0.25f);
         mFoldBaseShadowWidth = new ShadowWidth(2, 40, 0.4f);
 
-        mVertexProgram = new VertexProgram();
-        mFoldBackVertexProgram = new FoldBackVertexProgram();
-        mShadowVertexProgram = new ShadowVertexProgram();
+        //mVertexProgram = new VertexProgram();
+        //mFoldBackVertexProgram = new FoldBackVertexProgram();
+        //mShadowVertexProgram = new ShadowVertexProgram();
 
         mFoldFrontVertexes = new Vertexes();
         mFoldBackVertexes = new FoldBackVertexes();
@@ -566,10 +566,10 @@ public class PageModify {
 
     }
 
-    public void drawFullPage()
-    {
-        drawFullPage(mVertexProgram);
-    }
+    //public void drawFullPage()
+    //{
+    //    drawFullPage(mVertexProgram);
+    //}
 
     /**
      * Draw full page
