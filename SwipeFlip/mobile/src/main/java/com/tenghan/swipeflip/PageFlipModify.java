@@ -1186,6 +1186,7 @@ public class PageFlipModify {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(mVertexProgram.mProgramRef);
+        glActiveTexture(GL_TEXTURE0);
 
         for(int itrp=0; itrp<PAGE_SIZE; itrp++)
         {
@@ -1193,12 +1194,8 @@ public class PageFlipModify {
 
             glUniformMatrix4fv(mVertexProgram.mMVPMatrixLoc, 1, false, mVertexProgram.MVPMatrix, 0);
 
-            glActiveTexture(GL_TEXTURE0);
-
             mPages[itrp].drawFullPage(mVertexProgram);
-
         }
-
     }
 
     /**
@@ -1220,7 +1217,6 @@ public class PageFlipModify {
             mPages[itrp].drawFullPage(mPages[itrp].mVertexProgram);
 
         }*/
-
 
     }
 
