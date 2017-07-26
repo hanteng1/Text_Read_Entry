@@ -114,7 +114,7 @@ public class PageFlipModify {
     // pages and index
     private final static int FIRST_PAGE = 0;
     private int pageIndex;
-    public final static int PAGE_SIZE = 3; // 2 for testing
+    public final static int PAGE_SIZE = 1; // 2 for testing
     private final static int MANY_PAGE_MODE = 1;
 
     // view size
@@ -575,10 +575,10 @@ public class PageFlipModify {
                 mPages[itrp].mViewRect.set(mViewRect.width/2 + 100, mViewRect.height);
             }*/
 
-            mPages[itrp] = new PageModify(0, mViewRect.right,
+            mPages[itrp] = new PageModify(mViewRect.left, mViewRect.right,
                     mViewRect.top, mViewRect.bottom);
 
-            mPages[itrp].mViewRect.set(mViewRect.width/2, mViewRect.height);
+            mPages[itrp].mViewRect.set(mViewRect.width, mViewRect.height);
 
         }
 
@@ -614,14 +614,15 @@ public class PageFlipModify {
             mLastTouchP.set(touchX, touchY);
             mStartTouchP.set(touchX, touchY);
             mTouchP.set(touchX, touchY);
-            //mFlipState = PageFlipState.BEGIN_FLIP;
+
+            mFlipState = PageFlipState.BEGIN_FLIP;
 
             for(int itrp = 0; itrp < PAGE_SIZE; itrp++)
             {
                 mPages[itrp].mFakeTouchP.set(mTouchP.x, mTouchP.y);
             }
 
-            mFlipState = PageFlipState.BEGIN_TRANSLATE;  //get ready to translate
+            //mFlipState = PageFlipState.BEGIN_TRANSLATE;  //get ready to translate
 
         }
     }
@@ -642,12 +643,13 @@ public class PageFlipModify {
         float dy = (touchY - mStartTouchP.y);
         float dx = (touchX - mStartTouchP.x);
 
-        //Log.d(TAG, "dx " + dx + ", dy " + dy);
+        Log.d(TAG, "dx " + dx + ", dy " + dy);
 
         final PageModify page = mPages[FIRST_PAGE];
         final GLPoint originP = page.originP;
         final GLPoint diagonalP = page.diagonalP;
 
+        /*
         //begin translating
         if(mFlipState == PageFlipState.BEGIN_TRANSLATE &&
                 (Math.abs(dx) > mViewRect.width * 0.05f))  //finger move threshold
@@ -660,7 +662,6 @@ public class PageFlipModify {
                 //has to be moving from right to left
                 mFlipState = PageFlipState.FORWARD_TRANSLATE;
             }
-
         }
 
         //in translating
@@ -691,9 +692,9 @@ public class PageFlipModify {
 
         }
 
-        /*
+        */
 
-        // begin to move
+        // begin to flip
         if (mFlipState == PageFlipState.BEGIN_FLIP &&
                 (Math.abs(dx) > mViewRect.width * 0.05f)) {
 
@@ -705,17 +706,17 @@ public class PageFlipModify {
             // (OriginP.x, DiagonalP.Y)
             float y2o = Math.abs(mStartTouchP.y - originP.y);
             float y2d = Math.abs(mStartTouchP.y - diagonalP.y);
-            mMaxT2OAngleTan = computeTanOfCurlAngle(y2o);
-            mMaxT2DAngleTan = computeTanOfCurlAngle(y2d);
+            page.mMaxT2OAngleTan = page.computeTanOfCurlAngle(y2o);
+            page.mMaxT2DAngleTan = page.computeTanOfCurlAngle(y2d);
 
             // moving at the top and bottom screen have different tan value of
             // angle
             if ((originP.y < 0 && page.right > 0) ||
                     (originP.y > 0 && page.right <= 0)) {
-                mMaxT2OAngleTan = -mMaxT2OAngleTan;
+                page.mMaxT2OAngleTan = -page.mMaxT2OAngleTan;
             }
             else {
-                mMaxT2DAngleTan = -mMaxT2DAngleTan;
+                page.mMaxT2DAngleTan = -page.mMaxT2DAngleTan;
             }
 
             // determine if it is moving backward or forward
@@ -738,8 +739,6 @@ public class PageFlipModify {
             }
         }
 
-
-
         // in moving, compute the TouchXY
         if (mFlipState == PageFlipState.FORWARD_FLIP ||
                 mFlipState == PageFlipState.BACKWARD_FLIP ||
@@ -761,14 +760,14 @@ public class PageFlipModify {
             // 1. invert max curling angle
             // 2. invert Y of original point and diagonal point
             if ((dy < 0 && originP.y < 0) || (dy > 0 && originP.y > 0)) {
-                float t = mMaxT2DAngleTan;
-                mMaxT2DAngleTan = mMaxT2OAngleTan;
-                mMaxT2OAngleTan = t;
+                float t = page.mMaxT2DAngleTan;
+                page.mMaxT2DAngleTan = page.mMaxT2OAngleTan;
+                page.mMaxT2OAngleTan = t;
                 page.invertYOfOriginPoint();
             }
 
             // compute new TouchP.y
-            float maxY = dx * mMaxT2OAngleTan;
+            float maxY = dx * page.mMaxT2OAngleTan;
             if (Math.abs(dy) > Math.abs(maxY)) {
                 dy = maxY;
             }
@@ -777,7 +776,7 @@ public class PageFlipModify {
             // TouchP.y to assure the XFoldX1 is in page width
             float t2oK = dy / dx;
             float xTouchX = dx + dy * t2oK;
-            float xRatio = (1 + mSemiPerimeterRatio) * 0.5f;
+            float xRatio = (1 + page.mSemiPerimeterRatio) * 0.5f;
             float xFoldX1 = xRatio * xTouchX;
             if (Math.abs(xFoldX1) + 2 >= page.width) {
                 float dy2 = ((diagonalP.x - originP.x) / xRatio - dx) * dx;
@@ -802,15 +801,14 @@ public class PageFlipModify {
             // set touchP(x, y) and middleP(x, y)
             mLastTouchP.set(touchX, touchY);
             mTouchP.set(dx + originP.x, dy + originP.y);
-            mMiddleP.x = (mTouchP.x + originP.x) * 0.5f;
-            mMiddleP.y = (mTouchP.y + originP.y) * 0.5f;
+            page.mFakeTouchP.set(mTouchP.x, mTouchP.y);
+            page.mMiddleP.x = (mTouchP.x + originP.x) * 0.5f;
+            page.mMiddleP.y = (mTouchP.y + originP.y) * 0.5f;
 
             // continue to compute points to drawing flip
             computeVertexesAndBuildPage();
             return true;
         }
-
-        */
 
         return false;
     }
@@ -829,7 +827,6 @@ public class PageFlipModify {
         MainActivity.getSharedInstance().mPageFlipView.autoFingerUp(mStartTouchP.x, mStartTouchP.y);
 
     }
-
 
     /**
      * Handle finger up event
@@ -1154,10 +1151,11 @@ public class PageFlipModify {
         {
 
             // 1. draw back of fold page
+
             glUseProgram(mFoldBackVertexProgram.mProgramRef);
             glActiveTexture(GL_TEXTURE0);
             mPages[itrp].mFoldBackVertexes.draw(mFoldBackVertexProgram,
-                mPages[FIRST_PAGE],
+                mPages[itrp],
                 mGradientShadowTextureID);
 
             // 2. draw unfold page and front of fold page
@@ -1190,7 +1188,7 @@ public class PageFlipModify {
 
         for(int itrp=0; itrp<PAGE_SIZE; itrp++)
         {
-            Matrix.translateM(mVertexProgram.MVPMatrix, 0, -50.0f, 0.0f, 0.0f);
+            //Matrix.translateM(mVertexProgram.MVPMatrix, 0, -50.0f, 0.0f, 0.0f);
 
             glUniformMatrix4fv(mVertexProgram.mMVPMatrixLoc, 1, false, mVertexProgram.MVPMatrix, 0);
 
@@ -1281,7 +1279,7 @@ public class PageFlipModify {
      * Compute vertexes of page
      */
     private void computeVertexesAndBuildPage() {
-        Log.d(TAG, "called");
+        //Log.d(TAG, "called");
 
         for(int itrp = 0; itrp < PAGE_SIZE; itrp++)
         {

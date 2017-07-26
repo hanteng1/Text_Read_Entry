@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
@@ -41,12 +42,17 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
         instance = this;
 
         mPageFlipView = new PageFlipView(this);
 
         setContentView(mPageFlipView);
+
+        //set size and position
+        ViewGroup.LayoutParams layoutParams = mPageFlipView.getLayoutParams();
+        layoutParams.width = 320;
+        layoutParams.height = 320;
+        mPageFlipView.setLayoutParams(layoutParams);
 
         mGestureDetector = new GestureDetector(this, this);
 
@@ -61,8 +67,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                     View.SYSTEM_UI_FLAG_IMMERSIVE |
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
-
-
 
     }
 

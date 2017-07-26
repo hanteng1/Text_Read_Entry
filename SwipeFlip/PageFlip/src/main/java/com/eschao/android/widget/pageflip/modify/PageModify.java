@@ -120,7 +120,7 @@ public class PageModify {
 
 
     //computing vertexes
-    private PointF mMiddleP;
+    public PointF mMiddleP;
     private PointF mYFoldPc;
     private PointF mYFoldP0c;
     private PointF mYFoldP1c;
@@ -131,12 +131,12 @@ public class PageModify {
 
     //translation with x
     public float mTransOffX;
-    private float mMaxT2OAngleTan;
-    private float mMaxT2DAngleTan;
+    public float mMaxT2OAngleTan;
+    public float mMaxT2DAngleTan;
     private float mKValue;
     private float mLenOfTouchOrigin;
     private float mR;
-    private float mSemiPerimeterRatio;
+    public float mSemiPerimeterRatio;
     private int mMeshCount;
 
     private ShadowWidth mFoldEdgesShadowWidth;
@@ -881,12 +881,12 @@ public class PageModify {
         float x = mMiddleP.x;
         float stepX = (mMiddleP.x - mXFoldP0c.x) / mMeshCount;
 
-        final PageModify page = this;
-        final float oY = page.originP.y;
-        final float dY = page.diagonalP.y;
-        final float cDY = page.diagonalP.texY;
-        final float cOY = page.originP.texY;
-        final float cOX = page.originP.texX;
+        //final PageModify page = this;
+        final float oY = originP.y;
+        final float dY = diagonalP.y;
+        final float cDY = diagonalP.texY;
+        final float cOY = originP.texY;
+        final float cOX = originP.texX;
 
         // compute the point on back page half cylinder
         mFoldBackVertexes.reset();
@@ -896,7 +896,7 @@ public class PageModify {
             float x2t = x - mXFoldP1c.x;
             float radius = x2t / mR;
             float sinR = (float)Math.sin(radius);
-            float coordX = page.textureX(x);
+            float coordX = textureX(x);
             float fx = mXFoldP1c.x + mR * sinR;
             float fz = (float) (mR * (1 - Math.cos(radius)));
 
@@ -913,7 +913,7 @@ public class PageModify {
         // compute shadow width
         float sw = -mFoldEdgesShadowWidth.width(mR);
         float bw = mFoldBaseShadowWidth.width(mR);
-        if (page.originP.x < 0) {
+        if (originP.x < 0) {
             sw = -sw;
             bw = -bw;
         }
@@ -931,7 +931,7 @@ public class PageModify {
 
         // fold front
         mFoldFrontVertexes.reset();
-        page.buildVertexesOfPageWhenVertical(mFoldFrontVertexes, mXFoldP1c);
+        buildVertexesOfPageWhenVertical(mFoldFrontVertexes, mXFoldP1c);
         mFoldFrontVertexes.toFloatBuffer();
     }
 
@@ -949,13 +949,13 @@ public class PageModify {
         float r0 = 1 - mSemiPerimeterRatio;
         float r1 = 1 + mSemiPerimeterRatio;
         mXFoldPc.set(mMiddleP.x + dY * dY / dX, oY);
-        mXFoldP0c.set(oX + (mXFoldP.x - oX) * r0, mXFoldP.y);
-        mXFoldP1c.set(oX + r1 * (mXFoldP.x - oX), mXFoldP.y);
+        mXFoldP0c.set(oX + (mXFoldPc.x - oX) * r0, mXFoldPc.y);
+        mXFoldP1c.set(oX + r1 * (mXFoldPc.x - oX), mXFoldPc.y);
 
         // compute key points on Y axis
         mYFoldPc.set(oX, mMiddleP.y + dX * dX / dY);
-        mYFoldP0c.set(mYFoldP.x, oY + (mYFoldP.y - oY) * r0);
-        mYFoldP1c.set(mYFoldP.x, oY + r1 * (mYFoldP.y - oY));
+        mYFoldP0c.set(mYFoldPc.x, oY + (mYFoldPc.y - oY) * r0);
+        mYFoldP1c.set(mYFoldPc.x, oY + r1 * (mYFoldPc.y - oY));
 
         // line length from TouchXY to OriginalXY
         mLenOfTouchOrigin = (float)Math.hypot((mFakeTouchP.x - oX),
@@ -1227,14 +1227,14 @@ public class PageModify {
      * Compute vertexes when page flip is slope
      */
     public void computeVertexesWhenSlope() {
-        final PageModify page = this;
-        final float oX = page.originP.x;
-        final float oY = page.originP.y;
-        final float dY = page.diagonalP.y;
-        final float cOX = page.originP.texX;
-        final float cOY = page.originP.texY;
-        final float cDY = page.diagonalP.texY;
-        final float height = page.height;
+        //final PageModify page = this;
+        final float oX = originP.x;
+        final float oY = originP.y;
+        final float dY = diagonalP.y;
+        final float cOX = originP.texX;
+        final float cOY = originP.texY;
+        final float cDY = diagonalP.texY;
+        //final float height = height;
         final float d2oY = dY - oY;
 
         // compute radius and sin/cos of angle
@@ -1296,9 +1296,9 @@ public class PageModify {
         for (;i <= count && Math.abs(y) < height;
              ++i, x -= stepX, y -= stepY, sy -= stepSY, sx -= stepSX) {
             computeBackVertex(true, x, 0, x, sy, xFoldP1, sinA, cosA,
-                    page.textureX(x + oX), cOY, oX, oY);
+                    textureX(x + oX), cOY, oX, oY);
             computeBackVertex(false, 0, y, sx, y, xFoldP1, sinA, cosA, cOX,
-                    page.textureY(y + oY), oX, oY);
+                    textureY(y + oY), oX, oY);
         }
 
         // If y coordinate of point on YFP0 -> YFP is > diagonalP
@@ -1333,7 +1333,7 @@ public class PageModify {
                 else {
                     float x1 = mKValue * d2oY;
                     computeBackVertex(true, x1, 0, x1, sy, xFoldP1, sinA, cosA,
-                            page.textureX(x1 + oX), cOY, oX, oY);
+                            textureX(x1 + oX), cOY, oX, oY);
                     computeBackVertex(false, 0, d2oY, sx, d2oY, xFoldP1, sinA,
                             cosA, cOX, cDY, oX, oY);
                 }
@@ -1343,14 +1343,14 @@ public class PageModify {
             for (; i <= count;
                  ++i, x -= stepX, y -= stepY, sy -= stepSY, sx -= stepSX) {
                 computeBackVertex(true, x, 0, x, sy, xFoldP1, sinA, cosA,
-                        page.textureX(x + oX), cOY, oX, oY);
+                        textureX(x + oX), cOY, oX, oY);
 
                 // since the origin Y is beyond page, we need to compute its
                 // projection point on page border and then compute mapping
                 // point on curled cylinder
                 float x1 = mKValue * (y + oY - dY);
                 computeBackVertex(x1, d2oY, xFoldP1, sinA, cosA,
-                        page.textureX(x1 + oX), cDY, oX, oY);
+                        textureX(x1 + oX), cDY, oX, oY);
             }
         }
 
@@ -1391,10 +1391,10 @@ public class PageModify {
         for (; j < count && Math.abs(y) < height; ++j, x -= stepX, y -= stepY) {
             computeFrontVertex(true, x, 0, xFoldP1, sinA, cosA,
                     baseWcosA, baseWsinA,
-                    page.textureX(x + oX), cOY, oX, oY, dY);
+                    textureX(x + oX), cOY, oX, oY, dY);
             computeFrontVertex(false, 0, y, xFoldP1, sinA, cosA,
                     baseWcosA, baseWsinA,
-                    cOX, page.textureY(y + oY), oX, oY, dY);
+                    cOX, textureY(y + oY), oX, oY, dY);
         }
 
         // compute points outside the page
@@ -1405,10 +1405,10 @@ public class PageModify {
                 float x1 = mKValue * y1;
                 computeFrontVertex(true, x1, 0, xFoldP1, sinA, cosA,
                         baseWcosA, baseWsinA,
-                        page.textureX(x1 + oX), cOY, oX, oY, dY);
+                        textureX(x1 + oX), cOY, oX, oY, dY);
 
                 computeFrontVertex(0, y1, xFoldP1, sinA, cosA, cOX,
-                        page.textureY(y1+oY), oX, oY) ;
+                        textureY(y1+oY), oX, oY) ;
             }
 
             // compute last pair of vertexes of base shadow
@@ -1420,11 +1420,11 @@ public class PageModify {
             for (; j < count; ++j, x -= stepX, y -= stepY) {
                 computeFrontVertex(true, x, 0, xFoldP1, sinA, cosA,
                         baseWcosA, baseWsinA,
-                        page.textureX(x + oX), cOY, oX, oY, dY);
+                        textureX(x + oX), cOY, oX, oY, dY);
 
                 float x1 = mKValue * (y + oY - dY);
                 computeFrontVertex(x1, d2oY, xFoldP1, sinA, cosA,
-                        page.textureX(x1 + oX), cDY, oX, oY);
+                        textureX(x1 + oX), cDY, oX, oY);
             }
 
         }
@@ -1434,7 +1434,7 @@ public class PageModify {
         mFoldBaseShadow.vertexZ = -0.5f;
 
         // add two vertexes to connect with the unfold front page
-        page.buildVertexesOfPageWhenSlope(mFoldFrontVertexes, mXFoldP1c, mYFoldP1c,
+        buildVertexesOfPageWhenSlope(mFoldFrontVertexes, mXFoldP1c, mYFoldP1c,
                 mKValue);
         mFoldFrontVertexes.toFloatBuffer();
 

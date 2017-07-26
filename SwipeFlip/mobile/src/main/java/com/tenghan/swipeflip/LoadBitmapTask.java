@@ -36,6 +36,7 @@ public final class LoadBitmapTask implements Runnable {
     Thread mThread;
     LinkedList<Bitmap> mQueue;
     int[][] mPortraitBGs;
+    int mWatchBG;
 
     public static LoadBitmapTask get(Context context) {
         if (__object == null) {
@@ -43,7 +44,6 @@ public final class LoadBitmapTask implements Runnable {
         }
         return __object;
     }
-
 
     private LoadBitmapTask(Context context) {
         mResources = context.getResources();
@@ -60,6 +60,8 @@ public final class LoadBitmapTask implements Runnable {
         mPortraitBGs = new int[][] {
                 new int[] {R.drawable.p2_480, R.drawable.p1_480, R.drawable.p3_480, R.drawable.p4_480, R.drawable.p5_480, R.drawable.p6_480}
         };
+
+        mWatchBG = R.drawable.p1_320;
     }
 
 
@@ -74,7 +76,8 @@ public final class LoadBitmapTask implements Runnable {
 
         if (b == null) {
             Log.d(TAG, "Load bitmap instantly!");
-            b = getRandomBitmap();
+            //b = getRandomBitmap();
+            b = getWatchBitmap();
         }
 
         return b;
@@ -166,6 +169,12 @@ public final class LoadBitmapTask implements Runnable {
         return b;
     }
 
+    private Bitmap getWatchBitmap(){
+        int resId = mWatchBG;
+        Bitmap b = BitmapFactory.decodeResource(mResources, resId);
+        return b;
+    }
+
     private void cleanQueue() {
         for (int i = 0; i < mQueue.size(); ++i) {
             mQueue.get(i).recycle();
@@ -187,7 +196,7 @@ public final class LoadBitmapTask implements Runnable {
                 if (size < 1) {
                     for (int i = 0; i < mQueueMaxSize; ++i) {
                         Log.d(TAG, "Load Queue:" + i + " in background!");
-                        mQueue.push(getRandomBitmap());  //prepare the textures in a queue
+                        mQueue.push(getWatchBitmap());  //prepare the textures in a queue
                     }
                 }
 

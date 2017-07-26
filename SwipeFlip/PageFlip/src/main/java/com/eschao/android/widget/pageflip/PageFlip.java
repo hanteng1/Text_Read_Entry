@@ -664,7 +664,7 @@ public class PageFlip {
 
 
             // set OriginP and DiagonalP points
-            page.setOriginAndDiagonalPoints(mPages[SECOND_PAGE] != null, dy);
+            page.setOriginAndDiagonalPoints(mPages[SECOND_PAGE] != null, dy);  //double sizes
 
             // compute max degree between X axis and line from TouchP to OriginP
             // and max degree between X axis and line from TouchP to
