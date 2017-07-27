@@ -121,20 +121,19 @@ public class PageModify {
 
     //computing vertexes
     public PointF mMiddleP;
-    private PointF mYFoldPc;
+    public PointF mYFoldPc;
     private PointF mYFoldP0c;
-    private PointF mYFoldP1c;
+    public PointF mYFoldP1c;
     private PointF mXFoldPc;
     private PointF mXFoldP0c;
     private PointF mXFoldP1c;
-
 
     //translation with x
     public float mTransOffX;
     public float mMaxT2OAngleTan;
     public float mMaxT2DAngleTan;
-    private float mKValue;
-    private float mLenOfTouchOrigin;
+    public float mKValue;
+    public float mLenOfTouchOrigin;
     private float mR;
     public float mSemiPerimeterRatio;
     private int mMeshCount;
@@ -184,9 +183,9 @@ public class PageModify {
             (float)Math.tan(MAX_PAGE_CURL_RADIAN);
     private final static float MAX_PAGE_CURL_ANGLE_RATIO =
             MAX_PAGE_CURL_ANGLE / 90f;
-    private final static float MAX_TAN_OF_FORWARD_FLIP =
+    public final static float MAX_TAN_OF_FORWARD_FLIP =
             (float)Math.tan(Math.PI / 6);
-    private final static float MAX_TAN_OF_BACKWARD_FLIP =
+    public final static float MAX_TAN_OF_BACKWARD_FLIP =
             (float)Math.tan(Math.PI / 20);
 
 

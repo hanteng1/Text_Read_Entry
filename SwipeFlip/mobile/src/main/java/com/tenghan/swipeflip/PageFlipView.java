@@ -127,15 +127,29 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
 
     public void onFingerUp(float x, float y) // will auto check the animation first
     {
-        //do nothing for now
+        if (!mPageFlip.isAnimating()) {
+
+            mPageFlip.onFingerUp(x, y, mDuration);  //test and get ready for animating
+
+            try {
+                mDrawLock.lock();
+                if (mPageRender != null &&
+                        mPageRender.onFingerUp(x, y)) {
+                    requestRender();
+                }
+            }
+            finally {
+                mDrawLock.unlock();
+            }
+        }
     }
 
     public void autoFingerUp(float x, float y)
     {
         if (!mPageFlip.isAnimating()) {
 
-
             mPageFlip.onFingerUp(x, y, mDuration);
+
             try {
                 mDrawLock.lock();
                 if (mPageRender != null &&

@@ -837,12 +837,8 @@ public class PageFlipModify {
      * @return true if animation is started or animation is not triggered
      */
     public boolean onFingerUp(float touchX, float touchY, int duration) {
-        //touchX = mViewRect.toOpenGLX(touchX);
-        //touchY = mViewRect.toOpenGLY(touchY);
-
-
-        /* //need to handle later
-
+        touchX = mViewRect.toOpenGLX(touchX);
+        touchY = mViewRect.toOpenGLY(touchY);
 
         final PageModify page = mPages[FIRST_PAGE];
         final GLPoint originP = page.originP;
@@ -874,7 +870,7 @@ public class PageFlipModify {
                 end.set((int)(diagonalP.x - page.width), (int)originP.y);
             }
             else {
-                mMaxT2OAngleTan = (mTouchP.y - originP.y) /
+                page.mMaxT2OAngleTan = (mTouchP.y - originP.y) /
                         (mTouchP.x - originP.x);
                 end.set((int) originP.x, (int) originP.y);
             }
@@ -902,7 +898,6 @@ public class PageFlipModify {
             return true;
         }
 
-        */
         return false;
     }
 
@@ -932,7 +927,7 @@ public class PageFlipModify {
      * @param end end point of scroller will be set
      */
 
-    /*
+
     private void computeScrollPointsForClickingFlip(float x,
                                                     Point start,
                                                     Point end) {
@@ -941,8 +936,8 @@ public class PageFlipModify {
         GLPoint diagonalP = page.diagonalP;
 
         // forward and backward flip have different degree
-        float tanOfForwardAngle = MAX_TAN_OF_FORWARD_FLIP;
-        float tanOfBackwardAngle = MAX_TAN_OF_BACKWARD_FLIP;
+        float tanOfForwardAngle = page.MAX_TAN_OF_FORWARD_FLIP;
+        float tanOfBackwardAngle = page.MAX_TAN_OF_BACKWARD_FLIP;
         if ((originP.y < 0 && originP.x > 0) ||
                 (originP.y > 0 && originP.x < 0)) {
             tanOfForwardAngle = -tanOfForwardAngle;
@@ -955,9 +950,9 @@ public class PageFlipModify {
                 mListener != null &&
                 mListener.canFlipBackward()) {
             mFlipState = PageFlipState.BACKWARD_FLIP;
-            mKValue = tanOfBackwardAngle;
+            page.mKValue = tanOfBackwardAngle;
             start.set((int)diagonalP.x,
-                    (int)(originP.y + (start.x - originP.x) * mKValue));
+                    (int)(originP.y + (start.x - originP.x) * page.mKValue));
             end.set((int)originP.x - 5, (int)originP.y);
         }
         // forward flip
@@ -965,7 +960,7 @@ public class PageFlipModify {
                 mListener.canFlipForward() &&
                 page.isXInRange(x, mWidthRationOfClickToFlip)) {
             mFlipState = PageFlipState.FORWARD_FLIP;
-            mKValue = tanOfForwardAngle;
+            page.mKValue = tanOfForwardAngle;
 
             // compute start.x
             if (originP.x < 0) {
@@ -976,7 +971,7 @@ public class PageFlipModify {
             }
 
             // compute start.y
-            start.y = (int)(originP.y + (start.x - originP.x) * mKValue);
+            start.y = (int)(originP.y + (start.x - originP.x) * page.mKValue);
 
             // compute end.x
             // left page in double page mode
@@ -991,7 +986,7 @@ public class PageFlipModify {
         }
     }
 
-    */
+
 
     /**
      * Compute animating and check if it can continue
@@ -999,9 +994,6 @@ public class PageFlipModify {
      * @return true animating is continue or it is stopped
      */
     public boolean animating() {
-
-        /*
-        //need to handle later
 
         final PageModify page = mPages[FIRST_PAGE];
         final GLPoint originP = page.originP;
@@ -1013,12 +1005,14 @@ public class PageFlipModify {
             // get new (x, y)
             mScroller.computeScrollOffset();
             mTouchP.set(mScroller.getCurrX(), mScroller.getCurrY());
+            page.mFakeTouchP.set(mTouchP.x, mTouchP.y);
 
             // for backward and restore flip, compute x to check if it can
             // continue to flip
             if (mFlipState == PageFlipState.BACKWARD_FLIP ||
                     mFlipState == PageFlipState.RESTORE_FLIP) {
-                mTouchP.y = (mTouchP.x - originP.x) * mKValue + originP.y;
+                mTouchP.y = (mTouchP.x - originP.x) * page.mKValue + originP.y;
+                page.mFakeTouchP.y = mTouchP.y;
                 isAnimating = Math.abs(mTouchP.x - originP.x) > 10;
             }
             // check if flip is vertical
@@ -1027,24 +1021,23 @@ public class PageFlipModify {
             }
 
             // compute middle point
-            mMiddleP.set((mTouchP.x + originP.x) * 0.5f,
+            page.mMiddleP.set((mTouchP.x + originP.x) * 0.5f,
                     (mTouchP.y + originP.y) * 0.5f);
 
             // compute key points
             if (mIsVertical) {
-                computeKeyVertexesWhenVertical();
+                page.computeKeyVertexesWhenVertical();
             }
             else {
-                computeKeyVertexesWhenSlope();
+                page.computeKeyVertexesWhenSlope();
             }
-
 
             // in single page mode, check if the whole fold page is outside the
             // screen and animating should be stopped
             if (mFlipState == PageFlipState.FORWARD_FLIP) {
-                float r = (float)(mLenOfTouchOrigin * mSemiPerimeterRatio /
+                float r = (float)(page.mLenOfTouchOrigin * page.mSemiPerimeterRatio /
                         Math.PI);
-                float x = (mYFoldP1c.y - diagonalP.y) * mKValue + r;
+                float x = (page.mYFoldP1c.y - diagonalP.y) * page.mKValue + r;
                 isAnimating = x > (diagonalP.x - originP.x);
             }
         }
@@ -1055,17 +1048,13 @@ public class PageFlipModify {
         }
         // continue animation and compute vertexes
         else if (mIsVertical) {
-            computeVertexesWhenVertical();
+            page.computeVertexesWhenVertical();
         }
         else {
-            computeVertexesWhenSlope();
+            page.computeVertexesWhenSlope();
         }
 
-        */
-
-        //return isAnimating;
-
-        return false;
+        return isAnimating;
     }
 
     /**
@@ -1144,7 +1133,6 @@ public class PageFlipModify {
      */
     public void drawFlipFrame() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
         //make it for each page
         for(int itrp=0; itrp<PAGE_SIZE; itrp++)
