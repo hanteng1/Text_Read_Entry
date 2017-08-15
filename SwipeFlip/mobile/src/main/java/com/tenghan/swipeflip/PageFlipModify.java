@@ -114,7 +114,7 @@ public class PageFlipModify {
     // pages and index
     private final static int FIRST_PAGE = 0;
     private int pageIndex;
-    public final static int PAGE_SIZE = 1; // 2 for testing
+    public final static int PAGE_SIZE = 4; // 2 for testing
 
     // view size
     private GLViewRect mViewRect;
@@ -1160,27 +1160,28 @@ public class PageFlipModify {
 
         //make it for each page
         //the drawing order is very important
+
+        // 1. draw back of fold page
+        glUseProgram(mFoldBackVertexProgram.mProgramRef);
+        glActiveTexture(GL_TEXTURE0);
         for(int itrp= PAGE_SIZE - 1; itrp >= 0; itrp--) {
-            // 1. draw back of fold page
-            glUseProgram(mFoldBackVertexProgram.mProgramRef);
-            glActiveTexture(GL_TEXTURE0);
             mPages[itrp].mFoldBackVertexes.draw(mFoldBackVertexProgram,
                     mPages[itrp],
                     mGradientShadowTextureID);
         }
 
+        // 2. draw unfold page and front of fold page
+        //z is set to 0
+        glUseProgram(mVertexProgram.mProgramRef);
+        glActiveTexture(GL_TEXTURE0);
         for(int itrp=0; itrp<PAGE_SIZE; itrp++) {
-            // 2. draw unfold page and front of fold page
-            glUseProgram(mVertexProgram.mProgramRef);
-            glActiveTexture(GL_TEXTURE0);
             mPages[itrp].drawFrontPage(mVertexProgram,
                     mPages[itrp].mFoldFrontVertexes);
         }
 
+        // 3. draw edge and base shadow of fold parts
+        glUseProgram(mShadowVertexProgram.mProgramRef);
         for(int itrp= PAGE_SIZE - 1; itrp>=0; itrp--) {
-            // 3. draw edge and base shadow of fold parts
-
-            glUseProgram(mShadowVertexProgram.mProgramRef);
             if(itrp == 0) {
                 mPages[itrp].mFoldBaseShadow.draw(mShadowVertexProgram);
             }
@@ -1198,6 +1199,7 @@ public class PageFlipModify {
         glActiveTexture(GL_TEXTURE0);
 
         for(int itrp=0; itrp<PAGE_SIZE; itrp++)
+        //for(int itrp= PAGE_SIZE - 1; itrp>=0; itrp--)
         {
             //Matrix.translateM(mVertexProgram.MVPMatrix, 0, -50.0f, 0.0f, 0.0f);
 

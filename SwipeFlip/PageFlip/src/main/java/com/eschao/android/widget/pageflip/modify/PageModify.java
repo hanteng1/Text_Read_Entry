@@ -1031,9 +1031,8 @@ public class PageModify {
         float cy = y * cosA - x * sinA + oY;
         mFoldBackVertexes.addVertex(cx, cy, cz, (float)sinR, coordX, coordY);
 
-
         //print the vertex
-        Log.d(TAG, "" + cx + ", " + cy + ", " + cz);
+        //Log.d(TAG, "" + cx + ", " + cy + ", " + cz);
 
         // compute coordinates of fold shadow edge
         float sRadian = (sx - tX) / mR;
@@ -1116,6 +1115,9 @@ public class PageModify {
         float cx = x * cosA + y * sinA + oX;
         float cy = y * cosA - x * sinA + oY;
         mFoldFrontVertexes.addVertex(cx, cy, cz, coordX, coordY);
+
+        //Log.d(TAG, "" + cx + ", " + cy + ", " + cz);
+
         mFoldBaseShadow.addVertexes(isX, cx, cy,
                 cx + baseWcosA, cy - baseWsinA);
     }
@@ -1296,7 +1298,7 @@ public class PageModify {
         //
         // compute points within the page
 
-        Log.d(TAG, "compute points within the page");
+        //Log.d(TAG, "compute back points within the page");
 
         int i = 0;
         for (;i <= count && Math.abs(y) < height;
@@ -1307,7 +1309,7 @@ public class PageModify {
                     textureY(y + oY), oX, oY);
         }
 
-        Log.d(TAG, "end of compute points within the page");
+        //Log.d(TAG, "end of compute back points within the page");
 
 
         // If y coordinate of point on YFP0 -> YFP is > diagonalP
@@ -1397,6 +1399,9 @@ public class PageModify {
         x = mXFoldPc.x - oX - stepX;
         y = mYFoldPc.y - oY - stepY;
         int j = 0;
+
+        //Log.d(TAG, "compute front points within the page");
+
         for (; j < count && Math.abs(y) < height; ++j, x -= stepX, y -= stepY) {
             computeFrontVertex(true, x, 0, xFoldP1, sinA, cosA,
                     baseWcosA, baseWsinA,
@@ -1405,6 +1410,8 @@ public class PageModify {
                     baseWcosA, baseWsinA,
                     cOX, textureY(y + oY), oX, oY, dY);
         }
+
+        //Log.d(TAG, "end of compute front points within the page");
 
         // compute points outside the page
         if (j < count) {
@@ -1440,7 +1447,7 @@ public class PageModify {
 
         // set uniform Z value for shadow vertexes
         mFoldEdgesShadow.vertexZ = mFoldFrontVertexes.getFloatAt(2);
-        mFoldBaseShadow.vertexZ = -0.5f;
+        mFoldBaseShadow.vertexZ = -0.5f;  //
 
         // add two vertexes to connect with the unfold front page
         buildVertexesOfPageWhenSlope(mFoldFrontVertexes, mXFoldP1c, mYFoldP1c,
