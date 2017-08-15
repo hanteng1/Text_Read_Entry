@@ -1031,6 +1031,10 @@ public class PageModify {
         float cy = y * cosA - x * sinA + oY;
         mFoldBackVertexes.addVertex(cx, cy, cz, (float)sinR, coordX, coordY);
 
+
+        //print the vertex
+        Log.d(TAG, "" + cx + ", " + cy + ", " + cz);
+
         // compute coordinates of fold shadow edge
         float sRadian = (sx - tX) / mR;
         sx = (float)(tX + mR * Math.sin(sRadian));
@@ -1291,6 +1295,9 @@ public class PageModify {
         // 3. P point will be computed
         //
         // compute points within the page
+
+        Log.d(TAG, "compute points within the page");
+
         int i = 0;
         for (;i <= count && Math.abs(y) < height;
              ++i, x -= stepX, y -= stepY, sy -= stepSY, sx -= stepSX) {
@@ -1299,6 +1306,9 @@ public class PageModify {
             computeBackVertex(false, 0, y, sx, y, xFoldP1, sinA, cosA, cOX,
                     textureY(y + oY), oX, oY);
         }
+
+        Log.d(TAG, "end of compute points within the page");
+
 
         // If y coordinate of point on YFP0 -> YFP is > diagonalP
         // There are two cases:

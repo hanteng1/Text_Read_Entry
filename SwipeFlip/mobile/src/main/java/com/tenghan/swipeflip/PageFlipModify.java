@@ -114,7 +114,7 @@ public class PageFlipModify {
     // pages and index
     private final static int FIRST_PAGE = 0;
     private int pageIndex;
-    public final static int PAGE_SIZE = 2; // 2 for testing
+    public final static int PAGE_SIZE = 1; // 2 for testing
 
     // view size
     private GLViewRect mViewRect;
