@@ -903,6 +903,9 @@ public class PageModify {
             float fx = mXFoldP1c.x + mR * sinR;
             float fz = (float) (mR * (1 - Math.cos(radius)));
 
+            //fz *= (1.5f * (indexOfPage + 1));
+            fz *= (float)Math.pow(1.5, indexOfPage);
+
             // compute vertex when it is curled
             mFoldBackVertexes.addVertex(fx, dY, fz, sinR, coordX, cDY)
                     .addVertex(fx, oY, fz, sinR, coordX, cOY);
@@ -1012,6 +1015,7 @@ public class PageModify {
         mFoldBackVertexes.reset();
 
         // add the first 3 float numbers is fold triangle
+        //looks like the point was not used in rendering
         mFoldBackVertexes.addVertex(mFakeTouchP.x, mFakeTouchP.y, 1, 0, cOX, cOY);
 
         // compute vertexes for fold back part
@@ -1286,7 +1290,9 @@ public class PageModify {
         float cz = (float) (mR * (1 - Math.cos(rad)));
 
         //this step is to adjust the z value based on the index of page
+        //the closer to the flipped corner, the larger value it could be
         //cz *= (1.5f * (indexOfPage + 1));
+        cz *= (float)Math.pow(1.5, indexOfPage);
 
         // rotate degree -A, sin(-A) = -sin(A), cos(-A) = cos(A)
         float cx = x * cosA + y * sinA + oX;
