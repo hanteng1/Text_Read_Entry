@@ -61,7 +61,7 @@ public final class LoadBitmapTask implements Runnable {
                 new int[] {R.drawable.p2_480, R.drawable.p1_480, R.drawable.p3_480, R.drawable.p4_480, R.drawable.p5_480, R.drawable.p6_480}
         };
 
-        mWatchBG = R.drawable.p1_320;
+        mWatchBG = R.drawable.p2_320;
     }
 
 

@@ -144,7 +144,7 @@ public class PageModify {
     public Vertexes mFoldFrontVertexes;
     public FoldBackVertexes mFoldBackVertexes;
     public ShadowVertexes mFoldEdgesShadow;
-    public ShadowVertexes mFoldBaseShadow;
+    public ShadowVertexes mFoldBaseShadow;  //what is this used for
 
     //public FoldBackVertexProgram mFoldBackVertexProgram;
     //public ShadowVertexProgram mShadowVertexProgram;
@@ -193,10 +193,14 @@ public class PageModify {
     public GLViewRect mViewRect;
     public boolean mIsVertical;
     public int mPixelsOfMesh;
-
     public PointF mFakeTouchP;
 
     private static final String TAG = "PageModify";
+
+
+    //identity in PageFlipModify
+    //this is going to define the z value for unfold, fold front and fold back pages, and shadows
+    public int indexOfPage = -1;
 
     /**
      * Constructor
@@ -970,6 +974,261 @@ public class PageModify {
         computeMeshCount();
     }
 
+
+    /**
+     * Compute vertexes when page flip is slope
+     */
+    public void computeVertexesWhenSlope() {
+        //final PageModify page = this;
+        final float oX = originP.x;
+        final float oY = originP.y;
+        final float dY = diagonalP.y;
+        final float cOX = originP.texX;
+        final float cOY = originP.texY;
+        final float cDY = diagonalP.texY;
+        //final float height = height;
+        final float d2oY = dY - oY;
+
+        // compute radius and sin/cos of angle
+        float sinA = (mFakeTouchP.y - oY) / mLenOfTouchOrigin;
+        float cosA = (oX - mFakeTouchP.x) / mLenOfTouchOrigin;
+
+        // need to translate before rotate, and then translate back
+        int count = mMeshCount;
+        float xFoldP1 = (mXFoldP1c.x - oX) * cosA;
+        float edgeW = mFoldEdgesShadowWidth.width(mR);
+        float baseW = mFoldBaseShadowWidth.width(mR);
+        float baseWcosA = baseW * cosA;
+        float baseWsinA = baseW * sinA;
+        float edgeY = oY > 0 ? edgeW : -edgeW;
+        float edgeX = oX > 0 ? edgeW : -edgeW;
+        float stepSY = edgeY / count;
+        float stepSX = edgeX / count;
+
+        // reset vertexes buffer counter
+        mFoldEdgesShadow.reset();
+        mFoldBaseShadow.reset();
+        mFoldFrontVertexes.reset();
+        mFoldBackVertexes.reset();
+
+        // add the first 3 float numbers is fold triangle
+        mFoldBackVertexes.addVertex(mFakeTouchP.x, mFakeTouchP.y, 1, 0, cOX, cOY);
+
+        // compute vertexes for fold back part
+        float stepX = (mXFoldP0c.x - mXFoldPc.x) / count;
+        float stepY = (mYFoldP0c.y - mYFoldPc.y) / count;
+        float x = mXFoldP0c.x - oX;
+        float y = mYFoldP0c.y - oY;
+        float sx = edgeX;
+        float sy = edgeY;
+
+        // compute point of back of fold page
+        // Case 1: y coordinate of point YFP0 -> YFP is < diagonalP.y
+        //
+        //   <---- Flip
+        // +-------------+ diagonalP
+        // |             |
+        // |             + YFP
+        // |            /|
+        // |           / |
+        // |          /  |
+        // |         /   |
+        // |        /    + YFP0
+        // |       / p  /|
+        // +------+--.-+-+ originP
+        //      XFP   XFP0
+        //
+        // 1. XFP -> XFP0 -> originP -> YFP0 ->YFP is back of fold page
+        // 2. XFP -> XFP0 -> YFP0 -> YFP is a half of cylinder when page is
+        //    curled
+        // 3. P point will be computed
+        //
+        // compute points within the page
+
+        //Log.d(TAG, "compute back points within the page");
+        //for the back vertex, the larger the indexofPage value is, the larger the z values should be
+        //and for the front vertex, it should be the opposite
+
+        int i = 0;
+        for (;i <= count && Math.abs(y) < height;
+             ++i, x -= stepX, y -= stepY, sy -= stepSY, sx -= stepSX) {
+            computeBackVertex(true, x, 0, x, sy, xFoldP1, sinA, cosA,
+                    textureX(x + oX), cOY, oX, oY);
+            computeBackVertex(false, 0, y, sx, y, xFoldP1, sinA, cosA, cOX,
+                    textureY(y + oY), oX, oY);
+        }
+
+        //Log.d(TAG, "end of compute back points within the page");
+
+
+        // If y coordinate of point on YFP0 -> YFP is > diagonalP
+        // There are two cases:
+        //                      <---- Flip
+        //     Case 2                               Case 3
+        //          YFP                               YFP   YFP0
+        // +---------+---+ diagonalP          +--------+-----+--+ diagonalP
+        // |        /    |                    |       /     /   |
+        // |       /     + YFP0               |      /     /    |
+        // |      /     /|                    |     /     /     |
+        // |     /     / |                    |    /     /      |
+        // |    /     /  |                    |   /     /       |
+        // |   / p   /   |                    |  / p   /        |
+        // +--+--.--+----+ originalP          +-+--.--+---------+ originalP
+        //   XFP   XFP0                        XFP   XFP0
+        //
+        // compute points outside the page
+        if (i <= count) {
+            if (Math.abs(y) != height) {
+                // case 3: compute mapping point of diagonalP
+                if (Math.abs(mYFoldP0c.y - oY) > height) {
+                    float tx = oX + 2 * mKValue * (mYFoldPc.y - dY);
+                    float ty = dY + mKValue * (tx - oX);
+                    mFoldBackVertexes.addVertex(tx, ty, 1, 0, cOX, cDY);
+
+                    float tsx = tx - sx;
+                    float tsy = dY + mKValue * (tsx - oX);
+                    mFoldEdgesShadow.addVertexes(false, tx, ty, tsx, tsy);
+                }
+                // case 2: compute mapping point of diagonalP
+                else {
+                    float x1 = mKValue * d2oY;
+                    computeBackVertex(true, x1, 0, x1, sy, xFoldP1, sinA, cosA,
+                            textureX(x1 + oX), cOY, oX, oY);
+                    computeBackVertex(false, 0, d2oY, sx, d2oY, xFoldP1, sinA,
+                            cosA, cOX, cDY, oX, oY);
+                }
+            }
+
+            // compute the remaining points
+            for (; i <= count;
+                 ++i, x -= stepX, y -= stepY, sy -= stepSY, sx -= stepSX) {
+                computeBackVertex(true, x, 0, x, sy, xFoldP1, sinA, cosA,
+                        textureX(x + oX), cOY, oX, oY);
+
+                // since the origin Y is beyond page, we need to compute its
+                // projection point on page border and then compute mapping
+                // point on curled cylinder
+                float x1 = mKValue * (y + oY - dY);
+                computeBackVertex(x1, d2oY, xFoldP1, sinA, cosA,
+                        textureX(x1 + oX), cDY, oX, oY);
+            }
+        }
+
+        //to this step, the back vertexes of fold back is set
+
+
+
+        //show some basic info
+        mFoldBackVertexes.toFloatBuffer();
+
+        //Log.d(TAG, "page index: " + indexOfPage + ", fold back vertex size: " + mFoldBackVertexes.mVertexesSize);
+        //int sizepervertex = mFoldBackVertexes.mSizeOfPerVex;
+        //for(int itri = 0; itri < mFoldBackVertexes.mVertexesSize; itri++)
+        //{
+        //    Log.d(TAG, "x " + mFoldBackVertexes.mVertexes[itri * sizepervertex + 0] + " y " + mFoldBackVertexes.mVertexes[itri * sizepervertex + 1] + "  z " + mFoldBackVertexes.mVertexes[itri * sizepervertex + 2]);
+        //}
+        //lets play some tricks
+
+        // Like above computation, the below steps are computing vertexes of
+        // front of fold page
+        // Case 1: y coordinate of point YFP -> YFP1 is < diagonalP.y
+        //
+        //     <---- Flip
+        // +----------------+ diagonalP
+        // |                |
+        // |                + YFP1
+        // |               /|
+        // |              / |
+        // |             /  |
+        // |            /   |
+        // |           /    + YFP
+        // |          /    /|
+        // |         /    / |
+        // |        /    /  + YFP0
+        // |       /    /  /|
+        // |      / p  /  / |
+        // +-----+--.-+--+--+ originP
+        //    XFP1  XFP  XFP0
+        //
+        // 1. XFP -> YFP -> YFP1 ->XFP1 is front of fold page and a half of
+        //    cylinder when page is curled.
+        // 2. YFP->XFP is joint line of front and back of fold page
+        // 3. P point will be computed
+        //
+        // compute points within the page
+        stepX = (mXFoldPc.x - mXFoldP1c.x) / count;
+        stepY = (mYFoldPc.y - mYFoldP1c.y) / count;
+        x = mXFoldPc.x - oX - stepX;
+        y = mYFoldPc.y - oY - stepY;
+        int j = 0;
+
+        //Log.d(TAG, "compute front points within the page");
+
+        for (; j < count && Math.abs(y) < height; ++j, x -= stepX, y -= stepY) {
+            computeFrontVertex(true, x, 0, xFoldP1, sinA, cosA,
+                    baseWcosA, baseWsinA,
+                    textureX(x + oX), cOY, oX, oY, dY);
+            computeFrontVertex(false, 0, y, xFoldP1, sinA, cosA,
+                    baseWcosA, baseWsinA,
+                    cOX, textureY(y + oY), oX, oY, dY);
+        }
+
+        //Log.d(TAG, "end of compute front points within the page");
+
+        // compute points outside the page
+        if (j < count) {
+            // compute mapping point of diagonalP
+            if (Math.abs(y) != height && j > 0) {
+                float y1 = (dY - oY);
+                float x1 = mKValue * y1;
+                computeFrontVertex(true, x1, 0, xFoldP1, sinA, cosA,
+                        baseWcosA, baseWsinA,
+                        textureX(x1 + oX), cOY, oX, oY, dY);
+
+                computeFrontVertex(0, y1, xFoldP1, sinA, cosA, cOX,
+                        textureY(y1+oY), oX, oY) ;
+            }
+
+            // compute last pair of vertexes of base shadow
+            computeBaseShadowLastVertex(0, y, xFoldP1, sinA, cosA,
+                    baseWcosA, baseWsinA,
+                    oX, oY, dY);
+
+            // compute the remaining points
+            for (; j < count; ++j, x -= stepX, y -= stepY) {
+                computeFrontVertex(true, x, 0, xFoldP1, sinA, cosA,
+                        baseWcosA, baseWsinA,
+                        textureX(x + oX), cOY, oX, oY, dY);
+
+                float x1 = mKValue * (y + oY - dY);
+                computeFrontVertex(x1, d2oY, xFoldP1, sinA, cosA,
+                        textureX(x1 + oX), cDY, oX, oY);
+            }
+
+        }
+
+        // set uniform Z value for shadow vertexes
+        mFoldEdgesShadow.vertexZ = mFoldFrontVertexes.getFloatAt(2);  //this shouldn't be uniform
+
+        Log.d(TAG, "the depth of edge shadow is " + mFoldEdgesShadow.vertexZ);
+
+
+        mFoldBaseShadow.vertexZ = -0.5f;
+
+        // add two vertexes to connect with the unfold front page
+        buildVertexesOfPageWhenSlope(mFoldFrontVertexes, mXFoldP1c, mYFoldP1c,
+                mKValue);
+
+        //at this step, the fold front vertexes are set
+        mFoldFrontVertexes.toFloatBuffer();
+
+        // compute vertexes of fold edge shadow
+        mFoldBaseShadow.toFloatBuffer();
+        computeVertexesOfFoldTopEdgeShadow(mFakeTouchP.x, mFakeTouchP.y, sinA, cosA,
+                -edgeX, edgeY);
+        mFoldEdgesShadow.toFloatBuffer();
+    }
+
     /**
      * Compute back vertex and edge shadow vertex of fold page
      * <p>
@@ -1025,6 +1284,9 @@ public class PageModify {
         double sinR = Math.sin(rad);
         x = (float) (tX + mR * sinR);
         float cz = (float) (mR * (1 - Math.cos(rad)));
+
+        //this step is to adjust the z value based on the index of page
+        //cz *= (1.5f * (indexOfPage + 1));
 
         // rotate degree -A, sin(-A) = -sin(A), cos(-A) = cos(A)
         float cx = x * cosA + y * sinA + oX;
@@ -1228,238 +1490,7 @@ public class PageModify {
         mFoldBaseShadow.addVertexes(false, bx1, dY, bx2, dY);
     }
 
-    /**
-     * Compute vertexes when page flip is slope
-     */
-    public void computeVertexesWhenSlope() {
-        //final PageModify page = this;
-        final float oX = originP.x;
-        final float oY = originP.y;
-        final float dY = diagonalP.y;
-        final float cOX = originP.texX;
-        final float cOY = originP.texY;
-        final float cDY = diagonalP.texY;
-        //final float height = height;
-        final float d2oY = dY - oY;
 
-        // compute radius and sin/cos of angle
-        float sinA = (mFakeTouchP.y - oY) / mLenOfTouchOrigin;
-        float cosA = (oX - mFakeTouchP.x) / mLenOfTouchOrigin;
-
-        // need to translate before rotate, and then translate back
-        int count = mMeshCount;
-        float xFoldP1 = (mXFoldP1c.x - oX) * cosA;
-        float edgeW = mFoldEdgesShadowWidth.width(mR);
-        float baseW = mFoldBaseShadowWidth.width(mR);
-        float baseWcosA = baseW * cosA;
-        float baseWsinA = baseW * sinA;
-        float edgeY = oY > 0 ? edgeW : -edgeW;
-        float edgeX = oX > 0 ? edgeW : -edgeW;
-        float stepSY = edgeY / count;
-        float stepSX = edgeX / count;
-
-        // reset vertexes buffer counter
-        mFoldEdgesShadow.reset();
-        mFoldBaseShadow.reset();
-        mFoldFrontVertexes.reset();
-        mFoldBackVertexes.reset();
-
-        // add the first 3 float numbers is fold triangle
-        mFoldBackVertexes.addVertex(mFakeTouchP.x, mFakeTouchP.y, 1, 0, cOX, cOY);
-
-        // compute vertexes for fold back part
-        float stepX = (mXFoldP0c.x - mXFoldPc.x) / count;
-        float stepY = (mYFoldP0c.y - mYFoldPc.y) / count;
-        float x = mXFoldP0c.x - oX;
-        float y = mYFoldP0c.y - oY;
-        float sx = edgeX;
-        float sy = edgeY;
-
-        // compute point of back of fold page
-        // Case 1: y coordinate of point YFP0 -> YFP is < diagonalP.y
-        //
-        //   <---- Flip
-        // +-------------+ diagonalP
-        // |             |
-        // |             + YFP
-        // |            /|
-        // |           / |
-        // |          /  |
-        // |         /   |
-        // |        /    + YFP0
-        // |       / p  /|
-        // +------+--.-+-+ originP
-        //      XFP   XFP0
-        //
-        // 1. XFP -> XFP0 -> originP -> YFP0 ->YFP is back of fold page
-        // 2. XFP -> XFP0 -> YFP0 -> YFP is a half of cylinder when page is
-        //    curled
-        // 3. P point will be computed
-        //
-        // compute points within the page
-
-        //Log.d(TAG, "compute back points within the page");
-
-        int i = 0;
-        for (;i <= count && Math.abs(y) < height;
-             ++i, x -= stepX, y -= stepY, sy -= stepSY, sx -= stepSX) {
-            computeBackVertex(true, x, 0, x, sy, xFoldP1, sinA, cosA,
-                    textureX(x + oX), cOY, oX, oY);
-            computeBackVertex(false, 0, y, sx, y, xFoldP1, sinA, cosA, cOX,
-                    textureY(y + oY), oX, oY);
-        }
-
-        //Log.d(TAG, "end of compute back points within the page");
-
-
-        // If y coordinate of point on YFP0 -> YFP is > diagonalP
-        // There are two cases:
-        //                      <---- Flip
-        //     Case 2                               Case 3
-        //          YFP                               YFP   YFP0
-        // +---------+---+ diagonalP          +--------+-----+--+ diagonalP
-        // |        /    |                    |       /     /   |
-        // |       /     + YFP0               |      /     /    |
-        // |      /     /|                    |     /     /     |
-        // |     /     / |                    |    /     /      |
-        // |    /     /  |                    |   /     /       |
-        // |   / p   /   |                    |  / p   /        |
-        // +--+--.--+----+ originalP          +-+--.--+---------+ originalP
-        //   XFP   XFP0                        XFP   XFP0
-        //
-        // compute points outside the page
-        if (i <= count) {
-            if (Math.abs(y) != height) {
-                // case 3: compute mapping point of diagonalP
-                if (Math.abs(mYFoldP0c.y - oY) > height) {
-                    float tx = oX + 2 * mKValue * (mYFoldPc.y - dY);
-                    float ty = dY + mKValue * (tx - oX);
-                    mFoldBackVertexes.addVertex(tx, ty, 1, 0, cOX, cDY);
-
-                    float tsx = tx - sx;
-                    float tsy = dY + mKValue * (tsx - oX);
-                    mFoldEdgesShadow.addVertexes(false, tx, ty, tsx, tsy);
-                }
-                // case 2: compute mapping point of diagonalP
-                else {
-                    float x1 = mKValue * d2oY;
-                    computeBackVertex(true, x1, 0, x1, sy, xFoldP1, sinA, cosA,
-                            textureX(x1 + oX), cOY, oX, oY);
-                    computeBackVertex(false, 0, d2oY, sx, d2oY, xFoldP1, sinA,
-                            cosA, cOX, cDY, oX, oY);
-                }
-            }
-
-            // compute the remaining points
-            for (; i <= count;
-                 ++i, x -= stepX, y -= stepY, sy -= stepSY, sx -= stepSX) {
-                computeBackVertex(true, x, 0, x, sy, xFoldP1, sinA, cosA,
-                        textureX(x + oX), cOY, oX, oY);
-
-                // since the origin Y is beyond page, we need to compute its
-                // projection point on page border and then compute mapping
-                // point on curled cylinder
-                float x1 = mKValue * (y + oY - dY);
-                computeBackVertex(x1, d2oY, xFoldP1, sinA, cosA,
-                        textureX(x1 + oX), cDY, oX, oY);
-            }
-        }
-
-        mFoldBackVertexes.toFloatBuffer();
-
-        // Like above computation, the below steps are computing vertexes of
-        // front of fold page
-        // Case 1: y coordinate of point YFP -> YFP1 is < diagonalP.y
-        //
-        //     <---- Flip
-        // +----------------+ diagonalP
-        // |                |
-        // |                + YFP1
-        // |               /|
-        // |              / |
-        // |             /  |
-        // |            /   |
-        // |           /    + YFP
-        // |          /    /|
-        // |         /    / |
-        // |        /    /  + YFP0
-        // |       /    /  /|
-        // |      / p  /  / |
-        // +-----+--.-+--+--+ originP
-        //    XFP1  XFP  XFP0
-        //
-        // 1. XFP -> YFP -> YFP1 ->XFP1 is front of fold page and a half of
-        //    cylinder when page is curled.
-        // 2. YFP->XFP is joint line of front and back of fold page
-        // 3. P point will be computed
-        //
-        // compute points within the page
-        stepX = (mXFoldPc.x - mXFoldP1c.x) / count;
-        stepY = (mYFoldPc.y - mYFoldP1c.y) / count;
-        x = mXFoldPc.x - oX - stepX;
-        y = mYFoldPc.y - oY - stepY;
-        int j = 0;
-
-        //Log.d(TAG, "compute front points within the page");
-
-        for (; j < count && Math.abs(y) < height; ++j, x -= stepX, y -= stepY) {
-            computeFrontVertex(true, x, 0, xFoldP1, sinA, cosA,
-                    baseWcosA, baseWsinA,
-                    textureX(x + oX), cOY, oX, oY, dY);
-            computeFrontVertex(false, 0, y, xFoldP1, sinA, cosA,
-                    baseWcosA, baseWsinA,
-                    cOX, textureY(y + oY), oX, oY, dY);
-        }
-
-        //Log.d(TAG, "end of compute front points within the page");
-
-        // compute points outside the page
-        if (j < count) {
-            // compute mapping point of diagonalP
-            if (Math.abs(y) != height && j > 0) {
-                float y1 = (dY - oY);
-                float x1 = mKValue * y1;
-                computeFrontVertex(true, x1, 0, xFoldP1, sinA, cosA,
-                        baseWcosA, baseWsinA,
-                        textureX(x1 + oX), cOY, oX, oY, dY);
-
-                computeFrontVertex(0, y1, xFoldP1, sinA, cosA, cOX,
-                        textureY(y1+oY), oX, oY) ;
-            }
-
-            // compute last pair of vertexes of base shadow
-            computeBaseShadowLastVertex(0, y, xFoldP1, sinA, cosA,
-                    baseWcosA, baseWsinA,
-                    oX, oY, dY);
-
-            // compute the remaining points
-            for (; j < count; ++j, x -= stepX, y -= stepY) {
-                computeFrontVertex(true, x, 0, xFoldP1, sinA, cosA,
-                        baseWcosA, baseWsinA,
-                        textureX(x + oX), cOY, oX, oY, dY);
-
-                float x1 = mKValue * (y + oY - dY);
-                computeFrontVertex(x1, d2oY, xFoldP1, sinA, cosA,
-                        textureX(x1 + oX), cDY, oX, oY);
-            }
-
-        }
-
-        // set uniform Z value for shadow vertexes
-        mFoldEdgesShadow.vertexZ = mFoldFrontVertexes.getFloatAt(2);
-        mFoldBaseShadow.vertexZ = -0.5f;  //
-
-        // add two vertexes to connect with the unfold front page
-        buildVertexesOfPageWhenSlope(mFoldFrontVertexes, mXFoldP1c, mYFoldP1c,
-                mKValue);
-        mFoldFrontVertexes.toFloatBuffer();
-
-        // compute vertexes of fold edge shadow
-        mFoldBaseShadow.toFloatBuffer();
-        computeVertexesOfFoldTopEdgeShadow(mFakeTouchP.x, mFakeTouchP.y, sinA, cosA,
-                -edgeX, edgeY);
-        mFoldEdgesShadow.toFloatBuffer();
-    }
 
     /**
      * Compute vertexes of fold top edge shadow

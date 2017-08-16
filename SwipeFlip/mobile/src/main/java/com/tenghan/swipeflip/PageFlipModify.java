@@ -114,7 +114,7 @@ public class PageFlipModify {
     // pages and index
     private final static int FIRST_PAGE = 0;
     private int pageIndex;
-    public final static int PAGE_SIZE = 4; // 2 for testing
+    public final static int PAGE_SIZE = 5; // 2 for testing
 
     // view size
     private GLViewRect mViewRect;
@@ -575,7 +575,7 @@ public class PageFlipModify {
 
             mPages[itrp] = new PageModify(mViewRect.left, mViewRect.right,
                     mViewRect.top, mViewRect.bottom);
-
+            mPages[itrp].indexOfPage = itrp;
             mPages[itrp].mViewRect.set(mViewRect.width, mViewRect.height);
 
         }
@@ -1182,9 +1182,8 @@ public class PageFlipModify {
         // 3. draw edge and base shadow of fold parts
         glUseProgram(mShadowVertexProgram.mProgramRef);
         for(int itrp= PAGE_SIZE - 1; itrp>=0; itrp--) {
-            if(itrp == 0) {
-                mPages[itrp].mFoldBaseShadow.draw(mShadowVertexProgram);
-            }
+
+            mPages[itrp].mFoldBaseShadow.draw(mShadowVertexProgram);
             mPages[itrp].mFoldEdgesShadow.draw(mShadowVertexProgram);
         }
     }
