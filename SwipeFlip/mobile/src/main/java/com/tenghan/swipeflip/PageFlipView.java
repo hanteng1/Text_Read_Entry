@@ -37,7 +37,7 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         super(context);
         newHandler();
 
-        mDuration = 1000;  //an interesting number to try
+        mDuration = 1000;  //an interesting number to try, 1000 is fine
         int pixelsOfMesh = 10;
         boolean isAuto = false;
 

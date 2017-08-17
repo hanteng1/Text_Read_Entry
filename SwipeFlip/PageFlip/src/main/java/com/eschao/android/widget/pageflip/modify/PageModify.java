@@ -1214,9 +1214,7 @@ public class PageModify {
         // set uniform Z value for shadow vertexes
         mFoldEdgesShadow.vertexZ = mFoldFrontVertexes.getFloatAt(2);  //this shouldn't be uniform
 
-        Log.d(TAG, "the depth of edge shadow is " + mFoldEdgesShadow.vertexZ);
-
-
+        //Log.d(TAG, "the depth of edge shadow is " + mFoldEdgesShadow.vertexZ);
         mFoldBaseShadow.vertexZ = -0.5f;
 
         // add two vertexes to connect with the unfold front page
