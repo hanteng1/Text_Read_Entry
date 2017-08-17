@@ -114,7 +114,7 @@ public class PageFlipModify {
     // pages and index
     private final static int FIRST_PAGE = 0;
     private int pageIndex;
-    public final static int PAGE_SIZE = 5; // 2 for testing
+    public final static int PAGE_SIZE = 1; // 2 for testing
 
     // view size
     private GLViewRect mViewRect;
@@ -235,6 +235,7 @@ public class PageFlipModify {
 
     // is vertical page flip
     private boolean mIsVertical;
+    private boolean mIsHorizontal;
     private PageFlipState mFlipState;
 
     // use for flip animation
@@ -265,6 +266,7 @@ public class PageFlipModify {
         mFlipState = PageFlipState.END_FLIP;
 
         mIsVertical = false;
+        mIsHorizontal = false;
         mViewRect = new GLViewRect();
         mPixelsOfMesh = DEFAULT_MESH_VERTEX_PIXELS;
 
@@ -707,7 +709,8 @@ public class PageFlipModify {
                 GLPoint diagonalP = page.diagonalP;
 
                 // set OriginP and DiagonalP points
-                page.setOriginAndDiagonalPoints(dy);
+                //page.setOriginAndDiagonalPoints(dy);
+                page.setOriginAndDiagonalPoints(dx, dy, mStartTouchP.x, mStartTouchP.y);
                 // compute max degree between X axis and line from TouchP to OriginP
                 // and max degree between X axis and line from TouchP to
                 // (OriginP.x, DiagonalP.Y)
@@ -752,6 +755,10 @@ public class PageFlipModify {
                  mFlipState == PageFlipState.RESTORE_FLIP) {
 
              mIsVertical = Math.abs(dy) <= 1f;
+             if(mIsVertical == false)
+             {
+                 mIsHorizontal = Math.abs(dx) <= 1f;
+             }
              // multiply a factor to make sure the touch point is always head of
              // finger point
 
@@ -760,13 +767,15 @@ public class PageFlipModify {
                  //differentiate dx
                  //the 0.9 can be adjusted
                  dx = (touchX - mStartTouchP.x) * (float)Math.pow(TOUCH_DIFF_COEFFICIENT, itrp);  //forwards or backwards
-                 dy = (touchY - mStartTouchP.y);  //upwards or downwards
+                 dy = (touchY - mStartTouchP.y) * (float)Math.pow(TOUCH_DIFF_COEFFICIENT, itrp);  //upwards or downwards
 
-                 if (PageFlipState.FORWARD_FLIP == mFlipState) {
+                 if (PageFlipState.FORWARD_FLIP == mFlipState || PageFlipState.BACKWARD_FLIP == mFlipState) {
                      dx *= 1.2f;
+                     dy *= 1.2f;
                  }
                  else {
                      dx *= 1.1f;
+                     dy *= 1.1f;
                  }
 
                  PageModify page = mPages[itrp];
@@ -784,34 +793,40 @@ public class PageFlipModify {
                  }
 
                  // compute new TouchP.y
-                 float maxY = dx * page.mMaxT2OAngleTan;
-                 if (Math.abs(dy) > Math.abs(maxY)) {
-                     dy = maxY;
-                 }
+                 //this is to limit the dy values
+                 //float maxY = dx * page.mMaxT2OAngleTan;
+                 //if (Math.abs(dy) > Math.abs(maxY)) {
+                 //    dy = maxY;
+                 //}
 
                  // check if XFoldX1 is outside page width, if yes, recompute new
                  // TouchP.y to assure the XFoldX1 is in page width
-                 float t2oK = dy / dx;
-                 float xTouchX = dx + dy * t2oK;
-                 float xRatio = (1 + page.mSemiPerimeterRatio) * 0.5f;
-                 float xFoldX1 = xRatio * xTouchX;
-                 if (Math.abs(xFoldX1) + 2 >= page.width) {
-                     float dy2 = ((diagonalP.x - originP.x) / xRatio - dx) * dx;
-                     // ignore current moving if we can't get a valid dy, for example
-                     // , in double pages mode, when finger is moving from the one
-                     // page to another page, the dy2 is negative and should be
-                     // ignored
-                     if (dy2 < 0) {
-                         return false;
-                     }
 
-                     double t = Math.sqrt(dy2);
-                     if (originP.y > 0) {
-                         t = -t;
-                         dy = (int)Math.ceil(t);
-                     }
-                     else {
-                         dy = (int)Math.floor(t);
+                 // this is to set flipping angle restrictions
+                 if(mIsHorizontal == false)
+                 {
+                     float t2oK = dy / dx;
+                     float xTouchX = dx + dy * t2oK;
+                     float xRatio = (1 + page.mSemiPerimeterRatio) * 0.5f;
+                     float xFoldX1 = xRatio * xTouchX;
+                     if (Math.abs(xFoldX1) + 2 >= page.width) {
+                         float dy2 = ((diagonalP.x - originP.x) / xRatio - dx) * dx;
+                         // ignore current moving if we can't get a valid dy, for example
+                         // , in double pages mode, when finger is moving from the one
+                         // page to another page, the dy2 is negative and should be
+                         // ignored
+                         if (dy2 < 0) {
+                             return false;
+                         }
+
+                         double t = Math.sqrt(dy2);
+                         if (originP.y > 0) {
+                             t = -t;
+                             dy = (int)Math.ceil(t);
+                         }
+                         else {
+                             dy = (int)Math.floor(t);
+                         }
                      }
                  }
 
@@ -878,7 +893,7 @@ public class PageFlipModify {
         Point end = new Point(0, 0);
 
         // forward flipping
-        if (mFlipState == PageFlipState.FORWARD_FLIP) {
+        if (mFlipState == PageFlipState.FORWARD_FLIP || mFlipState == PageFlipState.BACKWARD_FLIP) {
             // can't go forward, restore current page
             if (page.isXInRange(touchX, WIDTH_RATIO_OF_RESTORE_FLIP)) {
                 end.x = (int)originP.x;
@@ -892,6 +907,7 @@ public class PageFlipModify {
             }
             end.y = (int)(originP.y);
         }
+        /*
         // backward flipping
         else if (mFlipState == PageFlipState.BACKWARD_FLIP) {
             // if not over middle x, change from backward to forward to restore
@@ -904,7 +920,7 @@ public class PageFlipModify {
                         (mTouchP.x - originP.x);
                 end.set((int) originP.x, (int) originP.y);
             }
-        }
+        }*/
         // ready to flip
         else if (mFlipState == PageFlipState.BEGIN_FLIP) {
             mIsVertical = false;
@@ -947,7 +963,8 @@ public class PageFlipModify {
 
         //the finger is outside of the view
 
-        return (mFlipState == PageFlipState.FORWARD_FLIP &&
+        return ((mFlipState == PageFlipState.FORWARD_FLIP ||
+                mFlipState == PageFlipState.BACKWARD_FLIP) &&
                 !mPages[FIRST_PAGE].contains(mViewRect.toOpenGLX(touchX),
                         mViewRect.toOpenGLY(touchY)));
     }
@@ -1045,13 +1062,6 @@ public class PageFlipModify {
             mScroller.computeScrollOffset();
             mTouchP.set(mScroller.getCurrX(), mScroller.getCurrY());
 
-            /*
-            mTouchP.set(dx + originP.x, dy + originP.y);
-                 page.mFakeTouchP.set(mTouchP.x, mTouchP.y);
-                 page.mMiddleP.x = (mTouchP.x + originP.x) * 0.5f;
-                 page.mMiddleP.y = (mTouchP.y + originP.y) * 0.5f;
-                     */
-
             for(int itrp = 0; itrp < PAGE_SIZE; itrp++)
             {
                 PageModify page = mPages[itrp];
@@ -1061,11 +1071,11 @@ public class PageFlipModify {
                 //differentiate the point
                 //caculate the dx and dy
                 float dx = (mTouchP.x - originP.x) * (float)Math.pow(TOUCH_DIFF_COEFFICIENT, itrp);
-                float dy = mTouchP.y - originP.y;
+                float dy = (mTouchP.y - originP.y) * (float)Math.pow(TOUCH_DIFF_COEFFICIENT, itrp);
 
-                Log.d(TAG, "dx " + dx);
+                //Log.d(TAG, "dx " + dx);
 
-                if(dx < 0 && originP.x > 0)   //can still support animation
+                if((dx < 0 && originP.x > 0) || (dx > 0 && originP.x < 0) )   //can still support animation
                 {
                     page.mFakeTouchP.set(originP.x + dx, originP.y + dy);
 
@@ -1098,9 +1108,6 @@ public class PageFlipModify {
                         page.computeKeyVertexesWhenSlope();
                     }
                 }
-
-
-
             }
 
             // in single page mode, check if the whole fold page is outside the
@@ -1128,7 +1135,6 @@ public class PageFlipModify {
                 PageModify page = mPages[itrp];
                 page.computeVertexesWhenVertical();
             }
-
         }
         else {
             for(int itrp =0; itrp < PAGE_SIZE; itrp++) {
@@ -1356,6 +1362,11 @@ public class PageFlipModify {
             if (mIsVertical) {
                 mPages[itrp].computeKeyVertexesWhenVertical();
                 mPages[itrp].computeVertexesWhenVertical();
+            }
+            else if (mIsHorizontal)
+            {
+                mPages[itrp].computeKeyVertexesWhenHorizontal();
+                mPages[itrp].computeVertexesWhenHorizontal();
             }
             else {
                 mPages[itrp].computeKeyVertexesWhenSlope();

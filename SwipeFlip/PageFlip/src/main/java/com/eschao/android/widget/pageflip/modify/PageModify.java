@@ -406,6 +406,10 @@ public class PageModify {
         return originP.x < 0 ? x > diagonalP.x : x < diagonalP.x;
     }
 
+    public boolean isYOutsidePage(float y) {
+        return originP.y < 0 ? y > diagonalP.y : y < diagonalP.y;
+    }
+
     /**
      * Compute index of page apexes order for current original point
      */
@@ -453,6 +457,47 @@ public class PageModify {
         diagonalP.texY = (top - diagonalP.y) / texHeight;
         return this;
     }
+
+    /**
+     * Set orginal point and diagonal point
+     *
+     * @param dx relative finger movement on X axis
+     * @param dy relative finger movement on Y axis
+     * @param startx x position of start point
+     * @param starty y position of start point
+     * @return
+     */
+    public PageModify setOriginAndDiagonalPoints(float dx, float dy, float startx, float starty) {
+
+        if(startx >= 0)
+        {
+            originP.x = right;
+            diagonalP.x = left;
+        }else
+        {
+            originP.x = left;
+            diagonalP.x = right;
+        }
+
+        if (dy > 0) {
+            originP.y = bottom;
+            diagonalP.y = top;
+        }
+        else {
+            originP.y = top;
+            diagonalP.y = bottom;
+        }
+
+        computeIndexOfApexOrder();
+
+        // set texture coordinates
+        originP.texX = (originP.x - left) / texWidth;
+        originP.texY = (top - originP.y) / texHeight;
+        diagonalP.texX = (diagonalP.x - left) / texWidth;
+        diagonalP.texY = (top - diagonalP.y) / texHeight;
+        return this;
+    }
+
 
     /**
      * Invert Y coordinate of original point and diagonal point
@@ -662,6 +707,92 @@ public class PageModify {
             float cx = textureX(xFoldP1.x);
             mXFoldP.set(xFoldP1.x, originP.y, 0, cx, originP.texY);
             mYFoldP.set(xFoldP1.x, diagonalP.y, 0, cx, diagonalP.texY);
+        }
+
+        // get apex order and fold vertex order
+        final int[] apexOrder = mPageApexOrders[mApexOrderIndex];
+        final int[] vexOrder = mFoldVexOrders[index];
+
+        // need to draw first texture, add xFoldX and yFoldY first. Remember
+        // the adding order of vertex in float buffer is X point prior to Y
+        // point
+        if (vexOrder[0] > 1) {
+            frontVertexes.addVertex(mXFoldP).addVertex(mYFoldP);
+        }
+
+        // add the leftover vertexes for the first texture
+        for (int i = 1; i < vexOrder[0]; ++i) {
+            int k = apexOrder[vexOrder[i]];
+            int m = k * 3;
+            int n = k << 1;
+            frontVertexes.addVertex(mApexes[m], mApexes[m + 1], 0,
+                    mApexTexCoords[n], mApexTexCoords[n + 1]);
+        }
+
+        // the vertex size for drawing front of fold page and first texture
+        mFrontVertexSize = frontVertexes.mNext / 3;
+
+        // if xFoldX and yFoldY are in the page, need add them for drawing the
+        // second texture
+        if (vexOrder[0] > 1) {
+            mXFoldP.z = mYFoldP.z = -1;
+            frontVertexes.addVertex(mXFoldP).addVertex(mYFoldP);
+        }
+
+        // add the remaining vertexes for the second texture
+        for (int i = vexOrder[0]; i < vexOrder.length; ++i) {
+            int k = apexOrder[vexOrder[i]];
+            int m = k * 3;
+            int n = k << 1;
+            frontVertexes.addVertex(mApexes[m], mApexes[m + 1], -1,
+                    mApexTexCoords[n], mApexTexCoords[n + 1]);
+        }
+    }
+
+
+    /**
+     * Build vertexes of page when page is flipping horizontally
+     * <pre>
+     *
+     *     1              2
+     *     +--------------+     |
+     *     |              |     |
+     *  fX |--------------| fY  \/
+     *     |              |
+     *     +--------------+
+     *     4              3
+     * </pre>
+     * <p>
+     * There is only one case to draw when page is flipping vertically
+     * will use this
+     * </p>
+     * <ul>
+     *      <li>Page is flipping from up -> down</li>
+     *      <li>Origin point: 1</li>
+     *      <li>Diagonal point: 3</li>
+     *      <li>yFoldP1.y: fY, yFoldP2.x: fX</li>
+     *      <li>Drawing front part with the first texture(GL_TRIANGLE_STRIP):
+     *      fX -> fY -> 4 -> 1</li>
+     *      <li>Drawing back part with the second texture(GL_TRIANGLE_STRIP):
+     *      3 -> 2 -> fX -> fY</li>
+     * </ul>
+     *
+     * @param frontVertexes vertexes for drawing font part of page
+     * @param yFoldP1 fold point on Y axis
+     */
+    public void buildVertexesOfPageWhenHorizontal(Vertexes frontVertexes,
+                                                PointF yFoldP1) {
+        // if xFoldX and yFoldY are both outside the page, use the last vertex
+        // order to draw page
+        int index = 4;
+
+        // compute xFoldX and yFoldY points
+        if (!isYOutsidePage(yFoldP1.y)) {
+            // use the case B of vertex order to draw page
+            index = 1;
+            float cy = textureX(yFoldP1.y);
+            mYFoldP.set(originP.x, yFoldP1.y, 0, originP.texX, cy);
+            mXFoldP.set(diagonalP.x, yFoldP1.y, 0, diagonalP.texX, cy);
         }
 
         // get apex order and fold vertex order
@@ -938,6 +1069,103 @@ public class PageModify {
         // fold front
         mFoldFrontVertexes.reset();
         buildVertexesOfPageWhenVertical(mFoldFrontVertexes, mXFoldP1c);
+        mFoldFrontVertexes.toFloatBuffer();
+    }
+
+    /**
+     * Compute key vertexes when page flip is horizontal
+     */
+    public void computeKeyVertexesWhenHorizontal() {
+        final float oX = originP.x ;
+        final float oY = originP.y;
+        //final float dY = diagonalP.y;
+        final float dX = diagonalP.x;
+
+        mFakeTouchP.x = oX;
+        mMiddleP.x = oX;
+
+        // set key point on Y axis
+        float r0 = 1 - mSemiPerimeterRatio;
+        float r1 = 1 + mSemiPerimeterRatio;
+        mYFoldPc.set(oX, mMiddleP.y);
+        mYFoldP0c.set(mYFoldPc.x, oY + (mYFoldPc.y - oY) * r0);
+        mYFoldP1c.set(mYFoldPc.x,  oY + r1 * (mYFoldPc.y - oY));
+
+        // set key point on X axis
+        mXFoldPc.set(dX, mMiddleP.y);
+        mXFoldP0c.set(mYFoldP0c.x, mXFoldPc.y);
+        mXFoldP1c.set(mYFoldP1c.x, mXFoldPc.y);
+
+        // line length from mTouchP to originP
+        mLenOfTouchOrigin = Math.abs(mFakeTouchP.y - oY);
+        mR = (float)(mLenOfTouchOrigin * mSemiPerimeterRatio / Math.PI);
+
+        // compute mesh count
+        computeMeshCount();
+    }
+
+    /**
+     * Compute all vertexes when page flip is horizontal
+     */
+    public void computeVertexesWhenHorizontal() {
+        float y = mMiddleP.y;
+        float stepY = (mMiddleP.y - mYFoldP0c.y) / mMeshCount;
+
+        //final PageModify page = this;
+        final float oX = originP.x;
+        final float dX = diagonalP.x;
+        final float cDX = diagonalP.texX;
+        final float cOX = originP.texX;
+        final float cOY = originP.texY;
+
+        // compute the point on back page half cylinder
+        mFoldBackVertexes.reset();
+
+        for (int i = 0; i <= mMeshCount; ++i, y -= stepY) {
+            // compute radian of x point
+            float y2t = y - mYFoldP1c.y;
+            float radius = y2t / mR;
+            float sinR = (float)Math.sin(radius);
+            float coordY = textureY(y);
+
+            float fy = mYFoldP1c.y + mR * sinR;
+            float fz = (float) (mR * (1 - Math.cos(radius)));
+
+            //fz *= (1.5f * (indexOfPage + 1));
+            fz *= (float)Math.pow(1.5, indexOfPage);
+
+            // compute vertex when it is curled
+            mFoldBackVertexes.addVertex(dX, fy, fz, sinR, cDX,  coordY)
+                    .addVertex(oX, fy, fz, sinR, cOX, coordY );
+        }
+
+        float ty0 = mFakeTouchP.y;
+        mFoldBackVertexes.addVertex(dX, ty0, 1, 0, cDX, cOY)
+                .addVertex(oX, ty0, 1, 0, cOX, cOY)
+                .toFloatBuffer();
+
+        // compute shadow width
+        float sw = -mFoldEdgesShadowWidth.width(mR);
+        float bw = mFoldBaseShadowWidth.width(mR);
+        if (originP.x < 0) {
+            sw = -sw;
+            bw = -bw;
+        }
+
+        // fold base shadow
+        float by0 = mFoldBackVertexes.mVertexes[1];
+        mFoldBaseShadow.setVertexes(0, oX, by0, oX, by0 + bw)
+                .setVertexes(8, dX , by0, dX, by0 + bw)
+                .toFloatBuffer(16);
+
+        // fold edge shadow
+        mFoldEdgesShadow.setVertexes(0, oX, ty0, oX, ty0 + sw)
+                .setVertexes(8, dX, ty0, dX, ty0 + sw)
+                .toFloatBuffer(16);
+
+        // fold front
+        mFoldFrontVertexes.reset();
+        buildVertexesOfPageWhenHorizontal(mFoldFrontVertexes, mYFoldP1c);
         mFoldFrontVertexes.toFloatBuffer();
     }
 
