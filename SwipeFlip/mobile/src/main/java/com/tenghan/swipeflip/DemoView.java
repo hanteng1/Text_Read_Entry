@@ -49,7 +49,7 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
         mPageNo = 1;
         mDrawLock = new ReentrantLock();
 
-        mPageRender = new DemoRender(context, mDemo, mHandler, mPageNo);
+        mPageRender = new DemoPeel2CommandRender(context, mDemo, mHandler, mPageNo);
 
         // configure render
         setRenderer(this);
@@ -164,9 +164,9 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
 
             int pageNo = mPageRender.getPageNo();
 
-            if(!(mPageRender instanceof DemoRender)){
+            if(!(mPageRender instanceof DemoPeel2CommandRender)){
                 mPageRender.release();
-                mPageRender = new DemoRender(getContext(),
+                mPageRender = new DemoPeel2CommandRender(getContext(),
                         mDemo,
                         mHandler,
                         pageNo);

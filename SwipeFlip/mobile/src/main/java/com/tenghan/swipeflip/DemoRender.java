@@ -13,9 +13,11 @@ import com.eschao.android.widget.pageflip.modify.PageModify;
 
 /**
  * Created by hanteng on 2017-08-18.
+ *
+ * Used as an abstract render class
  */
 
-public class DemoRender extends PageRender{
+public abstract class DemoRender extends PageRender{
 
     private final static String TAG = "DemoRender";
     private final static String[] Alphabet = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
@@ -27,19 +29,7 @@ public class DemoRender extends PageRender{
     }
 
     //what about loading textures first, then we can get rid of the mDrawCommand thing
-    private void LoadTextures(){
-        mPageFlipAbstract.deleteUnusedTextures();
-        PageModify[] pages = mPageFlipAbstract.getPages();
-
-        for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
-        {
-            if(!pages[itrp].isFrontTextureSet())
-            {
-                loadPage(itrp);
-                pages[itrp].setFrontTexture(mBitmap);
-            }
-        }
-    }
+    public abstract void LoadTextures();
 
     //this is calling the drawing functions
     public void onDrawFrame() {
@@ -172,7 +162,7 @@ public class DemoRender extends PageRender{
         return false;
     }
 
-    private void loadPage(int number) {  //create a new page texture (either first one or second one) when necessary/not set
+    public void loadPage(int number) {  //create a new page texture (either first one or second one) when necessary/not set
         final int width = mCanvas.getWidth();
         final int height = mCanvas.getHeight();
         Paint p = new Paint();
@@ -196,6 +186,36 @@ public class DemoRender extends PageRender{
         float textWidth = p.measureText(text);
         float y = height - p.getTextSize() - 20;
         mCanvas.drawText(text, (width - textWidth) / 2, y, p);
+    }
+
+    public void loadPageWithCommands(int number, int[] commandIds)
+    {
+        final int width = mCanvas.getWidth();
+        final int height = mCanvas.getHeight();
+        Paint p = new Paint();
+        p.setFilterBitmap(true);
+
+        // 1. load/draw background bitmap
+        Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
+        Rect rect = new Rect(0, 0, width, height);
+        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
+        background.recycle();
+        background = null;
+
+        // 2. load/draw page number
+        int fontSize = calcFontSize(80);
+        p.setColor(Color.GRAY);
+        p.setStrokeWidth(1);
+        p.setAntiAlias(true);
+        //p.setShadowLayer(5.0f, 8.0f, 8.0f, Color.BLACK);
+        p.setTextSize(fontSize);
+        String text = Alphabet[number];
+        float textWidth = p.measureText(text);
+        float y = height - p.getTextSize() - 20;
+        mCanvas.drawText(text, (width - textWidth) / 2, y, p);
+
+        //3. load/draw commands on corners
+
 
     }
 

@@ -360,6 +360,7 @@ public abstract class PageFlipModifyAbstract {
         mVertexProgram.initMatrix(-mViewRect.halfW, mViewRect.halfW, -mViewRect.halfH, mViewRect.halfH);
 
         createPages();
+
         computeMaxMeshCount();
 
     }
@@ -367,8 +368,7 @@ public abstract class PageFlipModifyAbstract {
     /**
      * Create pages
      */
-    private void createPages() {
-
+    public void createPages(){
         for(int itrp = 0;  itrp < PAGE_SIZE; itrp++)
         {
             // release textures hold in pages
@@ -388,6 +388,7 @@ public abstract class PageFlipModifyAbstract {
         setShadowWidthOfFoldBase(5, 80, 0.4f);
         int pixelsOfMesh = 10;
         setPixelsOfMesh(pixelsOfMesh);
+        Log.d(TAG, "override createPages");
     }
 
     /**
