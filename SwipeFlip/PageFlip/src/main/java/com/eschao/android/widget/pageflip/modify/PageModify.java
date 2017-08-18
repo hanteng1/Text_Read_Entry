@@ -58,6 +58,38 @@ public class PageModify {
     private final static int BACK_TEXTURE_ID = 1;
     private final static int INVALID_TEXTURE_ID = -1;
 
+
+    /**
+     * <p>
+     * 4 apexes of page has different permutation order according to original
+     * point since original point will be changed when user click to curl page
+     * from different direction. There are 4 kinds of order:
+     * </p><pre>
+     *   A           B           C           D
+     * 2    1      3    0      0    3      1    2
+     * +----+      +----+      +----+      +----+
+     * |    |      |    |      |    |      |    |
+     * +----+      +----+      +----+      +----+
+     * 3    0      2    1      1    2      0    3
+     *             From A      From A      From A
+     *             0 <-> 1     0 <-> 2     0 <-> 3
+     *             3 <-> 2     3 <-> 1     1 <-> 2
+     * </pre>
+     * <ul>
+     *      <li>0 always represents the origin point, accordingly 2 is diagonal
+     *      point</li>
+     *      <li>Case A is default order: 0 -> 1 -> 2 -> 3</li>
+     *      <li>Every apex data is stored in mApexes following the case A order
+     *      and never changed</li>
+     *      <li>This array is mapping apex order (case A - D) to real apex data
+     *      stored in mApexes. For example:
+     *      <ul>
+     *          <li>Case A has same order with storing sequence of apex data in
+     *          mApexes</li>
+     *          <li>Case B: the 0 apex is stored in 1 position in mApexes</li>
+     *      </ul></li>
+     *  </ul>
+     */
     private final static int[][] mPageApexOrders = new int[][] {
             new int[] {0, 1, 2, 3}, // for case A
             new int[] {1, 0, 3, 2}, // for case B
@@ -65,6 +97,37 @@ public class PageModify {
             new int[] {3, 2, 1, 0}, // for case D
     };
 
+    /**
+     * <p>When page is curled, there are 4 kinds of vertexes orders for drawing
+     * first texture and second texture with TRIANGLE_STRIP way</p><pre>
+     *     A             B              C              D
+     * 2       1     2     X 1      2 X     1      2       1
+     * +-------+     +-----.-+      +-.-----+      +-------+
+     * |       |     | F  /  |      |/      |      |   F   |
+     * |   F   .Y    |   /   |     Y.   S   |     X.-------.Y
+     * |      /|     |  /    |      |       |      |   S   |
+     * +-----.-+     +-.-----+      +-------+      +-------+
+     * 3    X  0     3 Y     0      3       0      3       0
+     * </pre>
+     * <ul>
+     *      <li>All cases are based on the apex order case A(0 -> 1 -> 2 -> 3)
+     *      </li>
+     *      <li>F means the first texture area, S means the second texture area
+     *      </li>
+     *      <li>X is xFoldX point, Y is yFoldY point</li>
+     *      <li>Case A means: xFoldX and yFoldY are both in page</li>
+     *      <li>Case B means: xFoldX is in page, but yFoldY is the intersecting
+     *      point with line 1->2 since yFoldY is outside the page</li>
+     *      <li>Case C means: xFoldX and yFoldY are both outside the page</li>
+     *      <li>Case D means: xFoldX outside page but yFoldY is in the page</li>
+     *      <li>Combining {@link #mPageApexOrders} with this array, we can get
+     *      the right apex data from mApexes array which will help us quickly
+     *      organizing triangle data for openGL drawing</li>
+     *      <li>The last array(Case E) in this array means: xFoldX and yFoldY
+     *      are both outside the page and the whole page will be draw with
+     *      second texture</li>
+     * </ul>
+     */
     private final static int[][] mFoldVexOrders = new int[][] {
             new int[] {4, 3, 1, 2, 0}, // Case A
             new int[] {3, 3, 2, 0, 1}, // Case B
@@ -469,24 +532,50 @@ public class PageModify {
      */
     public PageModify setOriginAndDiagonalPoints(float dx, float dy, float startx, float starty) {
 
-        if(startx >= 0)
+        if(Math.abs(dx) > Math.abs(dy))
         {
-            originP.x = right;
-            diagonalP.x = left;
+            if(startx >= 0)
+            {
+                originP.x = right;
+                diagonalP.x = left;
+            }else
+            {
+                originP.x = left;
+                diagonalP.x = right;
+            }
+
+            if (dy > 0) {
+                originP.y = bottom;
+                diagonalP.y = top;
+
+            }
+            else {
+                originP.y = top;
+                diagonalP.y = bottom;
+            }
         }else
         {
-            originP.x = left;
-            diagonalP.x = right;
+            if(starty >= 0)
+            {
+                originP.y = top;
+                diagonalP.y = bottom;
+            }else
+            {
+                originP.y = bottom;
+                diagonalP.y = top;
+            }
+
+            if (dx > 0) {
+                originP.x = left;
+                diagonalP.x = right;
+            }
+            else {
+                originP.x = right;
+                diagonalP.x = left;
+            }
         }
 
-        if (dy > 0) {
-            originP.y = bottom;
-            diagonalP.y = top;
-        }
-        else {
-            originP.y = top;
-            diagonalP.y = bottom;
-        }
+        //Log.d(TAG, "origin x " + originP.x + " y " + originP.y);
 
         computeIndexOfApexOrder();
 
@@ -512,6 +601,19 @@ public class PageModify {
         diagonalP.texY = t;
 
         // re-compute index for apex order since original point is changed
+        computeIndexOfApexOrder();
+    }
+
+    public void invertXOfOriginPoint()
+    {
+        float t = originP.x;
+        originP.x = diagonalP.x;
+        diagonalP.x = t;
+
+        t = originP.texX;
+        originP.texX = diagonalP.texX;
+        diagonalP.texX = t;
+
         computeIndexOfApexOrder();
     }
 
@@ -755,9 +857,9 @@ public class PageModify {
      * <pre>
      *
      *     1              2
-     *     +--------------+     |
-     *     |              |     |
-     *  fX |--------------| fY  \/
+     *     +--------------+     /|\
+     *     |              |      |
+     *  fX |--------------| fY   |
      *     |              |
      *     +--------------+
      *     4              3
@@ -768,17 +870,19 @@ public class PageModify {
      * </p>
      * <ul>
      *      <li>Page is flipping from up -> down</li>
-     *      <li>Origin point: 1</li>
-     *      <li>Diagonal point: 3</li>
+     *      <li>Origin point: 3</li>
+     *      <li>Diagonal point: 1</li>
      *      <li>yFoldP1.y: fY, yFoldP2.x: fX</li>
      *      <li>Drawing front part with the first texture(GL_TRIANGLE_STRIP):
-     *      fX -> fY -> 4 -> 1</li>
+     *      3 -> fY -> 4 -> fX</li>
      *      <li>Drawing back part with the second texture(GL_TRIANGLE_STRIP):
-     *      3 -> 2 -> fX -> fY</li>
+     *      fY -> 2 -> fX -> 1</li>
      * </ul>
      *
      * @param frontVertexes vertexes for drawing font part of page
      * @param yFoldP1 fold point on Y axis
+     *
+     * This has problem, pending
      */
     public void buildVertexesOfPageWhenHorizontal(Vertexes frontVertexes,
                                                 PointF yFoldP1) {
@@ -789,7 +893,7 @@ public class PageModify {
         // compute xFoldX and yFoldY points
         if (!isYOutsidePage(yFoldP1.y)) {
             // use the case B of vertex order to draw page
-            index = 1;
+            index = 3;
             float cy = textureX(yFoldP1.y);
             mYFoldP.set(originP.x, yFoldP1.y, 0, originP.texX, cy);
             mXFoldP.set(diagonalP.x, yFoldP1.y, 0, diagonalP.texX, cy);
@@ -803,7 +907,7 @@ public class PageModify {
         // the adding order of vertex in float buffer is X point prior to Y
         // point
         if (vexOrder[0] > 1) {
-            frontVertexes.addVertex(mXFoldP).addVertex(mYFoldP);
+            frontVertexes.addVertex(mYFoldP).addVertex(mXFoldP);
         }
 
         // add the leftover vertexes for the first texture
@@ -822,7 +926,7 @@ public class PageModify {
         // second texture
         if (vexOrder[0] > 1) {
             mXFoldP.z = mYFoldP.z = -1;
-            frontVertexes.addVertex(mXFoldP).addVertex(mYFoldP);
+            frontVertexes.addVertex(mYFoldP).addVertex(mXFoldP);
         }
 
         // add the remaining vertexes for the second texture
@@ -1074,6 +1178,8 @@ public class PageModify {
 
     /**
      * Compute key vertexes when page flip is horizontal
+     *
+     * This has problem, pending
      */
     public void computeKeyVertexesWhenHorizontal() {
         final float oX = originP.x ;
@@ -1093,8 +1199,8 @@ public class PageModify {
 
         // set key point on X axis
         mXFoldPc.set(dX, mMiddleP.y);
-        mXFoldP0c.set(mYFoldP0c.x, mXFoldPc.y);
-        mXFoldP1c.set(mYFoldP1c.x, mXFoldPc.y);
+        mXFoldP0c.set(mXFoldPc.x, mYFoldP0c.y);
+        mXFoldP1c.set(mXFoldPc.x, mYFoldP1c.y);
 
         // line length from mTouchP to originP
         mLenOfTouchOrigin = Math.abs(mFakeTouchP.y - oY);
@@ -1106,6 +1212,8 @@ public class PageModify {
 
     /**
      * Compute all vertexes when page flip is horizontal
+     *
+     * This has problem, pending
      */
     public void computeVertexesWhenHorizontal() {
         float y = mMiddleP.y;
@@ -1147,7 +1255,7 @@ public class PageModify {
         // compute shadow width
         float sw = -mFoldEdgesShadowWidth.width(mR);
         float bw = mFoldBaseShadowWidth.width(mR);
-        if (originP.x < 0) {
+        if (originP.y < 0) {
             sw = -sw;
             bw = -bw;
         }
@@ -1178,6 +1286,12 @@ public class PageModify {
 
         float dX = mMiddleP.x - oX;
         float dY = mMiddleP.y - oY;
+
+        if(dX == 0)
+            dX = 0.1f;
+
+        if(dY == 0)
+            dY = 0.1f;
 
         // compute key points on X axis
         float r0 = 1 - mSemiPerimeterRatio;
@@ -1804,7 +1918,7 @@ public class PageModify {
      */
     public float computeTanOfCurlAngle(float dy) {
         float ratio = dy / mViewRect.halfH;
-        if (ratio <= 1 - MAX_PAGE_CURL_ANGLE_RATIO) {
+        if (ratio <= 1 - MAX_PAGE_CURL_ANGLE_RATIO) {  //65/90
             return MAX_PAGE_CURL_TAN_OF_ANGEL;
         }
 

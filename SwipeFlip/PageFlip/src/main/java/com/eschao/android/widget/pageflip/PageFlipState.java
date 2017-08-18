@@ -32,6 +32,7 @@ public enum PageFlipState {
     BEGIN_FLIP,
     FORWARD_FLIP,
     BACKWARD_FLIP,
+    UPWARD_FLIP,
     RESTORE_FLIP,
     END_FLIP,
     END_WITH_FORWARD,

@@ -49,9 +49,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         setContentView(mPageFlipView);
 
         //set size and position
-        ViewGroup.LayoutParams layoutParams = mPageFlipView.getLayoutParams();
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mPageFlipView.getLayoutParams();
         layoutParams.width = 320;
         layoutParams.height = 320;
+        //layoutParams.setMargins(100, 200, 0, 0);
+
         mPageFlipView.setLayoutParams(layoutParams);
 
         mGestureDetector = new GestureDetector(this, this);
