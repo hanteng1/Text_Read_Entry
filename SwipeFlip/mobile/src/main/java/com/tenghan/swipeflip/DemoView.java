@@ -5,9 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.ViewGroup;
 
-import com.eschao.android.widget.pageflip.PageFlip;
 import com.eschao.android.widget.pageflip.PageFlipException;
 
 import java.util.concurrent.locks.ReentrantLock;
@@ -16,21 +14,21 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * Created by hanteng on 2017-05-30.
+ * Created by hanteng on 2017-08-18.
  */
 
-public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Renderer {
+public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
 
-    private final static String TAG = "PageFlipView";
+    private final static String TAG = "DemoView";
 
     int mPageNo;
     int mDuration;
     Handler mHandler;
-    PageFlipModify mPageFlip;
+    PageFlipModifyAbstract mDemo;
     PageRender mPageRender;
     ReentrantLock mDrawLock;
 
-    public PageFlipView(Context context)
+    public DemoView(Context context)
     {
         super(context);
         newHandler();
@@ -40,36 +38,18 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
         boolean isAuto = false;
 
         //create pageflip
-        mPageFlip = new PageFlipModify(context);
+        mDemo = new DemoPeel2Command(context);
         setEGLContextClientVersion(2);
 
         // create render
-        mPageNo = mPageFlip.PAGE_SIZE;  //need to change, should equal to Page_Size in mPageFlip
+        mPageNo = mDemo.PAGE_SIZE;  //need to change, should equal to Page_Size in mPageFlip
         mDrawLock = new ReentrantLock();
-        //mPageRender = new SinglePageRender(context, mPageFlip,
-        //        mHandler, mPageNo);
-
-        /*
-        //test
-        // create PageFlip
-        mPageFlip = new PageFlip(context);
-        mPageFlip.setSemiPerimeterRatio(0.8f)
-                .setShadowWidthOfFoldEdges(5, 60, 0.3f)
-                .setShadowWidthOfFoldBase(5, 80, 0.4f)
-                .setPixelsOfMesh(pixelsOfMesh)
-                .enableAutoPage(isAuto);
-        setEGLContextClientVersion(2);
-        */
-
-
 
         // init others
         mPageNo = 1;
         mDrawLock = new ReentrantLock();
 
-        mPageRender = new SinglePageRender(context, mPageFlip, mHandler, mPageNo);
-        //mPageRender = new TestSinglePageRender(context, mPageFlip, mHandler, mPageNo);
-
+        mPageRender = new DemoRender(context, mDemo, mHandler, mPageNo);
 
         // configure render
         setRenderer(this);
@@ -88,28 +68,28 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
 
     public int getPixelsOfMesh()
     {
-        return mPageFlip.getPixelsOfMesh();
+        return mDemo.getPixelsOfMesh();
     }
 
     public void onFingerDown(float x, float y)
     {
-        if (!mPageFlip.isAnimating() &&
-                mPageFlip.getFirstPage() != null) {
-            mPageFlip.onFingerDown(x, y);
+        if (!mDemo.isAnimating() &&
+                mDemo.getFirstPage() != null) {
+            mDemo.onFingerDown(x, y);
         }
     }
 
     public void onFingerMove(float x, float y)
     {
-        if (mPageFlip.isAnimating()) {
+        if (mDemo.isAnimating()) {
             // nothing to do during animating
         }
-        else if (mPageFlip.canAnimate(x, y)) {
+        else if (mDemo.canAnimate(x, y)) {
             // if the point is out of current page, try to start animating
             onFingerUp(x, y);
         }
         // move page by finger
-        else if (mPageFlip.onFingerMove(x, y)) {
+        else if (mDemo.onFingerMove(x, y)) {
             try {
                 mDrawLock.lock();
                 if (mPageRender != null &&
@@ -125,9 +105,9 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
 
     public void onFingerUp(float x, float y) // will auto check the animation first
     {
-        if (!mPageFlip.isAnimating()) {
+        if (!mDemo.isAnimating()) {
 
-            mPageFlip.onFingerUp(x, y, mDuration);  //test and get ready for animating
+            mDemo.onFingerUp(x, y, mDuration);  //test and get ready for animating
 
             try {
                 mDrawLock.lock();
@@ -144,9 +124,9 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
 
     public void autoFingerUp(float x, float y)
     {
-        if (!mPageFlip.isAnimating()) {
+        if (!mDemo.isAnimating()) {
 
-            mPageFlip.onFingerUp(x, y, mDuration);
+            mDemo.onFingerUp(x, y, mDuration);
 
             try {
                 mDrawLock.lock();
@@ -180,44 +160,33 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
     public void onSurfaceChanged(GL10 gl, int width, int height)  //called when surface is created and when the surface is changed
     {
         try{
-            mPageFlip.onSurfaceChanged(width, height);
+            mDemo.onSurfaceChanged(width, height);
 
             int pageNo = mPageRender.getPageNo();
 
-            if(!(mPageRender instanceof SinglePageRender)){
+            if(!(mPageRender instanceof DemoRender)){
                 mPageRender.release();
-                mPageRender = new SinglePageRender(getContext(),
-                        mPageFlip,
+                mPageRender = new DemoRender(getContext(),
+                        mDemo,
                         mHandler,
                         pageNo);
             }
-
-            /*
-            if(!(mPageRender instanceof TestSinglePageRender)){
-                mPageRender.release();
-                mPageRender = new TestSinglePageRender(getContext(),
-                        mPageFlip,
-                        mHandler,
-                        pageNo);
-            }
-
-            */
 
             mPageRender.onSurfaceChanged(width, height);
 
         }catch (PageFlipException e)
         {
-            Log.e(TAG, "Failed to run PageFlipRender:onSurfaceChanged");
+            Log.e(TAG, "Failed to run DemoRender:onSurfaceChanged");
         }
     }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {  //called when the gl thread starts
         try {
-            mPageFlip.onSurfaceCreated();
+            mDemo.onSurfaceCreated();
         }
         catch (PageFlipException e) {
-            Log.e(TAG, "Failed to run PageFlipRender:onSurfaceCreated");
+            Log.e(TAG, "Failed to run DemoRender:onSurfaceCreated");
         }
     }
 
@@ -225,27 +194,26 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
     {
         mHandler = new Handler()
         {
-          public void handleMessage(Message msg)
-          {
-              switch (msg.what){
-                  case PageRender.MSG_ENDED_DRAWING_FRAME:
-                      try{
-                          mDrawLock.lock();
-                          if(mPageRender != null && mPageRender.onEndedDrawing(msg.arg1)){
-                              requestRender();  //this is not called until the animating is done
-                          }
-                      }
-                      finally {
-                          mDrawLock.unlock();
+            public void handleMessage(Message msg)
+            {
+                switch (msg.what){
+                    case PageRender.MSG_ENDED_DRAWING_FRAME:
+                        try{
+                            mDrawLock.lock();
+                            if(mPageRender != null && mPageRender.onEndedDrawing(msg.arg1)){
+                                requestRender();  //this is not called until the animating is done
+                            }
+                        }
+                        finally {
+                            mDrawLock.unlock();
 
-                          //this is after the initial render
-                      }
-                      break;
-                  default:
-                      break;
-              }
-          }
+                            //this is after the initial render
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
         };
     }
-
 }

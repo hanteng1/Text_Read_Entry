@@ -2,7 +2,6 @@ package com.tenghan.swipeflip;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.opengl.Matrix;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.opengl.GLUtils;
@@ -10,19 +9,14 @@ import android.util.Log;
 import android.widget.Scroller;
 
 import com.eschao.android.widget.pageflip.FoldBackVertexProgram;
-import com.eschao.android.widget.pageflip.FoldBackVertexes;
 import com.eschao.android.widget.pageflip.GLPoint;
 import com.eschao.android.widget.pageflip.GLViewRect;
 import com.eschao.android.widget.pageflip.OnPageFlipListener;
-import com.eschao.android.widget.pageflip.Page;
 import com.eschao.android.widget.pageflip.PageFlipException;
 import com.eschao.android.widget.pageflip.PageFlipState;
 import com.eschao.android.widget.pageflip.PageFlipUtils;
 import com.eschao.android.widget.pageflip.ShadowVertexProgram;
-import com.eschao.android.widget.pageflip.ShadowVertexes;
-import com.eschao.android.widget.pageflip.ShadowWidth;
 import com.eschao.android.widget.pageflip.VertexProgram;
-import com.eschao.android.widget.pageflip.Vertexes;
 import com.eschao.android.widget.pageflip.modify.PageModify;
 
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
@@ -38,7 +32,6 @@ import static android.opengl.GLES20.glBindTexture;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glClearDepthf;
-import static android.opengl.GLES20.glDepthRangef;
 import static android.opengl.GLES20.glEnable;
 import static android.opengl.GLES20.glGenTextures;
 import static android.opengl.GLES20.glTexParameterf;
@@ -47,44 +40,19 @@ import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glViewport;
 
 /**
- * Created by hanteng on 2017-06-01.
- * a modified version of pageflip
- * to hold many pages, without drawing secodary textures
+ * Created by hanteng on 2017-08-18.
  *
- *
+ * This is used as a base, to support basic flipping/peeling animation and visual effect
+ * Demos could be built upon modifications of this one
+ * Lets make it abstract
  */
 
-public class PageFlipModify {
+public abstract class PageFlipModifyAbstract {
 
     final static String TAG = "PageFlipModify";
 
     // default pixels of mesh vertex
     private final static int DEFAULT_MESH_VERTEX_PIXELS = 10;
-    //private final static int MESH_COUNT_THRESHOLD = 20;
-
-    /*
-    // The min page curl angle (5 degree)
-    private final static int MIN_PAGE_CURL_ANGLE = 5;
-    // The max page curl angle (5 degree)
-    private final static int MAX_PAGE_CURL_ANGLE = 65;
-    private final static int PAGE_CURL_ANGEL_DIFF = MAX_PAGE_CURL_ANGLE -
-            MIN_PAGE_CURL_ANGLE;
-    private final static float MIN_PAGE_CURL_RADIAN =
-            (float)(Math.PI * MIN_PAGE_CURL_ANGLE / 180);
-    private final static float MAX_PAGE_CURL_RADIAN=
-            (float)(Math.PI * MAX_PAGE_CURL_ANGLE / 180);
-    private final static float MIN_PAGE_CURL_TAN_OF_ANGLE =
-            (float)Math.tan(MIN_PAGE_CURL_RADIAN);
-    private final static float MAX_PAGE_CURL_TAN_OF_ANGEL =
-            (float)Math.tan(MAX_PAGE_CURL_RADIAN);
-    private final static float MAX_PAGE_CURL_ANGLE_RATIO =
-            MAX_PAGE_CURL_ANGLE / 90f;
-    private final static float MAX_TAN_OF_FORWARD_FLIP =
-            (float)Math.tan(Math.PI / 6);
-    private final static float MAX_TAN_OF_BACKWARD_FLIP =
-            (float)Math.tan(Math.PI / 20);
-    */
-
 
     // width ratio of clicking to flip
     private final static float WIDTH_RATIO_OF_CLICK_TO_FLIP = 0.5f;
@@ -93,23 +61,6 @@ public class PageFlipModify {
     //1.0 means it is always restoring when finger's up
     private final static float WIDTH_RATIO_OF_RESTORE_FLIP = 1.0f;
 
-    /*
-    // folder page shadow color buffer size
-    private final static int FOLD_TOP_EDGE_SHADOW_VEX_COUNT = 22;
-
-    // fold edge shadow color
-    private final static float FOLD_EDGE_SHADOW_START_COLOR = 0.1f;
-    private final static float FOLD_EDGE_SHADOW_START_ALPHA = 0.25f;
-    private final static float FOLD_EDGE_SHADOW_END_COLOR = 0.3f;
-    private final static float FOLD_EDGE_SHADOW_END_ALPHA = 0f;
-
-    // fold base shadow color
-    private final static float FOLD_BASE_SHADOW_START_COLOR = 0.05f;
-    private final static float FOLD_BASE_SHADOW_START_ALPHA = 0.4f;
-    private final static float FOLD_BASE_SHADOW_END_COLOR = 0.3f;
-    private final static float FOLD_BASE_SHADOW_END_ALPHA = 0f;
-
-*/
     // pages and index
     private final static int FIRST_PAGE = 0;
     private int pageIndex;
@@ -131,106 +82,11 @@ public class PageFlipModify {
     // the first touch point when finger down on the screen
     private PointF mStartTouchP;
 
-
-
-    // the middle point between touch point and origin point
-    //private PointF mMiddleP;
-
-
-    //========================================================================================================
-    //variables for each single page
-    //some variables can be put to the page class
-    //this class is just a controller, that corresponds to user input
-
-    // from 2D perspective, the line will intersect Y axis and X axis that being
-    // through middle point and perpendicular to the line which is from touch
-    // point to origin point, The point on Y axis is mYFoldP, the mXFoldP is on
-    // X axis. The mY{X}FoldP1 is up mY{X}FoldP, The mY{X}FoldP0 is under
-    // mY{X}FoldP
-    //
-    //        -----> Flip in reverse way
-    //                          ^ Y
-    //                          |
-    //                          + mYFoldP1
-    //                        / |
-    //                       /  |
-    //                      /   |
-    //                     /    |
-    //                    /     |
-    //                   /      |
-    //                  /       + mYFoldP
-    //    mTouchP      /      / |
-    //       .        /      /  |
-    //               /      /   |
-    //              /      /    |
-    //             /      /     |
-    //            /   .  /      + mYFoldP0
-    //           /      /      /|
-    //          /      /      / |
-    //         /      /      /  |
-    //X <-----+------+------+---+ originP
-    //   mXFoldP1 mXFoldP mXFoldP0
-    //
-
-    /*
-    private PointF mYFoldPc;
-    private PointF mYFoldP0c;
-    private PointF mYFoldP1c;
-    private PointF mXFoldPc;
-    private PointF mXFoldP0c;
-    private PointF mXFoldP1c;
-    */
-
-    //private float mTransOffX[];  //<0 means translate towards left
-
-
-    /*
-    //            ^ Y
-    //   mTouchP  |
-    //        +   |
-    //         \  |
-    //          \ |
-    //       A ( \|
-    // X <--------+ originP
-    //
-    // A is angle between X axis and line from mTouchP to originP
-    // the max curling angle between line from touchP to originP and X axis
-    private float mMaxT2OAngleTan;
-    // another max curling angle when finger moving causes the originP change
-    // from (x, y) to (x, -y) which means mirror based on Y axis.
-    private float mMaxT2DAngleTan;
-    // the tan value of current curling angle
-    // mKValue = (touchP.y - originP.y) / (touchP.x - originP.x)
-    private float mKValue;
-    // the length of line from mTouchP to originP
-    private float mLenOfTouchOrigin;
-    // the cylinder radius
-    private float mR;
-    // the perimeter ratio of semi-cylinder based on mLenOfTouchOrigin;
-    private float mSemiPerimeterRatio;
-    // Mesh count
-    private int mMeshCount;
-
-    // edges shadow width of back of fold page
-    private ShadowWidth mFoldEdgesShadowWidth;
-    // base shadow width of front of fold page
-    private ShadowWidth mFoldBaseShadowWidth;
-
-    // fold page and shadow vertexes
-    private Vertexes mFoldFrontVertexes;
-    private FoldBackVertexes mFoldBackVertexes;
-    private ShadowVertexes mFoldEdgesShadow;
-    private ShadowVertexes mFoldBaseShadow;
-
-
-*/
-
     // Shader program for openGL drawing
     //one for all page instances to keep efficiency
     private VertexProgram mVertexProgram;
     private FoldBackVertexProgram mFoldBackVertexProgram;
     private ShadowVertexProgram mShadowVertexProgram;
-
 
     // is vertical page flip
     private boolean mIsVertical;
@@ -258,7 +114,7 @@ public class PageFlipModify {
     /**
      * Constructor
      */
-    public PageFlipModify(Context context) {
+    public PageFlipModifyAbstract(Context context) {
         mContext = context;
         mScroller = new Scroller(context);
 
@@ -269,8 +125,6 @@ public class PageFlipModify {
         mViewRect = new GLViewRect();
         mPixelsOfMesh = DEFAULT_MESH_VERTEX_PIXELS;
 
-        //mSemiPerimeterRatio = 0.8f;
-
         mIsClickToFlip = true;
         mListener = null;
         mWidthRationOfClickToFlip = WIDTH_RATIO_OF_CLICK_TO_FLIP;
@@ -278,51 +132,14 @@ public class PageFlipModify {
         // init pages
         mPages = new PageModify[PAGE_SIZE];  //10 for now
 
-        //init parameters
-        //mTransOffX = new float[PAGE_SIZE];
-
-        // key points
-        //these points can be the same for all
-
-        /*
-        mMiddleP = new PointF();
-        mYFoldPc = new PointF();
-        mYFoldP0c = new PointF();
-        mYFoldP1c = new PointF();
-        mXFoldPc = new PointF();
-        mXFoldP0c = new PointF();
-        mXFoldP1c = new PointF();
-        */
-
-
         mTouchP = new PointF();
         mLastTouchP = new PointF();
         mStartTouchP = new PointF();
-
-        // init shadow width
-        //mFoldEdgesShadowWidth = new ShadowWidth(5, 30, 0.25f);
-        //mFoldBaseShadowWidth = new ShadowWidth(2, 40, 0.4f);
 
         // init shader program
         mVertexProgram = new VertexProgram();
         mFoldBackVertexProgram = new FoldBackVertexProgram();
         mShadowVertexProgram = new ShadowVertexProgram();
-
-        // init vertexes
-        /*
-        mFoldFrontVertexes = new Vertexes();
-        mFoldBackVertexes = new FoldBackVertexes();
-        mFoldEdgesShadow = new ShadowVertexes(FOLD_TOP_EDGE_SHADOW_VEX_COUNT,
-                FOLD_EDGE_SHADOW_START_COLOR,
-                FOLD_EDGE_SHADOW_START_ALPHA,
-                FOLD_EDGE_SHADOW_END_COLOR,
-                FOLD_EDGE_SHADOW_END_ALPHA);
-        mFoldBaseShadow = new ShadowVertexes(0,
-                FOLD_BASE_SHADOW_START_COLOR,
-                FOLD_BASE_SHADOW_START_ALPHA,
-                FOLD_BASE_SHADOW_END_COLOR,
-                FOLD_BASE_SHADOW_END_ALPHA);
-        */
 
     }
 
@@ -337,7 +154,7 @@ public class PageFlipModify {
      * @param listener a listener for page flip
      * @return self
      */
-    public PageFlipModify setListener(OnPageFlipListener listener) {
+    public PageFlipModifyAbstract setListener(OnPageFlipListener listener) {
         mListener = listener;
         return this;
     }
@@ -349,7 +166,7 @@ public class PageFlipModify {
      * @param pixelsOfMesh pixel amount of each mesh
      * @return self
      */
-    public PageFlipModify setPixelsOfMesh(int pixelsOfMesh) {
+    public PageFlipModifyAbstract setPixelsOfMesh(int pixelsOfMesh) {
         mPixelsOfMesh = pixelsOfMesh > 0 ? pixelsOfMesh :
                 DEFAULT_MESH_VERTEX_PIXELS;
 
@@ -385,9 +202,7 @@ public class PageFlipModify {
      *              value is (0..1]
      * @return self
      */
-
-
-    public PageFlipModify setSemiPerimeterRatio(float ratio) {
+    public PageFlipModifyAbstract setSemiPerimeterRatio(float ratio) {
         if (ratio <= 0 || ratio > 1) {
             throw new IllegalArgumentException("Invalid ratio value: " + ratio);
         }
@@ -403,7 +218,7 @@ public class PageFlipModify {
      * @param alpha alpha value is in [0..255]
      * @return self
      */
-    public PageFlipModify setMaskAlphaOfFold(int alpha) {
+    public PageFlipModifyAbstract setMaskAlphaOfFold(int alpha) {
         //mFoldBackVertexes.setMaskAlpha(alpha);
         return this;
     }
@@ -417,10 +232,10 @@ public class PageFlipModify {
      * @param endAlpha shadow end alpha: [0..1]
      * @return self
      */
-    public PageFlipModify setShadowColorOfFoldEdges(float startColor,
-                                              float startAlpha,
-                                              float endColor,
-                                              float endAlpha) {
+    public PageFlipModifyAbstract setShadowColorOfFoldEdges(float startColor,
+                                                    float startAlpha,
+                                                    float endColor,
+                                                    float endAlpha) {
         //mFoldEdgesShadow.mColor.set(startColor, startAlpha, endColor, endAlpha);
         return this;
     }
@@ -434,11 +249,11 @@ public class PageFlipModify {
      * @param endAlpha shadow end alpha: [0..1]
      * @return self
      */
-    public PageFlipModify setShadowColorOfFoldBase(float startColor,
-                                             float startAlpha,
-                                             float endColor,
-                                             float endAlpha) {
-       // mFoldBaseShadow.mColor.set(startColor, startAlpha, endColor, endAlpha);
+    public PageFlipModifyAbstract setShadowColorOfFoldBase(float startColor,
+                                                   float startAlpha,
+                                                   float endColor,
+                                                   float endAlpha) {
+        // mFoldBaseShadow.mColor.set(startColor, startAlpha, endColor, endAlpha);
         return this;
     }
 
@@ -450,9 +265,9 @@ public class PageFlipModify {
      * @param ratio width ratio based on fold cylinder radius. It is in (0..1)
      * @return self
      */
-    public PageFlipModify setShadowWidthOfFoldEdges(float min,
-                                              float max,
-                                              float ratio) {
+    public PageFlipModifyAbstract setShadowWidthOfFoldEdges(float min,
+                                                    float max,
+                                                    float ratio) {
         //mFoldEdgesShadowWidth.set(min, max, ratio);
         return this;
     }
@@ -465,9 +280,9 @@ public class PageFlipModify {
      * @param ratio width ratio based on fold cylinder radius. It is in (0..1)
      * @return self
      */
-    public PageFlipModify setShadowWidthOfFoldBase(float min,
-                                             float max,
-                                             float ratio) {
+    public PageFlipModifyAbstract setShadowWidthOfFoldBase(float min,
+                                                   float max,
+                                                   float ratio) {
         //mFoldBaseShadowWidth.set(min, max, ratio);
         return this;
     }
@@ -560,23 +375,6 @@ public class PageFlipModify {
                 mPages[itrp].deleteAllTextures();
             }
 
-            //create new pages
-            //test
-            /*
-            if(itrp == 0)
-            {
-                mPages[itrp] = new PageModify(-100, mViewRect.right,
-                        mViewRect.top, mViewRect.bottom);
-
-                mPages[itrp].mViewRect.set(mViewRect.width/2 + 100, mViewRect.height);
-            }else
-            {
-                mPages[itrp] = new PageModify(mViewRect.left, 100,
-                        mViewRect.top, mViewRect.bottom);
-
-                mPages[itrp].mViewRect.set(mViewRect.width/2 + 100, mViewRect.height);
-            }*/
-
             mPages[itrp] = new PageModify(mViewRect.left, mViewRect.right,
                     mViewRect.top, mViewRect.bottom);
             mPages[itrp].indexOfPage = itrp;
@@ -623,9 +421,6 @@ public class PageFlipModify {
             {
                 mPages[itrp].mFakeTouchP.set(mTouchP.x, mTouchP.y);
             }
-
-            //mFlipState = PageFlipState.BEGIN_TRANSLATE;  //get ready to translate
-
         }
     }
 
@@ -645,62 +440,9 @@ public class PageFlipModify {
         float dy = (touchY - mStartTouchP.y);
         float dx = (touchX - mStartTouchP.x);
 
-        //Log.d(TAG, "dx " + dx + ", dy " + dy);
-
-
-
-        //final PageModify page = mPages[FIRST_PAGE];
-        //final GLPoint originP = page.originP;
-        //final GLPoint diagonalP = page.diagonalP;
-
-        /*
-        //begin translating
-        if(mFlipState == PageFlipState.BEGIN_TRANSLATE &&
-                (Math.abs(dx) > mViewRect.width * 0.05f))  //finger move threshold
-        {
-            //is ready to translate
-            page.setOriginAndDiagonalPoints(1); //set bottom left as original point,, for now
-
-            // determine if it is moving backward or forward[
-            if(dx < 0 && originP.x > 0 || dx > 0 && originP.x < 0){
-                //has to be moving from right to left
-                mFlipState = PageFlipState.FORWARD_TRANSLATE;
-            }
-        }
-
-        //in translating
-        if(mFlipState == PageFlipState.FORWARD_TRANSLATE)
-        {
-            //using sequential
-            dy = (touchY - mLastTouchP.y);
-            dx = (touchX - mLastTouchP.x);
-
-            if(dx <= 0)
-            {
-                //set the value of translate offset, used for drawing process
-                //mTransOffX = dx * 1.2f;   //has to be negative
-                for(int itrp = 0; itrp < PAGE_SIZE; itrp++)
-                {
-                    //mTransOffX[itrp] = dx * (1.2f - 0.1f * itrp);
-                    mPages[itrp].mTransOffX = dx * (1.2f - 0.1f * itrp);
-                }
-
-                mLastTouchP.set(touchX, touchY);
-                return true;
-            }else if(Math.abs(dx) > mViewRect.width * 0.05f)
-            {
-                //switch to flip animation
-                setAutoFlip();
-
-            }
-
-        }
-
-        */
-
         // begin to flip
         if (mFlipState == PageFlipState.BEGIN_FLIP
-               // && (Math.abs(dx) > mViewRect.width * 0.05f)
+            // && (Math.abs(dx) > mViewRect.width * 0.05f)
                 ) {
 
             for (int itrp = 0; itrp < PAGE_SIZE; itrp++) {
@@ -761,88 +503,88 @@ public class PageFlipModify {
             } // end of for loop
         }
 
-         // in moving, compute the TouchXY
-         if (mFlipState == PageFlipState.FORWARD_FLIP ||
-                 mFlipState == PageFlipState.BACKWARD_FLIP ||
-                 mFlipState == PageFlipState.UPWARD_FLIP ||
-                 mFlipState == PageFlipState.RESTORE_FLIP) {
+        // in moving, compute the TouchXY
+        if (mFlipState == PageFlipState.FORWARD_FLIP ||
+                mFlipState == PageFlipState.BACKWARD_FLIP ||
+                mFlipState == PageFlipState.UPWARD_FLIP ||
+                mFlipState == PageFlipState.RESTORE_FLIP) {
 
 
-             //temporary solution
-             if(Math.abs(dy) <= 0.1f)
-                 dy = dy > 0 ? 0.11f : -0.11f;
-             if(Math.abs(dx) <= 0.1f)
-                 dx = dx > 0 ? 0.11f : -0.11f;
+            //temporary solution
+            if(Math.abs(dy) <= 0.1f)
+                dy = dy > 0 ? 0.11f : -0.11f;
+            if(Math.abs(dx) <= 0.1f)
+                dx = dx > 0 ? 0.11f : -0.11f;
 
-             mIsVertical = Math.abs(dy) <= 0.1f;
-             if(mIsVertical == false)
-             {
-                 //Log.d(TAG, "abs dx " + Math.abs(dx));
-                 mIsHorizontal = Math.abs(dx) <= 0.1f;
-             }
-             //skip the calculation when the flip is either horizontal or vertical
-             if(mIsHorizontal || mIsVertical) {
-                 Log.d(TAG, "skipping a frame ..............");
-                 return false;
-             }
-             // multiply a factor to make sure the touch point is always head of
-             // finger point
+            mIsVertical = Math.abs(dy) <= 0.1f;
+            if(mIsVertical == false)
+            {
+                //Log.d(TAG, "abs dx " + Math.abs(dx));
+                mIsHorizontal = Math.abs(dx) <= 0.1f;
+            }
+            //skip the calculation when the flip is either horizontal or vertical
+            if(mIsHorizontal || mIsVertical) {
+                Log.d(TAG, "skipping a frame ..............");
+                return false;
+            }
+            // multiply a factor to make sure the touch point is always head of
+            // finger point
 
-             for (int itrp = 0; itrp < PAGE_SIZE; itrp++) {
+            for (int itrp = 0; itrp < PAGE_SIZE; itrp++) {
 
-                 //differentiate dx
-                 //the 0.9 can be adjusted
-                 dx = (touchX - mStartTouchP.x) * (float)Math.pow(TOUCH_DIFF_COEFFICIENT, itrp);  //forwards or backwards
-                 dy = (touchY - mStartTouchP.y) * (float)Math.pow(TOUCH_DIFF_COEFFICIENT, itrp);  //upwards or downwards
+                //differentiate dx
+                //the 0.9 can be adjusted
+                dx = (touchX - mStartTouchP.x) * (float)Math.pow(TOUCH_DIFF_COEFFICIENT, itrp);  //forwards or backwards
+                dy = (touchY - mStartTouchP.y) * (float)Math.pow(TOUCH_DIFF_COEFFICIENT, itrp);  //upwards or downwards
 
-                 if (PageFlipState.FORWARD_FLIP == mFlipState || PageFlipState.BACKWARD_FLIP == mFlipState
+                if (PageFlipState.FORWARD_FLIP == mFlipState || PageFlipState.BACKWARD_FLIP == mFlipState
                         || PageFlipState.UPWARD_FLIP == mFlipState) {
-                     dx *= 1.2f;
-                     dy *= 1.2f;
-                 }
-                 else {
-                     dx *= 1.1f;
-                     dy *= 1.1f;
-                 }
+                    dx *= 1.2f;
+                    dy *= 1.2f;
+                }
+                else {
+                    dx *= 1.1f;
+                    dy *= 1.1f;
+                }
 
-                 PageModify page = mPages[itrp];
-                 GLPoint originP = page.originP;
-                 GLPoint diagonalP = page.diagonalP;
+                PageModify page = mPages[itrp];
+                GLPoint originP = page.originP;
+                GLPoint diagonalP = page.diagonalP;
 
-                 // moving direction is changed:
-                 // 1. invert max curling angle
-                 // 2. invert Y of original point and diagonal point
+                // moving direction is changed:
+                // 1. invert max curling angle
+                // 2. invert Y of original point and diagonal point
 
-                 if(mFlipState == PageFlipState.FORWARD_FLIP || mFlipState == PageFlipState.BACKWARD_FLIP)
-                 {
-                     if ((dy < 0 && originP.y < 0) || (dy > 0 && originP.y > 0)
-                             ) {
-                         float t = page.mMaxT2DAngleTan;
-                         page.mMaxT2DAngleTan = page.mMaxT2OAngleTan;
-                         page.mMaxT2OAngleTan = t;
-                         page.invertYOfOriginPoint();
-                     }
-                 }else if(mFlipState == PageFlipState.UPWARD_FLIP)
-                 {
-                     if((dx < 0 && originP.x < 0) || (dx > 0 && originP.x > 0))
-                     {
-                         //invert the x of original point and diagonal point
-                         page.invertXOfOriginPoint();
-                     }
-                 }
+                if(mFlipState == PageFlipState.FORWARD_FLIP || mFlipState == PageFlipState.BACKWARD_FLIP)
+                {
+                    if ((dy < 0 && originP.y < 0) || (dy > 0 && originP.y > 0)
+                            ) {
+                        float t = page.mMaxT2DAngleTan;
+                        page.mMaxT2DAngleTan = page.mMaxT2OAngleTan;
+                        page.mMaxT2OAngleTan = t;
+                        page.invertYOfOriginPoint();
+                    }
+                }else if(mFlipState == PageFlipState.UPWARD_FLIP)
+                {
+                    if((dx < 0 && originP.x < 0) || (dx > 0 && originP.x > 0))
+                    {
+                        //invert the x of original point and diagonal point
+                        page.invertXOfOriginPoint();
+                    }
+                }
 
 
-                 // compute new TouchP.y
-                 //this is to limit the dy values
-                 //float maxY = dx * page.mMaxT2OAngleTan;
-                 //if (Math.abs(dy) > Math.abs(maxY)) {
-                 //    dy = maxY;
-                 //}
+                // compute new TouchP.y
+                //this is to limit the dy values
+                //float maxY = dx * page.mMaxT2OAngleTan;
+                //if (Math.abs(dy) > Math.abs(maxY)) {
+                //    dy = maxY;
+                //}
 
-                 // check if XFoldX1 is outside page width, if yes, recompute new
-                 // TouchP.y to assure the XFoldX1 is in page width
+                // check if XFoldX1 is outside page width, if yes, recompute new
+                // TouchP.y to assure the XFoldX1 is in page width
 
-                 // this is to set flipping angle restrictions
+                // this is to set flipping angle restrictions
                  /*
                  if(mIsHorizontal == false)
                  {
@@ -871,30 +613,30 @@ public class PageFlipModify {
                      }
                  }*/
 
-                 // set touchP(x, y) and middleP(x, y)
-                 if(itrp == FIRST_PAGE)
-                 {
-                     mLastTouchP.set(dx + originP.x, dy + originP.y);  //used to store the value temporarily
-                 }
-                 mTouchP.set(dx + originP.x, dy + originP.y);
+                // set touchP(x, y) and middleP(x, y)
+                if(itrp == FIRST_PAGE)
+                {
+                    mLastTouchP.set(dx + originP.x, dy + originP.y);  //used to store the value temporarily
+                }
+                mTouchP.set(dx + originP.x, dy + originP.y);
 
-                 //Log.d(TAG, "origin point" + originP.x);
-                 //Log.d(TAG, "moving touch point " + mTouchP.x);
+                //Log.d(TAG, "origin point" + originP.x);
+                //Log.d(TAG, "moving touch point " + mTouchP.x);
 
-                 page.mFakeTouchP.set(mTouchP.x, mTouchP.y);
-                 page.mMiddleP.x = (mTouchP.x + originP.x) * 0.5f;
-                 page.mMiddleP.y = (mTouchP.y + originP.y) * 0.5f;
+                page.mFakeTouchP.set(mTouchP.x, mTouchP.y);
+                page.mMiddleP.x = (mTouchP.x + originP.x) * 0.5f;
+                page.mMiddleP.y = (mTouchP.y + originP.y) * 0.5f;
 
-             }  //end of for loop
+            }  //end of for loop
 
-             mTouchP.set(mLastTouchP.x, mLastTouchP.y);
-             mLastTouchP.set(touchX, touchY);
+            mTouchP.set(mLastTouchP.x, mLastTouchP.y);
+            mLastTouchP.set(touchX, touchY);
 
-             // continue to compute points to drawing flip
-             computeVertexesAndBuildPage();
-             return true;
+            // continue to compute points to drawing flip
+            computeVertexesAndBuildPage();
+            return true;
 
-         }
+        }
 
         return false;
     }
@@ -1023,8 +765,6 @@ public class PageFlipModify {
      * @param start start point of scroller will be set
      * @param end end point of scroller will be set
      */
-
-
     private void computeScrollPointsForClickingFlip(float x,
                                                     Point start,
                                                     Point end) {
@@ -1044,8 +784,8 @@ public class PageFlipModify {
         // backward flip
         if (
                 x < diagonalP.x + page.width * mWidthRationOfClickToFlip &&
-                mListener != null &&
-                mListener.canFlipBackward()) {
+                        mListener != null &&
+                        mListener.canFlipBackward()) {
             mFlipState = PageFlipState.BACKWARD_FLIP;
             page.mKValue = tanOfBackwardAngle;
             start.set((int)diagonalP.x,
@@ -1095,12 +835,6 @@ public class PageFlipModify {
      */
 
     public boolean animating() {
-
-        //try all together for now
-
-        //final PageModify page = mPages[FIRST_PAGE];
-        //final GLPoint originP = page.originP;
-        //final GLPoint diagonalP = page.diagonalP;
 
         // is to end animating?
         boolean isAnimating = !mScroller.isFinished();
@@ -1468,7 +1202,6 @@ public class PageFlipModify {
             }
 
         }
-
 
     }
 

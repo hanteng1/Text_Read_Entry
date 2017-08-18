@@ -31,6 +31,7 @@ public abstract class PageRender implements OnPageFlipListener{
     Context mContext;
     Handler mHandler;
     PageFlipModify mPageFlip;
+    PageFlipModifyAbstract mPageFlipAbstract;
 
     public PageRender(Context context, PageFlipModify pageFlip, Handler handler, int pageNo)
     {
@@ -42,7 +43,20 @@ public abstract class PageRender implements OnPageFlipListener{
         mCanvas = new Canvas();
         mPageFlip.setListener(this);
         mHandler = handler;
+        mPageFlipAbstract = null;
+    }
 
+    public PageRender(Context context, PageFlipModifyAbstract pageFlip, Handler handler, int pageNo)
+    {
+        mContext = context;
+        mPageFlipAbstract = pageFlip;
+        mPageNo = pageNo;
+        //mDrawCommand = DRAW_MOVING_FRAME;
+        mDrawCommand = DRAW_FULL_PAGE;
+        mCanvas = new Canvas();
+        mPageFlipAbstract.setListener(this);
+        mHandler = handler;
+        mPageFlip = null;
     }
 
     public int getPageNo()
@@ -58,7 +72,10 @@ public abstract class PageRender implements OnPageFlipListener{
             mBitmap = null;
         }
 
-        mPageFlip.setListener(null);
+        if(mPageFlip != null)
+            mPageFlip.setListener(null);
+        if(mPageFlipAbstract != null)
+            mPageFlipAbstract.setListener(null);
         mCanvas = null;
         mBackgroundBitmap = null;
     }
@@ -72,7 +89,11 @@ public abstract class PageRender implements OnPageFlipListener{
     public boolean onFingerUp(float x, float y)
     {
 
-        if(mPageFlip.animating())  //when finger up, auto check the animation progress
+        if(mPageFlip != null && mPageFlip.animating())  //when finger up, auto check the animation progress
+        {
+            mDrawCommand = DRAW_ANIMATING_FRAME;
+            return true;
+        }else if(mPageFlipAbstract != null && mPageFlipAbstract.animating())
         {
             mDrawCommand = DRAW_ANIMATING_FRAME;
             return true;
