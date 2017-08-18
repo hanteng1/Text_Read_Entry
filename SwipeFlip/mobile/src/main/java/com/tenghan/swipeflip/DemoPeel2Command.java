@@ -10,6 +10,9 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
 
     public DemoPeel2Command(Context context)
     {
-        super(context);
+        super(context, 5);
     }
+
+
+
 }

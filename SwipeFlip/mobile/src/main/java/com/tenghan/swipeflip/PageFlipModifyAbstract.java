@@ -49,7 +49,7 @@ import static android.opengl.GLES20.glViewport;
 
 public abstract class PageFlipModifyAbstract {
 
-    final static String TAG = "PageFlipModify";
+    final static String TAG = "PageFlipModifyAbstract";
 
     // default pixels of mesh vertex
     private final static int DEFAULT_MESH_VERTEX_PIXELS = 10;
@@ -64,7 +64,7 @@ public abstract class PageFlipModifyAbstract {
     // pages and index
     private final static int FIRST_PAGE = 0;
     private int pageIndex;
-    public final static int PAGE_SIZE = 1; // 2 for testing
+    public int PAGE_SIZE = 1; // 2 for testing
 
     // view size
     private GLViewRect mViewRect;
@@ -114,9 +114,11 @@ public abstract class PageFlipModifyAbstract {
     /**
      * Constructor
      */
-    public PageFlipModifyAbstract(Context context) {
+    public PageFlipModifyAbstract(Context context, int pageSize) {
         mContext = context;
         mScroller = new Scroller(context);
+
+        PAGE_SIZE = pageSize;
 
         mFlipState = PageFlipState.END_FLIP;
 
@@ -351,7 +353,6 @@ public abstract class PageFlipModifyAbstract {
      */
     public void onSurfaceChanged(int width, int height) throws
             PageFlipException {
-
 
         mViewRect.set(width, height);
         glViewport(0, 0, width, height);
