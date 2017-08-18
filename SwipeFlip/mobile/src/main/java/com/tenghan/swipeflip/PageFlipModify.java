@@ -935,8 +935,11 @@ public class PageFlipModify {
         Point end = new Point(0, 0);
 
         // forward flipping
-        if (mFlipState == PageFlipState.FORWARD_FLIP || mFlipState == PageFlipState.BACKWARD_FLIP) {
+        if (mFlipState == PageFlipState.FORWARD_FLIP ||
+                mFlipState == PageFlipState.BACKWARD_FLIP ||
+                mFlipState == PageFlipState.UPWARD_FLIP) {
             // can't go forward, restore current page
+            // with ratio set to 1.0, 100% restore
             if (page.isXInRange(touchX, WIDTH_RATIO_OF_RESTORE_FLIP)) {
                 end.x = (int)originP.x;
                 mFlipState = PageFlipState.RESTORE_FLIP;
@@ -964,6 +967,8 @@ public class PageFlipModify {
             }
         }*/
         // ready to flip
+        // this could be ignored for now
+
         else if (mFlipState == PageFlipState.BEGIN_FLIP) {
             mIsVertical = false;
             mFlipState = PageFlipState.END_FLIP;
@@ -979,6 +984,7 @@ public class PageFlipModify {
         // start scroller for animating
         if (mFlipState == PageFlipState.FORWARD_FLIP ||
                 mFlipState == PageFlipState.BACKWARD_FLIP ||
+                mFlipState == PageFlipState.UPWARD_FLIP ||
                 mFlipState == PageFlipState.RESTORE_FLIP) {
 
             //activiate the job sheduling
@@ -1117,39 +1123,76 @@ public class PageFlipModify {
 
                 //Log.d(TAG, "dx " + dx);
 
-                if((dx < 0 && originP.x > 0) || (dx > 0 && originP.x < 0) )   //can still support animation
+
+                if(Math.abs(dx) > Math.abs(dy))
                 {
-                    page.mFakeTouchP.set(originP.x + dx, originP.y + dy);
+                    if((dx < 0 && originP.x > 0) || (dx > 0 && originP.x < 0) )   //can still support animation
+                    {
+                        page.mFakeTouchP.set(originP.x + dx, originP.y + dy);
 
-                    // for backward and restore flip, compute x to check if it can
-                    // continue to flip
-                    if (mFlipState == PageFlipState.BACKWARD_FLIP ||
-                            mFlipState == PageFlipState.RESTORE_FLIP) {
-                        mTouchP.y = (page.mFakeTouchP.x - originP.x) * page.mKValue + originP.y;
-                        page.mFakeTouchP.y = mTouchP.y;
+                        // for backward and restore flip, compute x to check if it can
+                        // continue to flip
+                        if (mFlipState == PageFlipState.BACKWARD_FLIP ||
+                                mFlipState == PageFlipState.RESTORE_FLIP) {
 
-                        if(itrp == FIRST_PAGE) {
-                            isAnimating = Math.abs(page.mFakeTouchP.x - originP.x) > 10;   //distance less than 10
+                            mTouchP.y = (page.mFakeTouchP.x - originP.x) * page.mKValue + originP.y;
+                            page.mFakeTouchP.y = mTouchP.y;
+
+                            if(itrp == FIRST_PAGE) {
+                                isAnimating = Math.abs(page.mFakeTouchP.x - originP.x) > 10;   //distance less than 10
+                            }
+                        }
+                        // check if flip is vertical
+                        else {
+                            if(itrp == FIRST_PAGE)
+                                mIsVertical = Math.abs(page.mFakeTouchP.y - originP.y) < 1f;
+                        }
+
+                        // compute middle point
+                        page.mMiddleP.set((page.mFakeTouchP.x + originP.x) * 0.5f,
+                                (page.mFakeTouchP.y + originP.y) * 0.5f);
+
+                        // compute key points
+                        if (mIsVertical) {
+                            page.computeKeyVertexesWhenVertical();
+                        }
+                        else {
+                            page.computeKeyVertexesWhenSlope();
                         }
                     }
-                    // check if flip is vertical
-                    else {
-                        if(itrp == FIRST_PAGE)
-                            mIsVertical = Math.abs(page.mFakeTouchP.y - originP.y) < 1f;
-                    }
+                }else
+                {
+                    if((dy < 0 && originP.y > 0) || (dy > 0 && originP.y < 0))  //can still support animating
+                    {
+                        page.mFakeTouchP.set(originP.x + dx, originP.y + dy);
 
-                    // compute middle point
-                    page.mMiddleP.set((page.mFakeTouchP.x + originP.x) * 0.5f,
-                            (page.mFakeTouchP.y + originP.y) * 0.5f);
+                        if (mFlipState == PageFlipState.RESTORE_FLIP) {
+                            //could be adjusted
+                            //mTouchP.y = (page.mFakeTouchP.x - originP.x) * page.mKValue + originP.y;
+                            //page.mFakeTouchP.y = mTouchP.y;
 
-                    // compute key points
-                    if (mIsVertical) {
-                        page.computeKeyVertexesWhenVertical();
-                    }
-                    else {
-                        page.computeKeyVertexesWhenSlope();
+                            if(itrp == FIRST_PAGE) {
+                                isAnimating = Math.abs(page.mFakeTouchP.y - originP.y) > 10;   //distance less than 10
+                            }
+                        }else  //is still going in original way
+                        {
+                            //check if horizontal
+                            mIsHorizontal = false; // faking event
+                        }
+
+                        page.mMiddleP.set((page.mFakeTouchP.x + originP.x) * 0.5f,
+                                (page.mFakeTouchP.y + originP.y) * 0.5f);
+
+                        // compute key points
+                        if (mIsHorizontal) {
+                            page.computeKeyVertexesWhenHorizontal();
+                        }
+                        else {
+                            page.computeKeyVertexesWhenSlope();
+                        }
                     }
                 }
+
             }
 
             // in single page mode, check if the whole fold page is outside the
@@ -1176,6 +1219,13 @@ public class PageFlipModify {
             {
                 PageModify page = mPages[itrp];
                 page.computeVertexesWhenVertical();
+            }
+        } else if(mIsHorizontal)
+        {
+            for(int itrp =0; itrp < PAGE_SIZE; itrp++)
+            {
+                PageModify page = mPages[itrp];
+                page.computeVertexesWhenHorizontal();
             }
         }
         else {
