@@ -74,7 +74,8 @@ public abstract class DemoRender extends PageRender{
                 //}
 
                 // draw frame for page flip
-                mPageFlipAbstract.drawFlipFrame();  //see the difference
+                //mPageFlipAbstract.drawFlipFrame();  //see the difference
+                mPageFlipAbstract.drawFlipFrameWithIndex(mPageFlipAbstract.flipped);
             }
 
         }
