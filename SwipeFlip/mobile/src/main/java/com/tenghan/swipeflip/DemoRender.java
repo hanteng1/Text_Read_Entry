@@ -22,7 +22,6 @@ public abstract class DemoRender extends PageRender{
     private final static String TAG = "DemoRender";
     private final static String[] Alphabet = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
-
     public DemoRender(Context context, PageFlipModifyAbstract pageFlipAbstract,
                             Handler handler, int pageNo) {
         super(context, pageFlipAbstract, handler, pageNo);
@@ -188,7 +187,7 @@ public abstract class DemoRender extends PageRender{
         mCanvas.drawText(text, (width - textWidth) / 2, y, p);
     }
 
-    public void loadPageWithCommands(int number, int[] commandIds)
+    public void loadPageWithCommands(int number, String[] commandIds)
     {
         final int width = mCanvas.getWidth();
         final int height = mCanvas.getHeight();
@@ -212,10 +211,48 @@ public abstract class DemoRender extends PageRender{
         String text = Alphabet[number];
         float textWidth = p.measureText(text);
         float y = height - p.getTextSize() - 20;
-        mCanvas.drawText(text, (width - textWidth) / 2, y, p);
+        float x = (width - textWidth) / 2;
+        mCanvas.drawText(text, x, y, p);
 
         //3. load/draw commands on corners
+        for(int itrc = 0; itrc < commandIds.length; itrc++)
+        {
+            fontSize = calcFontSize(40);
+            p.setColor(Color.GRAY);
+            p.setStrokeWidth(1);
+            p.setAntiAlias(true);
+            p.setTextSize(fontSize);
+            text = commandIds[itrc];
+            textWidth = p.measureText(text);
 
+            /**
+             *    ---------
+             *   |0       1|
+             *   |         |
+             *   |         |
+             *   |3       2|
+             *    ---------
+             */
+
+            float offset = 20.0f;
+            if(itrc == 0 || itrc == 3)
+            {
+                x = -width / 2 + offset  + textWidth / 2;
+            }else
+            {
+                x = width / 2 - offset - textWidth / 2;
+            }
+
+            if(itrc == 0 || itrc == 1)
+            {
+                y = height/2 - offset - p.getTextSize();
+            }else
+            {
+                y = -height/2 + offset;
+            }
+
+            mCanvas.drawText(text, x, y, p);
+        }
 
     }
 
