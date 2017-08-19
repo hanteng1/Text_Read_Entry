@@ -203,6 +203,7 @@ public abstract class DemoRender extends PageRender{
         background = null;
 
         // 2. load/draw page number
+        /*
         int fontSize = calcFontSize(80);
         p.setColor(Color.GRAY);
         p.setStrokeWidth(1);
@@ -214,17 +215,19 @@ public abstract class DemoRender extends PageRender{
         float y = height - p.getTextSize() - 20;
         float x = (width - textWidth) / 2;
         mCanvas.drawText(text, x, y, p);
+        */
 
         //3. load/draw commands on corners
         for(int itrc = 0; itrc < commandIds.length; itrc++)
         {
-            fontSize = calcFontSize(40);
+            int fontSize = calcFontSize(20);
             p.setColor(Color.GRAY);
             p.setStrokeWidth(1);
             p.setAntiAlias(true);
             p.setTextSize(fontSize);
-            text = commandIds[itrc];
-            textWidth = p.measureText(text);
+            String text = commandIds[itrc];
+            float textWidth = p.measureText(text);
+            float x, y;
 
             /**
              *    ---------
@@ -238,21 +241,27 @@ public abstract class DemoRender extends PageRender{
             float offset = 20.0f;
             if(itrc == 0 || itrc == 3)
             {
-                x = -width / 2 + offset  + textWidth / 2;
+                x = offset;
             }else
             {
-                x = width / 2 - offset - textWidth / 2;
+                x = width - offset - textWidth;
             }
 
             if(itrc == 0 || itrc == 1)
             {
-                y = height/2 - offset - p.getTextSize();
+                y = offset + p.getTextSize()/2;
             }else
             {
-                y = -height/2 + offset;
+                y = height - offset;
             }
 
+            mCanvas.save();
+            if(itrc == 0 || itrc == 2)
+                mCanvas.rotate(-45f, x + textWidth/2, y - p.getTextSize()/2);
+            else if(itrc == 1 || itrc == 3)
+                mCanvas.rotate(45f, x + textWidth/2, y - p.getTextSize()/2);
             mCanvas.drawText(text, x, y, p);
+            mCanvas.restore();
         }
 
     }

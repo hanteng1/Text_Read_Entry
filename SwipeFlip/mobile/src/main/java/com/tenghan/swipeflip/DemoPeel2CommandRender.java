@@ -16,10 +16,10 @@ import com.eschao.android.widget.pageflip.modify.PageModify;
 public class DemoPeel2CommandRender extends DemoRender{
 
     //depends on how many pages to support
-    String[][] cRIds = {{},{"Copy", "Paste", "Color", "Save"},
-            {"Copy", "Paste", "Color", "Save"},
-            {"Copy", "Paste", "Color", "Save"},
-            {"Copy", "Paste", "Color", "Save"}};
+    String[][] cRIds = {{},{"Copy", "Color", "Paste", "Save"},
+            {"Copy", "Color", "Paste", "Save"},
+            {"Copy", "Color", "Paste", "Save"},
+            {"Copy", "Color", "Paste", "Save"}};
 
     public DemoPeel2CommandRender(Context context, PageFlipModifyAbstract pageFlipAbstract,
                                   Handler handler, int pageNo)
