@@ -665,7 +665,7 @@ public class PageModify {
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, b, 0);
 
-        Log.d(TAG, "front texture id " + mTexIDs[FRONT_TEXTURE_ID]);
+        //Log.d(TAG, "front texture id " + mTexIDs[FRONT_TEXTURE_ID]);
 
     }
 

@@ -58,7 +58,7 @@ public class GestureService {
                 Log.d(TAG, "command activiated " + activiatedCommandIndex);
                 //reload texture
                 //MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(1);
-                MainActivity.getSharedInstance().mDemoView.mDemo.getPages()[1].setFirstTextureWithSecond();
+                //MainActivity.getSharedInstance().mDemoView.mDemo.getPages()[1].setFirstTextureWithSecond();
             }
 
         }
