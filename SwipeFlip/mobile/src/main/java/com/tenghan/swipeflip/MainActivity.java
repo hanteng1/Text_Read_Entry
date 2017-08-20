@@ -5,6 +5,7 @@ a good demo to follow: https://www.youtube.com/watch?v=rVyBwz1-AiE
  */
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.Tag;
 import android.os.Build;
@@ -25,7 +26,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     PageFlipView mPageFlipView;
     DemoView mDemoView;
-    GestureDetector mGestureDetector;
+    GestureDetector mGestureDetector;  //handle touch screen events
+    //intent for gesture recognition service
+    public GestureService mGestureService;
 
     private final static String TAG = "MainActivity";
 
@@ -50,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         instance = this;
+
+        mGestureService = new GestureService();
 
         /**
          * function test group
@@ -118,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         activityIndex = 3;
 
          */
+
 
 
     }

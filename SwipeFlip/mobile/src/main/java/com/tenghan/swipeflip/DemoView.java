@@ -76,6 +76,8 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
         if (!mDemo.isAnimating() &&
                 mDemo.getFirstPage() != null) {
             mDemo.onFingerDown(x, y);
+
+            MainActivity.getSharedInstance().mGestureService.clear();
         }
     }
 
@@ -94,6 +96,7 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
                 mDrawLock.lock();
                 if (mPageRender != null &&
                         mPageRender.onFingerMove(x, y)) {
+                    MainActivity.getSharedInstance().mGestureService.handleData(new float[]{x, y});
                     requestRender();
                 }
             }
