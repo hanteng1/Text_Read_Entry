@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.eschao.android.widget.pageflip.PageFlipState;
 import com.eschao.android.widget.pageflip.modify.PageModify;
@@ -29,6 +30,8 @@ public abstract class DemoRender extends PageRender{
 
     //what about loading textures first, then we can get rid of the mDrawCommand thing
     public abstract void LoadTextures();
+
+    public abstract void ReloadTexture(int itrp);
 
     //this is calling the drawing functions
     public void onDrawFrame() {
@@ -221,7 +224,14 @@ public abstract class DemoRender extends PageRender{
         for(int itrc = 0; itrc < commandIds.length; itrc++)
         {
             int fontSize = calcFontSize(20);
-            p.setColor(Color.GRAY);
+            if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == itrc)
+            {
+                p.setColor(Color.RED);
+            }else
+            {
+                p.setColor(Color.GRAY);
+            }
+
             p.setStrokeWidth(1);
             p.setAntiAlias(true);
             p.setTextSize(fontSize);

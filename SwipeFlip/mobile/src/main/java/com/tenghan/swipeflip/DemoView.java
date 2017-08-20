@@ -24,8 +24,8 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
     int mPageNo;
     int mDuration;
     Handler mHandler;
-    PageFlipModifyAbstract mDemo;
-    PageRender mPageRender;
+    public PageFlipModifyAbstract mDemo;
+    public DemoPeel2CommandRender mPageRender;
     ReentrantLock mDrawLock;
 
     public DemoView(Context context)
@@ -77,7 +77,6 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
                 mDemo.getFirstPage() != null) {
             mDemo.onFingerDown(x, y);
 
-            MainActivity.getSharedInstance().mGestureService.clear();
         }
     }
 
@@ -96,7 +95,6 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
                 mDrawLock.lock();
                 if (mPageRender != null &&
                         mPageRender.onFingerMove(x, y)) {
-                    MainActivity.getSharedInstance().mGestureService.handleData(new float[]{x, y});
                     requestRender();
                 }
             }

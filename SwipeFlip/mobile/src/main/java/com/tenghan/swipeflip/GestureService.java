@@ -4,6 +4,8 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import com.eschao.android.widget.pageflip.GLPoint;
+
 import java.util.ArrayList;
 
 /**
@@ -14,12 +16,29 @@ public class GestureService {
 
     private final static String TAG = "GestureService";
     private ArrayList<float[]> poses;
-    private int SIZE_LIMIT = 5;  //use 5 sequential points
+    private static int SIZE_LIMIT = 5;  //use 5 sequential points
+
+    private GLPoint origin;
+    private boolean originSet;
+
+    /**
+     *    ---------
+     *   |0       1|
+     *   |         |
+     *   |         |
+     *   |3       2|
+     *    ---------
+     */
+    public int activiatedCommandIndex = -1;
+    private static double PEEL_ACTIVIATION_DISTANCE = 100;
+
 
     public GestureService()
     {
         //Log.d(TAG, "initial called");
         poses = new ArrayList<float[]>();
+        origin = new GLPoint();
+        originSet = false;
     }
 
     public void handleData(float[] pos) {
@@ -32,13 +51,24 @@ public class GestureService {
             poses.remove(0);
         }
 
+        if(activiatedCommandIndex == -1) {
+            activiatedCommandIndex = calPeelDistance(pos);
+
+            if(activiatedCommandIndex > -1) {
+                Log.d(TAG, "command activiated " + activiatedCommandIndex);
+                //reload texture
+                MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(1);
+
+            }
+
+        }
+
         gestureRecognition(poses);
     }
 
     private int gestureRecognition(ArrayList<float[]> posXY)
     {
         int recognizedGesture = 0;
-
         if(posXY.size() < SIZE_LIMIT)
             return recognizedGesture;
 
@@ -55,13 +85,54 @@ public class GestureService {
 
         averageDis = averageDis / (posXY.size() - 1);
 
-        Log.d(TAG, "averageDis " + averageDis);
+        //Log.d(TAG, "averageDis " + averageDis);
 
         return 0;
     }
 
+    private int calPeelDistance(float[] pos)
+    {
+        if(originSet == false)
+            return -1;
+
+        double distance = Math.sqrt((double)((pos[0] - origin.x) * (pos[0] - origin.x)
+                + (pos[1] - origin.y) * (pos[1] - origin.y)));
+
+        //Log.d(TAG, "pos " + pos[0] + " , " + pos[1]);
+
+        if(distance > PEEL_ACTIVIATION_DISTANCE)
+        {
+            if(origin.x < 0  && origin.y > 0)
+            {
+                return 0;
+            }else if(origin.x > 0 && origin.y > 0)
+            {
+                return 1;
+            }else if(origin.x > 0 && origin.y < 0)
+            {
+                return 2;
+            }else{
+                return 3;
+            }
+        }
+
+        return -1;
+    }
+
+    public void setOrigin(float[] ori)
+    {
+        origin.x = ori[0];
+        origin.y = ori[1];
+
+        //Log.d(TAG, "origin " + origin.x + ", " + origin.y);
+
+        originSet = true;
+    }
+
     public void clear()
     {
+        activiatedCommandIndex = -1;
+        originSet = false;
         poses.clear();
     }
 }

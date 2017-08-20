@@ -53,6 +53,13 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
                 // set OriginP and DiagonalP points
                 //page.setOriginAndDiagonalPoints(dy);
                 page.setOriginAndDiagonalPoints(dx, dy, mStartTouchP.x, mStartTouchP.y);
+
+                //clear the variables
+                MainActivity.getSharedInstance().mGestureService.clear();
+                //set origin
+                MainActivity.getSharedInstance().mGestureService.setOrigin(new float[]{touchX, touchY});
+                MainActivity.getSharedInstance().mGestureService.handleData(new float[]{touchX, touchY});
+
                 // compute max degree between X axis and line from TouchP to OriginP
                 // and max degree between X axis and line from TouchP to
                 // (OriginP.x, DiagonalP.Y)
@@ -109,6 +116,7 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
                 mFlipState == PageFlipState.UPWARD_FLIP ||
                 mFlipState == PageFlipState.RESTORE_FLIP) {
 
+            MainActivity.getSharedInstance().mGestureService.handleData(new float[]{touchX, touchY});
 
             //temporary solution
             if(Math.abs(dy) <= 0.1f)

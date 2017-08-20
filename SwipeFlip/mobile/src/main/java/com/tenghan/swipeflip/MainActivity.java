@@ -24,9 +24,9 @@ import android.view.WindowManager;
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
 
-    PageFlipView mPageFlipView;
-    DemoView mDemoView;
-    GestureDetector mGestureDetector;  //handle touch screen events
+    public PageFlipView mPageFlipView;
+    public DemoView mDemoView;
+    public GestureDetector mGestureDetector;  //handle touch screen events
     //intent for gesture recognition service
     public GestureService mGestureService;
 
