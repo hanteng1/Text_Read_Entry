@@ -664,6 +664,23 @@ public class PageModify {
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, b, 0);
+
+        Log.d(TAG, "front texture id " + mTexIDs[FRONT_TEXTURE_ID]);
+
+    }
+
+
+    public PageModify setFirstTextureWithSecond() {
+        if (mTexIDs[FRONT_TEXTURE_ID] > INVALID_TEXTURE_ID) {
+            mUnusedTexIDs[mUnusedTexSize++] = mTexIDs[FRONT_TEXTURE_ID];
+        }
+
+        maskColor[FRONT_TEXTURE_ID][0] = maskColor[BACK_TEXTURE_ID][0];
+        maskColor[FRONT_TEXTURE_ID][1] = maskColor[BACK_TEXTURE_ID][1];
+        maskColor[FRONT_TEXTURE_ID][2] = maskColor[BACK_TEXTURE_ID][2];
+        mTexIDs[FRONT_TEXTURE_ID] = mTexIDs[BACK_TEXTURE_ID];
+        mTexIDs[BACK_TEXTURE_ID] = INVALID_TEXTURE_ID;
+        return this;
     }
 
     /**

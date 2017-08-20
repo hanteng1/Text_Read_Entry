@@ -46,6 +46,9 @@ public class DemoPeel2CommandRender extends DemoRender{
                 //commands ids
                 loadPageWithCommands(itrp, cRIds[itrp]);
                 pages[itrp].setFrontTexture(mBitmap);
+
+                loadPage(itrp + 5);
+                pages[itrp].setBackTexture(mBitmap);
             }
         }
     }
