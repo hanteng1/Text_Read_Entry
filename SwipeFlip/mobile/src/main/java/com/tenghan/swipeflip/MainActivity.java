@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     public PageFlipView mPageFlipView;
     public DemoView mDemoView;
+    public DemoUIView mDemoUIView;
     public GestureDetector mGestureDetector;  //handle touch screen events
     //intent for gesture recognition service
     public GestureService mGestureService;
@@ -101,17 +102,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
          */
 
         activityIndex = 2;
-       // mDemoView =   new DemoView(this);
-       // setContentView(mDemoView);
 
         mDemoView = (DemoView)findViewById(R.id.demo_view);
-        //set size and position
-        ///ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mDemoView.getLayoutParams();
-        //layoutParams.width = 320;
-        //layoutParams.height = 320;
-        //layoutParams.setMargins(100, 200, 0, 0);
-        ///mDemoView.setLayoutParams(layoutParams);
-
+        mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
+        mDemoUIView.setDimension(320, 320);
 
         mGestureDetector = new GestureDetector(this, this);
 
