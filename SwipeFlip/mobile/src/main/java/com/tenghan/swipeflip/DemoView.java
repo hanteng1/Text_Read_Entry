@@ -4,6 +4,7 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.os.Message;
+import android.util.AttributeSet;
 import android.util.Log;
 
 import com.eschao.android.widget.pageflip.PageFlipException;
@@ -28,9 +29,9 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
     public DemoPeel2CommandRender mPageRender;
     ReentrantLock mDrawLock;
 
-    public DemoView(Context context)
+    public DemoView(Context context, AttributeSet attrs)
     {
-        super(context);
+        super(context, attrs);
         newHandler();
 
         mDuration = 1000;  //an interesting number to try, 1000 is fine

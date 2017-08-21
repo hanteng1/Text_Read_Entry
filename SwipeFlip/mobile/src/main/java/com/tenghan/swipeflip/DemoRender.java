@@ -48,9 +48,6 @@ public abstract class DemoRender extends PageRender{
         //PageModify page = mPageFlip.getFirstPage(); //there is only one page in single page mode
         PageModify[] pages = mPageFlipAbstract.getPages();
 
-
-        //what about updating the texture here
-
         // 2. handle drawing command triggered from finger moving and animating
         if (mDrawCommand == DRAW_MOVING_FRAME ||
                 mDrawCommand == DRAW_ANIMATING_FRAME) {
@@ -89,7 +86,7 @@ public abstract class DemoRender extends PageRender{
                 // draw frame for page flip
                 //mPageFlipAbstract.drawFlipFrame();  //see the difference
 
-
+                //what about updating the texture here
                 for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
                 {
                     if(pages[itrp].waiting4TextureUpdate == true)

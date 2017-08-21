@@ -21,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
 
@@ -52,9 +53,17 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
         instance = this;
 
         mGestureService = new GestureService();
+
+        FrameLayout frameLayout = (FrameLayout)findViewById(R.id.frame_layout);
+        ViewGroup.LayoutParams layoutParams = (ViewGroup.LayoutParams) frameLayout.getLayoutParams();
+        layoutParams.width = 320;
+        layoutParams.height = 320;
+        frameLayout.setLayoutParams(layoutParams);
 
         /**
          * function test group
@@ -90,17 +99,20 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         /**
          * demo group
          */
+
         activityIndex = 2;
-        mDemoView = new DemoView(this);
-        setContentView(mDemoView);
+       // mDemoView =   new DemoView(this);
+       // setContentView(mDemoView);
 
+        mDemoView = (DemoView)findViewById(R.id.demo_view);
         //set size and position
-        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mDemoView.getLayoutParams();
-        layoutParams.width = 320;
-        layoutParams.height = 320;
+        ///ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mDemoView.getLayoutParams();
+        //layoutParams.width = 320;
+        //layoutParams.height = 320;
         //layoutParams.setMargins(100, 200, 0, 0);
+        ///mDemoView.setLayoutParams(layoutParams);
 
-        mDemoView.setLayoutParams(layoutParams);
+
         mGestureDetector = new GestureDetector(this, this);
 
         if(Build.VERSION.SDK_INT < 16)

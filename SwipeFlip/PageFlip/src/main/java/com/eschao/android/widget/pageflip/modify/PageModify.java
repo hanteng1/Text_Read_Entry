@@ -673,13 +673,6 @@ public class PageModify {
     //upate texture
     public void updateFrontTexture(Bitmap b)
     {
-//        if (mTexIDs[FRONT_TEXTURE_ID] > INVALID_TEXTURE_ID) {
-//            mUnusedTexIDs[mUnusedTexSize++] = mTexIDs[FRONT_TEXTURE_ID];
-//        }
-
-//        deleteUnusedTextures();
-
-
         int color = PageFlipUtils.computeAverageColor(b, 30);
         maskColor[FRONT_TEXTURE_ID][0] = Color.red(color) / 255.0f;
         maskColor[FRONT_TEXTURE_ID][1] = Color.green(color) / 255.0f;
@@ -695,7 +688,6 @@ public class PageModify {
 
         waiting4TextureUpdate = false;
     }
-
 
     public PageModify setFirstTextureWithSecond() {
         if (mTexIDs[FRONT_TEXTURE_ID] > INVALID_TEXTURE_ID) {
