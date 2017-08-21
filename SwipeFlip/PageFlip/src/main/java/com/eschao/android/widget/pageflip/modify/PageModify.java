@@ -669,6 +669,31 @@ public class PageModify {
 
     }
 
+    //upate texture
+    public void updateFrontTexture(Bitmap b)
+    {
+        if (mTexIDs[FRONT_TEXTURE_ID] > INVALID_TEXTURE_ID) {
+            mUnusedTexIDs[mUnusedTexSize++] = mTexIDs[FRONT_TEXTURE_ID];
+        }
+
+        deleteUnusedTextures();
+
+        /*
+        int color = PageFlipUtils.computeAverageColor(b, 30);
+        maskColor[FRONT_TEXTURE_ID][0] = Color.red(color) / 255.0f;
+        maskColor[FRONT_TEXTURE_ID][1] = Color.green(color) / 255.0f;
+        maskColor[FRONT_TEXTURE_ID][2] = Color.blue(color) / 255.0f;
+
+        //glGenTextures(1, mTexIDs, FRONT_TEXTURE_ID);
+        //glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, mTexIDs[FRONT_TEXTURE_ID]);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //GLUtils.texSubImage2D(GL_TEXTURE_2D, 0, 0, 0, b);
+        GLUtils.texImage2D(GL_TEXTURE_2D, 0, b, 0);
+        */
+    }
+
 
     public PageModify setFirstTextureWithSecond() {
         if (mTexIDs[FRONT_TEXTURE_ID] > INVALID_TEXTURE_ID) {

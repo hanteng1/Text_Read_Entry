@@ -57,9 +57,11 @@ public class DemoPeel2CommandRender extends DemoRender{
     public void ReloadTexture(int itrp)
     {
         PageModify page = mPageFlipAbstract.getPages()[itrp];
-        page.deleteAllTextures();
-        loadPageWithCommands(itrp, cRIds[itrp]);
-        page.setFrontTexture(mBitmap);
+        //page.deleteAllTextures();
+        //loadPageWithCommands(itrp, cRIds[itrp]);
+        //page.updateFrontTexture(mBitmap);
+        //page.setBackTexture(mBitmap);
+        //page.setFirstTextureWithSecond();
 
     }
 }
