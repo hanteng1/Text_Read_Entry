@@ -58,6 +58,7 @@ public class PageModify {
     private final static int BACK_TEXTURE_ID = 1;
     private final static int INVALID_TEXTURE_ID = -1;
 
+    public boolean waiting4TextureUpdate = false;
 
     /**
      * <p>
@@ -672,13 +673,13 @@ public class PageModify {
     //upate texture
     public void updateFrontTexture(Bitmap b)
     {
-        if (mTexIDs[FRONT_TEXTURE_ID] > INVALID_TEXTURE_ID) {
-            mUnusedTexIDs[mUnusedTexSize++] = mTexIDs[FRONT_TEXTURE_ID];
-        }
+//        if (mTexIDs[FRONT_TEXTURE_ID] > INVALID_TEXTURE_ID) {
+//            mUnusedTexIDs[mUnusedTexSize++] = mTexIDs[FRONT_TEXTURE_ID];
+//        }
 
-        deleteUnusedTextures();
+//        deleteUnusedTextures();
 
-        /*
+
         int color = PageFlipUtils.computeAverageColor(b, 30);
         maskColor[FRONT_TEXTURE_ID][0] = Color.red(color) / 255.0f;
         maskColor[FRONT_TEXTURE_ID][1] = Color.green(color) / 255.0f;
@@ -691,7 +692,8 @@ public class PageModify {
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         //GLUtils.texSubImage2D(GL_TEXTURE_2D, 0, 0, 0, b);
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, b, 0);
-        */
+
+        waiting4TextureUpdate = false;
     }
 
 

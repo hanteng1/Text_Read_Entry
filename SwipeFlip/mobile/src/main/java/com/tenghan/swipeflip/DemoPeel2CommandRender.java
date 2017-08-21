@@ -15,12 +15,6 @@ import com.eschao.android.widget.pageflip.modify.PageModify;
 
 public class DemoPeel2CommandRender extends DemoRender{
 
-    //depends on how many pages to support
-    String[][] cRIds = {{},{"Copy", "Color", "Paste", "Save"},
-            {"Copy", "Color", "Paste", "Save"},
-            {"Copy", "Color", "Paste", "Save"},
-            {"Copy", "Color", "Paste", "Save"}};
-
     public DemoPeel2CommandRender(Context context, PageFlipModifyAbstract pageFlipAbstract,
                                   Handler handler, int pageNo)
     {
@@ -57,6 +51,8 @@ public class DemoPeel2CommandRender extends DemoRender{
     public void ReloadTexture(int itrp)
     {
         PageModify page = mPageFlipAbstract.getPages()[itrp];
+        page.waiting4TextureUpdate = true;
+
         //page.deleteAllTextures();
         //loadPageWithCommands(itrp, cRIds[itrp]);
         //page.updateFrontTexture(mBitmap);

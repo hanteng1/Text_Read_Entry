@@ -23,6 +23,13 @@ public abstract class DemoRender extends PageRender{
     private final static String TAG = "DemoRender";
     private final static String[] Alphabet = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
+
+    //depends on how many pages to support
+    public String[][] cRIds = {{},{"Copy", "Color", "Paste", "Save"},
+            {"Copy", "Color", "Paste", "Save"},
+            {"Copy", "Color", "Paste", "Save"},
+            {"Copy", "Color", "Paste", "Save"}};
+
     public DemoRender(Context context, PageFlipModifyAbstract pageFlipAbstract,
                             Handler handler, int pageNo) {
         super(context, pageFlipAbstract, handler, pageNo);
@@ -40,6 +47,9 @@ public abstract class DemoRender extends PageRender{
         mPageFlipAbstract.deleteUnusedTextures();
         //PageModify page = mPageFlip.getFirstPage(); //there is only one page in single page mode
         PageModify[] pages = mPageFlipAbstract.getPages();
+
+
+        //what about updating the texture here
 
         // 2. handle drawing command triggered from finger moving and animating
         if (mDrawCommand == DRAW_MOVING_FRAME ||
@@ -78,6 +88,17 @@ public abstract class DemoRender extends PageRender{
 
                 // draw frame for page flip
                 //mPageFlipAbstract.drawFlipFrame();  //see the difference
+
+
+                for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
+                {
+                    if(pages[itrp].waiting4TextureUpdate == true)
+                    {
+                        loadPageWithCommands(itrp, cRIds[itrp]);
+                        pages[itrp].updateFrontTexture(mBitmap);
+                    }
+                }
+
                 mPageFlipAbstract.drawFlipFrameWithIndex(mPageFlipAbstract.flipped);
             }
 
