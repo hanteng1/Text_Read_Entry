@@ -197,15 +197,22 @@ public abstract class DemoRender extends PageRender{
         background = null;
 
         // 2. load/draw page number
-        int fontSize = calcFontSize(80);
+        int fontSize = calcFontSize(10);
         p.setColor(Color.GRAY);
         p.setStrokeWidth(1);
         p.setAntiAlias(true);
         //p.setShadowLayer(5.0f, 8.0f, 8.0f, Color.BLACK);
         p.setTextSize(fontSize);
-        String text = Alphabet[number];
+        //String text = Alphabet[number];
+
+        String text = "Mr Trump also warned Pakistan that the US would no longer tolerate the country offering \"safe havens\" to extremists, saying the country had \"much to lose\" if it did not side with the Americans.\n" +
+                "\"We have been paying Pakistan billions and billions of dollars - at the same time they are housing the very terrorists that we are fighting,\" he said.\n" +
+                "He also said the US would seek a stronger partnership with India.\n" +
+                "Meanwhile, Mr Trump made it clear he expects his existing allies to support him in his new strategy, telling them he wanted them to raise their countries' contributions \"in line with our own\".";
+
         float textWidth = p.measureText(text);
-        float y = height - p.getTextSize() - 20;
+        float y = 20;
+        //mCanvas.drawText(text, (width - textWidth) / 2, y, p);
         mCanvas.drawText(text, (width - textWidth) / 2, y, p);
     }
 
