@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     {
         if(event.getAction() == MotionEvent.ACTION_UP)
         {
-
+            mDemoUIView.onFingerUp(event.getX(), event.getY());
         }
 
         return mGestureDetetor.onTouchEvent(event);
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public boolean onDown(MotionEvent e)
     {
-        mDemoUIView
+        mDemoUIView.onFingerDown(e.getX(), e.getY());
         return true;
     }
 
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
                             float distanceY)
     {
-
+        mDemoUIView.onFingerMove(e2.getX(), e2.getY());
         return true;
     }
 

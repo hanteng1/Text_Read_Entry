@@ -8,8 +8,12 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+
+import java.util.ArrayList;
 
 /**
  * Created by hanteng on 2017-08-22.
@@ -17,16 +21,21 @@ import android.view.View;
 
 public class DemoUIView extends View {
 
+    private final static String TAG = "DemoUIView";
     private Paint inputPaint = new Paint();
     private Paint bgPaint = new Paint();
     private Paint strokePaint = new Paint();
     private int screenWidth, screenHeight;
     private Path touchPath = new Path();
     private int touchLength = 10;
+    private ArrayList<PointF> touchPoints;
 
     private String[] menuItems = {"copy", "paste", "color", "size"};
     private float menuDistance = 80.0f;
     private PointF menuCenter = new PointF();
+
+    private Runnable strokeDeleting;
+    private Handler mHandler;
 
     public DemoUIView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -48,6 +57,26 @@ public class DemoUIView extends View {
         menuCenter.y = 200.0f;
 
         this.setBackgroundColor(Color.parseColor("#559B9B9B"));
+
+        touchPoints = new ArrayList<PointF>();
+
+        mHandler = new Handler();
+        strokeDeleting = new Runnable() {
+            @Override
+            public void run() {
+
+                if (touchPoints.size() > 0)
+                {
+                    touchPoints.remove(0);
+                    //Log.d(TAG, "called" );
+                    invalidate();
+                }
+
+                mHandler.postDelayed(this, 50);
+            }
+        };
+
+        mHandler.post(strokeDeleting);
     }
 
     public void setDimension(int x, int y)
@@ -103,24 +132,40 @@ public class DemoUIView extends View {
 
 
         //draw touch path
-        canvas.drawPath(touchPath, strokePaint);
+        if (touchPoints.size() > 0)
+        {
+            touchPath.reset();
+            for (int itrt = 0; itrt < touchPoints.size(); itrt++)
+            {
+                if(itrt == 0)
+                {
+                    touchPath.moveTo(touchPoints.get(itrt).x, touchPoints.get(itrt).y);
+                }else
+                {
+                    touchPath.lineTo(touchPoints.get(itrt).x, touchPoints.get(itrt).y);
+                }
+            }
 
+            canvas.drawPath(touchPath, strokePaint);
+        }
     }
 
     public void onFingerDown(float x, float y)
     {
-        touchPath.reset();
-        touchPath.moveTo(x, y);
+        //touchPath.reset();
+        //touchPath.moveTo(x, y);
+        touchPoints.clear();
+        touchPoints.add(new PointF(x, y));
     }
 
     public void onFingerMove(float x, float y)
     {
-        touchPath.lineTo(x, y);
-        //if(touchPath)
+        //touchPath.lineTo(x, y);
+        touchPoints.add(new PointF(x, y));
         invalidate();
     }
 
-    public void onFingerUp()
+    public void onFingerUp(float x, float y)
     {
 
     }
