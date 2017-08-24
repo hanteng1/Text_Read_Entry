@@ -3,6 +3,7 @@ package com.tenghan.markingmenu;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +14,8 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener{
+
+    private final static String TAG = "MainActivity";
 
     public static MainActivity instance;
     public static MainActivity getSharedInstance()
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         mContentView = (ContentView)findViewById(R.id.content_view);
         mContentView.setDimension(320, 320);
         mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
+        mDemoUIView.setDimension(320, 320);
 
         mGestureDetetor = new GestureDetector(this, this);
 
@@ -92,7 +96,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     {
         if(event.getAction() == MotionEvent.ACTION_UP)
         {
+            Log.d(TAG, "up");
             mDemoUIView.onFingerUp(event.getX(), event.getY());
+        }else if(event.getAction() == MotionEvent.ACTION_MOVE)
+        {
+            Log.d(TAG, "move");
+            mDemoUIView.onFingerMove(event.getX(), event.getY());
         }
 
         return mGestureDetetor.onTouchEvent(event);
@@ -101,33 +110,44 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public boolean onDown(MotionEvent e)
     {
+        Log.d(TAG, "down");
         mDemoUIView.onFingerDown(e.getX(), e.getY());
+
         return true;
     }
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                            float velocityY) {
+
+        Log.d(TAG, "flying");
         return false;
     }
 
     @Override
     public void onLongPress(MotionEvent e) {
+
+        //trigger
+        mDemoUIView.onLongPressed(e.getX(), e.getY());
+        Log.d(TAG, "long press");
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
                             float distanceY)
     {
-        mDemoUIView.onFingerMove(e2.getX(), e2.getY());
-        return true;
+        Log.d(TAG, "scroll");
+        //mDemoUIView.onFingerMove(e2.getX(), e2.getY());
+        return false;
     }
 
     @Override
     public void onShowPress(MotionEvent e) {
+        Log.d(TAG, "show press");
     }
 
     public boolean onSingleTapUp(MotionEvent e) {
+        Log.d(TAG, "single tap up");
         return false;
     }
 }
