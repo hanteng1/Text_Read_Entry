@@ -96,11 +96,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     {
         if(event.getAction() == MotionEvent.ACTION_UP)
         {
-            Log.d(TAG, "up");
+            //Log.d(TAG, "up");
             mDemoUIView.onFingerUp(event.getX(), event.getY());
         }else if(event.getAction() == MotionEvent.ACTION_MOVE)
         {
-            Log.d(TAG, "move");
+            //Log.d(TAG, "move");
             mDemoUIView.onFingerMove(event.getX(), event.getY());
         }
 
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public boolean onDown(MotionEvent e)
     {
-        Log.d(TAG, "down");
+        //Log.d(TAG, "down");
         mDemoUIView.onFingerDown(e.getX(), e.getY());
 
         return true;
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                            float velocityY) {
 
-        Log.d(TAG, "flying");
+        //Log.d(TAG, "flying");
         return false;
     }
 
@@ -129,14 +129,14 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         //trigger
         mDemoUIView.onLongPressed(e.getX(), e.getY());
-        Log.d(TAG, "long press");
+        //Log.d(TAG, "long press");
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
                             float distanceY)
     {
-        Log.d(TAG, "scroll");
+        //Log.d(TAG, "scroll");
         //mDemoUIView.onFingerMove(e2.getX(), e2.getY());
         return false;
     }
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     public boolean onSingleTapUp(MotionEvent e) {
-        Log.d(TAG, "single tap up");
+        //Log.d(TAG, "single tap up");
         return false;
     }
 }

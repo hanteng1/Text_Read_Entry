@@ -51,9 +51,9 @@ public class DemoUIView extends View {
 
     private ArrayList<Integer> colorCode;
     private Random rand;
-    private int totalColor = 1000;
-    private int presentedColor = 100;
-    private int colorAnchor = 450;
+    private int totalColor = 100;
+    private int presentedColor = 10;
+    private int colorAnchor = 45;
 
 
     public DemoUIView(Context context, AttributeSet attrs) {
@@ -116,7 +116,7 @@ public class DemoUIView extends View {
 
     private void generateColor(int num)
     {
-        int maxDistance = 5;
+        int maxDistance = 30;
 
         int a = 255;
         //set first to white
@@ -297,14 +297,17 @@ public class DemoUIView extends View {
                     //vertical, use y
                     float diffY = y - subMenuTouchAchor.y;
                     int diffColorAnchor = (int) (diffY * (totalColor - presentedColor)) / screenHeight;
-                    colorAnchor += diffColorAnchor;
+                    colorAnchor = totalColor / 2 + diffColorAnchor;
+
+                    Log.d(TAG, "diffY " + diffY);
                 }else
                 {
                     //horizontal, use x
                     float diffX = x - subMenuTouchAchor.x;
                     int diffColorAnchor = (int) (diffX * (totalColor - presentedColor)) / screenWidth;
-                    colorAnchor += diffColorAnchor;
+                    colorAnchor = totalColor / 2 + diffColorAnchor;
 
+                    Log.d(TAG, "diffX " + diffX);
                 }
 
                 if( (colorAnchor + presentedColor)  > totalColor)
