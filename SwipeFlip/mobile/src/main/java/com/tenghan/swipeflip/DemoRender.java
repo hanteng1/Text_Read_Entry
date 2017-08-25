@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
@@ -11,6 +12,9 @@ import android.util.Log;
 
 import com.eschao.android.widget.pageflip.PageFlipState;
 import com.eschao.android.widget.pageflip.modify.PageModify;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by hanteng on 2017-08-18.
@@ -37,7 +41,6 @@ public abstract class DemoRender extends PageRender{
 
     //what about loading textures first, then we can get rid of the mDrawCommand thing
     public abstract void LoadTextures();
-
     public abstract void ReloadTexture(int itrp);
 
     //this is calling the drawing functions
@@ -210,96 +213,33 @@ public abstract class DemoRender extends PageRender{
                 "He also said the US would seek a stronger partnership with India.\n" +
                 "Meanwhile, Mr Trump made it clear he expects his existing allies to support him in his new strategy, telling them he wanted them to raise their countries' contributions \"in line with our own\".";
 
+        ArrayList<String> textList = new ArrayList<String>(Arrays.asList(text.split("\\s+")));
+
         float textWidth = p.measureText(text);
         float y = 20;
-        //mCanvas.drawText(text, (width - textWidth) / 2, y, p);
-        mCanvas.drawText(text, (width - textWidth) / 2, y, p);
-    }
 
-    public void loadPageWithCommands(int number, String[] commandIds)
-    {
-        final int width = mCanvas.getWidth();
-        final int height = mCanvas.getHeight();
-        Paint p = new Paint();
-        p.setFilterBitmap(true);
+        PointF textCursor = new PointF();
+        textCursor.set(0, 0);
 
-        // 1. load/draw background bitmap
-        Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
-        Rect rect = new Rect(0, 0, width, height);
-        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
-        background.recycle();
-        background = null;
 
-        // 2. load/draw page number
-        /*
-        int fontSize = calcFontSize(80);
-        p.setColor(Color.GRAY);
-        p.setStrokeWidth(1);
-        p.setAntiAlias(true);
-        //p.setShadowLayer(5.0f, 8.0f, 8.0f, Color.BLACK);
-        p.setTextSize(fontSize);
-        String text = Alphabet[number];
-        float textWidth = p.measureText(text);
-        float y = height - p.getTextSize() - 20;
-        float x = (width - textWidth) / 2;
-        mCanvas.drawText(text, x, y, p);
-        */
-
-        //3. load/draw commands on corners
-        for(int itrc = 0; itrc < commandIds.length; itrc++)
+        for(int itrt = 0; itrt < textList.size(); itrt++)
         {
-            int fontSize = calcFontSize(20);
-            if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == itrc)
+            if(textCursor.x + p.measureText(textList.get(itrt)) >  320)
             {
-                p.setColor(Color.RED);
-            }else
-            {
-                p.setColor(Color.GRAY);
+                //change to the next line
+                textCursor.x = 0;
+                textCursor.y += 20;
             }
 
-            p.setStrokeWidth(1);
-            p.setAntiAlias(true);
-            p.setTextSize(fontSize);
-            String text = commandIds[itrc];
-            float textWidth = p.measureText(text);
-            float x, y;
+            mCanvas.drawText(textList.get(itrt), textCursor.x, textCursor.y, p);
+            //Log.d(TAG, "X " + textCursor.x + "  y " + textCursor.y);
 
-            /**
-             *    ---------
-             *   |0       1|
-             *   |         |
-             *   |         |
-             *   |3       2|
-             *    ---------
-             */
-
-            float offset = 20.0f;
-            if(itrc == 0 || itrc == 3)
-            {
-                x = offset;
-            }else
-            {
-                x = width - offset - textWidth;
-            }
-
-            if(itrc == 0 || itrc == 1)
-            {
-                y = offset + p.getTextSize()/2;
-            }else
-            {
-                y = height - offset;
-            }
-
-            mCanvas.save();
-            if(itrc == 0 || itrc == 2)
-                mCanvas.rotate(-45f, x + textWidth/2, y - p.getTextSize()/2);
-            else if(itrc == 1 || itrc == 3)
-                mCanvas.rotate(45f, x + textWidth/2, y - p.getTextSize()/2);
-            mCanvas.drawText(text, x, y, p);
-            mCanvas.restore();
+            textCursor.x += (p.measureText(textList.get(itrt)) + 10);
         }
 
     }
+
+    public abstract void loadPageWithCommands(int number, String[] commandIds);
 
     public boolean canFlipForward()
     {
