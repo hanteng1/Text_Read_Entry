@@ -88,7 +88,10 @@ public class GestureService {
                 if(activiatedCommandIndex > -1) {
                     Log.d(TAG, "command activiated " + activiatedCommandIndex);
                     //reload texture
-                    MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(1);
+
+                    //the page behind of current lock page
+                    int comamndPage = MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock + 1;
+                    MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(comamndPage);
                 }
             }
         }

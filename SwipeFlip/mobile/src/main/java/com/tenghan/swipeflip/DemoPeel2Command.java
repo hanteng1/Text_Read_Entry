@@ -17,7 +17,7 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
     private final static String TAG = "DemoPeel2Command";
 
     //first page as main content, second page as command
-    private final static int pageSize = 2;
+    private final static int pageSize = 3;
 
     public DemoPeel2Command(Context context)
     {

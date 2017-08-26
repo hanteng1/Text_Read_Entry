@@ -489,7 +489,6 @@ public abstract class PageFlipModifyAbstract {
         Point start = new Point((int)mTouchP.x, (int)mTouchP.y);
         Point end = new Point(0, 0);
 
-
         //see the gesture state
         if(MainActivity.getSharedInstance().mGestureService.gestureState == 2)
         {
