@@ -1,6 +1,7 @@
 package com.tenghan.swipeflip;
 
 import android.content.Context;
+import android.graphics.PointF;
 import android.util.Log;
 
 import com.eschao.android.widget.pageflip.GLPoint;
@@ -17,7 +18,6 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
 
     //first page as main content, second page as command
     private final static int pageSize = 2;
-
 
     public DemoPeel2Command(Context context)
     {
@@ -56,6 +56,8 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
 
                 //clear the variables
                 MainActivity.getSharedInstance().mGestureService.reset();
+                //starting from one page
+                singlePageMode = true;
                 //set origin
                 MainActivity.getSharedInstance().mGestureService.setOrigin(new float[]{touchX, touchY});
                 MainActivity.getSharedInstance().mGestureService.handleData(new float[]{touchX, touchY});
@@ -142,11 +144,8 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
             //second page flip only
             //all previous page flip togeter
 
-
-           // for (int itrp = 0; itrp < PAGE_SIZE; itrp++) {
-
-                //differentiate dx
-                //the 0.9 can be adjusted
+            if(singlePageMode)
+            {
                 dx = (touchX - mStartTouchP.x) * (float)Math.pow(TOUCH_DIFF_COEFFICIENT, FIRST_PAGE);  //forwards or backwards
                 dy = (touchY - mStartTouchP.y) * (float)Math.pow(TOUCH_DIFF_COEFFICIENT, FIRST_PAGE);  //upwards or downwards
 
@@ -186,46 +185,6 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
                     }
                 }
 
-
-                // compute new TouchP.y
-                //this is to limit the dy values
-                //float maxY = dx * page.mMaxT2OAngleTan;
-                //if (Math.abs(dy) > Math.abs(maxY)) {
-                //    dy = maxY;
-                //}
-
-                // check if XFoldX1 is outside page width, if yes, recompute new
-                // TouchP.y to assure the XFoldX1 is in page width
-
-                // this is to set flipping angle restrictions
-                 /*
-                 if(mIsHorizontal == false)
-                 {
-                     float t2oK = dy / dx;
-                     float xTouchX = dx + dy * t2oK;
-                     float xRatio = (1 + page.mSemiPerimeterRatio) * 0.5f;
-                     float xFoldX1 = xRatio * xTouchX;
-                     if (Math.abs(xFoldX1) + 2 >= page.width) {
-                         float dy2 = ((diagonalP.x - originP.x) / xRatio - dx) * dx;
-                         // ignore current moving if we can't get a valid dy, for example
-                         // , in double pages mode, when finger is moving from the one
-                         // page to another page, the dy2 is negative and should be
-                         // ignored
-                         if (dy2 < 0) {
-                             return false;
-                         }
-
-                         double t = Math.sqrt(dy2);
-                         if (originP.y > 0) {
-                             t = -t;
-                             dy = (int)Math.ceil(t);
-                         }
-                         else {
-                             dy = (int)Math.floor(t);
-                         }
-                     }
-                 }*/
-
                 // set touchP(x, y) and middleP(x, y)
                 if(0 == FIRST_PAGE)
                 {
@@ -240,13 +199,90 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
                 page.mMiddleP.x = (mTouchP.x + originP.x) * 0.5f;
                 page.mMiddleP.y = (mTouchP.y + originP.y) * 0.5f;
 
-            //}  //end of for loop
+
+                //detect whether the back page has reached front page
+                float travelDis = calDistance(dx, dy);
+                if(travelDis > maxTravelDis)
+                {
+                    maxTravelDis = travelDis;
+                    //Log.d(TAG, "max travel " + maxTravelDis);
+
+                    singlePageMode = false;
+                }
+
+            }else
+            {
+                for (int itrp = 0; itrp < currentPageLock + 1; itrp++) {
+
+                    //differentiate dx
+                    //the 0.9 can be adjusted
+                    dx = (touchX - mStartTouchP.x) * (float)Math.pow(TOUCH_DIFF_COEFFICIENT, itrp);  //forwards or backwards
+                    dy = (touchY - mStartTouchP.y) * (float)Math.pow(TOUCH_DIFF_COEFFICIENT, itrp);  //upwards or downwards
+
+                    if (PageFlipState.FORWARD_FLIP == mFlipState || PageFlipState.BACKWARD_FLIP == mFlipState
+                            || PageFlipState.UPWARD_FLIP == mFlipState) {
+                        dx *= 1.2f;
+                        dy *= 1.2f;
+                    }
+                    else {
+                        dx *= 1.1f;
+                        dy *= 1.1f;
+                    }
+
+                    PageModify page = mPages[itrp];
+                    GLPoint originP = page.originP;
+                    GLPoint diagonalP = page.diagonalP;
+
+                    if(mFlipState == PageFlipState.FORWARD_FLIP || mFlipState == PageFlipState.BACKWARD_FLIP)
+                    {
+                        if ((dy < 0 && originP.y < 0) || (dy > 0 && originP.y > 0)
+                                ) {
+                            float t = page.mMaxT2DAngleTan;
+                            page.mMaxT2DAngleTan = page.mMaxT2OAngleTan;
+                            page.mMaxT2OAngleTan = t;
+                            page.invertYOfOriginPoint();
+                        }
+                    }else if(mFlipState == PageFlipState.UPWARD_FLIP)
+                    {
+                        if((dx < 0 && originP.x < 0) || (dx > 0 && originP.x > 0))
+                        {
+                            //invert the x of original point and diagonal point
+                            page.invertXOfOriginPoint();
+                        }
+                    }
+
+                    // set touchP(x, y) and middleP(x, y)
+                    if(itrp == FIRST_PAGE)
+                    {
+                        mLastTouchP.set(dx + originP.x, dy + originP.y);  //used to store the value temporarily
+                    }
+                    mTouchP.set(dx + originP.x, dy + originP.y);
+                    page.mFakeTouchP.set(mTouchP.x, mTouchP.y);
+                    page.mMiddleP.x = (mTouchP.x + originP.x) * 0.5f;
+                    page.mMiddleP.y = (mTouchP.y + originP.y) * 0.5f;
+
+                    if(itrp == FIRST_PAGE)
+                    {
+                        //detect whether the back page has reached front page
+                        float travelDis = calDistance(dx, dy);
+                        if(travelDis > maxTravelDis)
+                        {
+                            maxTravelDis = travelDis;
+
+                            //Log.d(TAG, "new max travel " + maxTravelDis);
+                        }
+                    }
+
+                }  //end of for loop
+
+            }
 
             mTouchP.set(mLastTouchP.x, mLastTouchP.y);
             mLastTouchP.set(touchX, touchY);
 
             // continue to compute points to drawing flip
             computeVertexesAndBuildPage();
+
             return true;
 
         }
@@ -254,10 +290,11 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
         return false;
     }
 
-    //define the finger up
-
-
-
+    //calculate a distance from dx and dy
+    private float calDistance(float disx, float disy)
+    {
+        return (float)Math.sqrt(disx * disx + disy * disy);
+    }
 
     /**
      * Compute vertexes of page
@@ -265,23 +302,30 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
     public void computeVertexesAndBuildPage() {
         //Log.d(TAG, "called");
 
-        for(int itrp = currentPageLock; itrp < (currentPageLock + 1); itrp++)
+        if(singlePageMode)
         {
-
-            if (mIsVertical) {
-                //mPages[itrp].computeKeyVertexesWhenVertical();
-                //mPages[itrp].computeVertexesWhenVertical();
-            }
-            else if (mIsHorizontal)
+            mPages[currentPageLock].computeKeyVertexesWhenSlope();
+            mPages[currentPageLock].computeVertexesWhenSlope();
+        }else
+        {
+            for(int itrp = 0; itrp < (currentPageLock + 1); itrp++)
             {
-                //mPages[itrp].computeKeyVertexesWhenHorizontal();
-                //mPages[itrp].computeVertexesWhenHorizontal();
-            }
-            else {
-                mPages[itrp].computeKeyVertexesWhenSlope();
-                mPages[itrp].computeVertexesWhenSlope();
-            }
 
+                if (mIsVertical) {
+                    //mPages[itrp].computeKeyVertexesWhenVertical();
+                    //mPages[itrp].computeVertexesWhenVertical();
+                }
+                else if (mIsHorizontal)
+                {
+                    //mPages[itrp].computeKeyVertexesWhenHorizontal();
+                    //mPages[itrp].computeVertexesWhenHorizontal();
+                }
+                else {
+                    mPages[itrp].computeKeyVertexesWhenSlope();
+                    mPages[itrp].computeVertexesWhenSlope();
+                }
+
+            }
         }
 
     }

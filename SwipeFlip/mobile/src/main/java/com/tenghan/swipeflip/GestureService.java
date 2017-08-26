@@ -114,7 +114,7 @@ public class GestureService {
 
         averageDis = averageDis / (posXY.size() - 1);
 
-        Log.d(TAG, "averageDis " + averageDis);
+        //Log.d(TAG, "averageDis " + averageDis);
 
         if(gestureState == 1)
         {

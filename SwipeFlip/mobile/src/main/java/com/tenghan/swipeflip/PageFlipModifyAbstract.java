@@ -112,7 +112,8 @@ public abstract class PageFlipModifyAbstract {
 
     //page locking
     public int currentPageLock = 0;  //first page never gets locked
-
+    public float maxTravelDis = 0;
+    public boolean singlePageMode = true;
 
     /**
      * Constructor
@@ -496,8 +497,6 @@ public abstract class PageFlipModifyAbstract {
             return false;
         }
 
-        releasePageLock();
-
         // forward flipping
         if (mFlipState == PageFlipState.FORWARD_FLIP ||
                 mFlipState == PageFlipState.BACKWARD_FLIP ||
@@ -812,6 +811,7 @@ public abstract class PageFlipModifyAbstract {
      */
     public void abortAnimating() {
         mScroller.abortAnimation();
+
         if (mFlipState == PageFlipState.FORWARD_FLIP) {
             mFlipState = PageFlipState.END_WITH_FORWARD;
         }

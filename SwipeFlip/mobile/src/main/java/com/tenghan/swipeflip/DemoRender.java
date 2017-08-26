@@ -106,6 +106,11 @@ public abstract class DemoRender extends PageRender{
         // draw stationary page without flipping
         else if (mDrawCommand == DRAW_FULL_PAGE) {
 
+            //this is called when animation is finished
+            MainActivity.getSharedInstance().mDemoView.mDemo.releasePageLock();
+            //clear the maxtravel
+            MainActivity.getSharedInstance().mDemoView.mDemo.maxTravelDis = 0;
+
             for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
             {
                 if (!pages[itrp].isFrontTextureSet()) {
