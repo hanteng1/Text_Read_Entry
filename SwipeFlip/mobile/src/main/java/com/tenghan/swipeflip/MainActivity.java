@@ -196,7 +196,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
             }
 
-            return true;
+            return true;  // there is no event detectale afterwards
+        }else if(event.getAction() == MotionEvent.ACTION_MOVE)
+        {
+            //do nothing for now
         }
 
         return mGestureDetector.onTouchEvent(event);
@@ -219,12 +222,33 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                            float velocityY) {
+
+        //Log.d(TAG, "finger flying");
+        //Log.d(TAG, "velocity " + Math.sqrt(velocityX * velocityX + velocityY * velocityY));
+
+        /*
+        //set 800 as a threshold for flicking gesture
+        if(Math.sqrt(velocityX * velocityX + velocityY * velocityY) > 800)
+        {
+            if(activityIndex == 1) {
+                //mPageFlipView.onFingerFlick();
+            }else if(activityIndex == 2)
+            {
+                mDemoView.onFingerFlick();
+            }else if(activityIndex == 3)
+            {
+
+            }
+        }*/
+
         return false;
     }
 
 
     @Override
     public void onLongPress(MotionEvent e) {
+
+        //could do something
     }
 
     @Override

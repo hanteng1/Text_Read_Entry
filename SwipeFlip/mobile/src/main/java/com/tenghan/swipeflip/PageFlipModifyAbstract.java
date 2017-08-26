@@ -112,6 +112,9 @@ public abstract class PageFlipModifyAbstract {
 
     public final float TOUCH_DIFF_COEFFICIENT = 0.9f;
 
+    //page locking
+    public int currentPageLock = -1;  //first page never gets locked
+
 
     /**
      * Constructor
@@ -454,6 +457,21 @@ public abstract class PageFlipModifyAbstract {
 
     }
 
+    //page lock
+    public void setPageLock()
+    {
+        if(currentPageLock + 1 < PAGE_SIZE)
+        {
+            currentPageLock++;
+        }
+    }
+
+    public void releaseLock()
+    {
+        currentPageLock = -1;
+    }
+
+
     /**
      * Handle finger up event
      *
@@ -472,6 +490,13 @@ public abstract class PageFlipModifyAbstract {
 
         Point start = new Point((int)mTouchP.x, (int)mTouchP.y);
         Point end = new Point(0, 0);
+
+
+        //see the gesture state
+        if(MainActivity.getSharedInstance().mGestureService.gestureState == 2)
+        {
+            return false;
+        }
 
         // forward flipping
         if (mFlipState == PageFlipState.FORWARD_FLIP ||
@@ -509,6 +534,9 @@ public abstract class PageFlipModifyAbstract {
         // this could be ignored for now
 
         else if (mFlipState == PageFlipState.BEGIN_FLIP) {
+
+            //need to re-do this part
+
             mIsVertical = false;
             mFlipState = PageFlipState.END_FLIP;
             page.setOriginAndDiagonalPoints(-touchY);
@@ -636,6 +664,14 @@ public abstract class PageFlipModifyAbstract {
 
         // is to end animating?
         boolean isAnimating = !mScroller.isFinished();
+
+        //check if there is page lock
+        if(currentPageLock > -1)
+        {
+            //stop the animation
+            isAnimating = false;
+        }
+
         if (isAnimating) {
             // get new (x, y)
             mScroller.computeScrollOffset();

@@ -22,6 +22,24 @@ public class GestureService {
     private boolean originSet;
 
     /**
+     * 1 has to follow 0
+     * 2 has to follow 1
+     * 3 and 4 have to follow 2
+     *
+     * 0 - nothing
+     * 1 - start to move
+     * 2 - hold
+     * 3 - continue to move
+     * 4 - move back
+     */
+    public int gestureState = 0;
+
+    private float holdDistance;
+    private float curDistance;
+
+
+
+    /**
      *    ---------
      *   |0       1|
      *   |         |
@@ -30,6 +48,8 @@ public class GestureService {
      *    ---------
      */
     public int activiatedCommandIndex = -1;
+
+    //this can be treated as the minimum activation distance
     private static double PEEL_ACTIVIATION_DISTANCE = 100;
 
 
@@ -43,6 +63,11 @@ public class GestureService {
 
     public void handleData(float[] pos) {
         // Gets data from the incoming Intent
+        //if its the first data
+        if(poses.size() == 0 && gestureState == 0)
+        {
+            gestureState = 1;
+        }
 
         //Log.d(TAG, " " + pos[0] + ", " + pos[1]);
         poses.add(pos);
@@ -51,24 +76,30 @@ public class GestureService {
             poses.remove(0);
         }
 
-        if(activiatedCommandIndex == -1) {
-            activiatedCommandIndex = calPeelDistance(pos);
+        if(gestureState == 1 || gestureState == 2)
+        {
+            gestureRecognition(poses);
+        }else if(gestureState == 3)
+        {
+            //find out which command
+            if(activiatedCommandIndex == -1) {
+                activiatedCommandIndex = calPeelCommand(pos);
 
-            if(activiatedCommandIndex > -1) {
-                Log.d(TAG, "command activiated " + activiatedCommandIndex);
-                //reload texture
-                MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(1);
+                if(activiatedCommandIndex > -1) {
+                    Log.d(TAG, "command activiated " + activiatedCommandIndex);
+                    //reload texture
+                    MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(1);
+                }
             }
         }
 
-        gestureRecognition(poses);
     }
 
-    private int gestureRecognition(ArrayList<float[]> posXY)
+    private void gestureRecognition(ArrayList<float[]> posXY)
     {
         int recognizedGesture = 0;
         if(posXY.size() < SIZE_LIMIT)
-            return recognizedGesture;
+            return;
 
         //calculate the average distance
         double disSequentialPoint = 0;
@@ -83,20 +114,58 @@ public class GestureService {
 
         averageDis = averageDis / (posXY.size() - 1);
 
-        //Log.d(TAG, "averageDis " + averageDis);
+        Log.d(TAG, "averageDis " + averageDis);
 
-        return 0;
+        if(gestureState == 1)
+        {
+            //looking for the hold
+            if(averageDis < 3)
+            {
+                gestureState = 2;  //hold
+                float[] lastpos = posXY.get(posXY.size() - 1);
+                holdDistance = calPeelDistance(lastpos);
+            }
+        }else if(gestureState == 2)
+        {
+            //looking for flip forward or backward
+            if(averageDis > 3)
+            {
+                float[] lastpos = posXY.get(posXY.size() - 1);
+                curDistance = calPeelDistance(lastpos);
+                if(curDistance > holdDistance)
+                {
+                    gestureState = 3;
+
+                }else if(curDistance < holdDistance)
+                {
+                    gestureState = 4;
+                }
+            }
+        }
+
     }
 
-    private int calPeelDistance(float[] pos)
+    private float calPeelDistance(float[] pos)
     {
         if(originSet == false)
             return -1;
 
-        double distance = Math.sqrt((double)((pos[0] - origin.x) * (pos[0] - origin.x)
+        float distance = (float)Math.sqrt((double)((pos[0] - origin.x) * (pos[0] - origin.x)
                 + (pos[1] - origin.y) * (pos[1] - origin.y)));
 
         //Log.d(TAG, "pos " + pos[0] + " , " + pos[1]);
+        return distance;
+
+
+    }
+
+    private int calPeelCommand(float[] pos)
+    {
+        if(originSet == false)
+            return -1;
+
+        float distance = (float)Math.sqrt((double)((pos[0] - origin.x) * (pos[0] - origin.x)
+                + (pos[1] - origin.y) * (pos[1] - origin.y)));
 
         if(distance > PEEL_ACTIVIATION_DISTANCE)
         {
@@ -115,6 +184,7 @@ public class GestureService {
         }
 
         return -1;
+
     }
 
     public void setOrigin(float[] ori)
@@ -127,9 +197,10 @@ public class GestureService {
         originSet = true;
     }
 
-    public void clear()
+    public void reset()
     {
         activiatedCommandIndex = -1;
+        gestureState = 0;
         originSet = false;
         poses.clear();
     }

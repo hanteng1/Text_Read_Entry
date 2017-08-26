@@ -18,6 +18,7 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
     //first page as main content, second page as command
     private final static int pageSize = 2;
 
+
     public DemoPeel2Command(Context context)
     {
         super(context, pageSize);
@@ -55,7 +56,7 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
                 page.setOriginAndDiagonalPoints(dx, dy, mStartTouchP.x, mStartTouchP.y);
 
                 //clear the variables
-                MainActivity.getSharedInstance().mGestureService.clear();
+                MainActivity.getSharedInstance().mGestureService.reset();
                 //set origin
                 MainActivity.getSharedInstance().mGestureService.setOrigin(new float[]{touchX, touchY});
                 MainActivity.getSharedInstance().mGestureService.handleData(new float[]{touchX, touchY});
