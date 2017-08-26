@@ -99,7 +99,7 @@ public abstract class DemoRender extends PageRender{
                     }
                 }
 
-                mPageFlipAbstract.drawFlipFrameWithIndex(mPageFlipAbstract.flipped);
+                mPageFlipAbstract.drawFlipFrameWithIndex(mPageFlipAbstract.currentPageLock);
             }
 
         }

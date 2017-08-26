@@ -46,8 +46,7 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
                 ) {
 
             //for (int itrp = 0; itrp < PAGE_SIZE; itrp++) {
-                PageModify page = mPages[FIRST_PAGE];
-                flipped = 0;
+                PageModify page = mPages[currentPageLock];
                 GLPoint originP = page.originP;
                 GLPoint diagonalP = page.diagonalP;
 
@@ -139,6 +138,11 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
             // multiply a factor to make sure the touch point is always head of
             // finger point
 
+            //there could be two conditions
+            //second page flip only
+            //all previous page flip togeter
+
+
            // for (int itrp = 0; itrp < PAGE_SIZE; itrp++) {
 
                 //differentiate dx
@@ -156,7 +160,7 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
                     dy *= 1.1f;
                 }
 
-                PageModify page = mPages[FIRST_PAGE];
+                PageModify page = mPages[currentPageLock];
                 GLPoint originP = page.originP;
                 GLPoint diagonalP = page.diagonalP;
 
@@ -261,7 +265,7 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
     public void computeVertexesAndBuildPage() {
         //Log.d(TAG, "called");
 
-        for(int itrp = 0; itrp < (flipped + 1); itrp++)
+        for(int itrp = currentPageLock; itrp < (currentPageLock + 1); itrp++)
         {
 
             if (mIsVertical) {

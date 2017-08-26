@@ -65,8 +65,6 @@ public abstract class PageFlipModifyAbstract {
     public final static int FIRST_PAGE = 0;
     private int pageIndex;
     public int PAGE_SIZE = 1; // 2 for testing
-    //current flipped page
-    public int flipped  = -1;  // -1 means full rendering
 
     // view size
     public GLViewRect mViewRect;
@@ -113,7 +111,7 @@ public abstract class PageFlipModifyAbstract {
     public final float TOUCH_DIFF_COEFFICIENT = 0.9f;
 
     //page locking
-    public int currentPageLock = -1;  //first page never gets locked
+    public int currentPageLock = 0;  //first page never gets locked
 
 
     /**
@@ -466,11 +464,10 @@ public abstract class PageFlipModifyAbstract {
         }
     }
 
-    public void releaseLock()
+    public void releasePageLock()
     {
-        currentPageLock = -1;
+        currentPageLock = 0;
     }
-
 
     /**
      * Handle finger up event
@@ -495,8 +492,11 @@ public abstract class PageFlipModifyAbstract {
         //see the gesture state
         if(MainActivity.getSharedInstance().mGestureService.gestureState == 2)
         {
+            setPageLock();
             return false;
         }
+
+        releasePageLock();
 
         // forward flipping
         if (mFlipState == PageFlipState.FORWARD_FLIP ||
@@ -664,13 +664,6 @@ public abstract class PageFlipModifyAbstract {
 
         // is to end animating?
         boolean isAnimating = !mScroller.isFinished();
-
-        //check if there is page lock
-        if(currentPageLock > -1)
-        {
-            //stop the animation
-            isAnimating = false;
-        }
 
         if (isAnimating) {
             // get new (x, y)
@@ -951,8 +944,6 @@ public abstract class PageFlipModifyAbstract {
             mPages[itrp].mFoldBaseShadow.draw(mShadowVertexProgram);
             mPages[itrp].mFoldEdgesShadow.draw(mShadowVertexProgram);
         }
-
-
 
     }
 
