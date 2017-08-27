@@ -28,7 +28,7 @@ public abstract class DemoRender extends PageRender{
     private final static String[] Alphabet = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
     //depends on how many pages to support
-    public String[][] cRIds = {{},{"Copy", "Cut", "Paste", "Save"},
+    public String[][] cRIds = {{},{"Font", "Cut", "Paste", "Save"},
             {"Copy", "Color", "Paste", "Save"},
             {"Copy", "Color", "Paste", "Save"},
             {"Copy", "Color", "Paste", "Save"}};
@@ -106,6 +106,12 @@ public abstract class DemoRender extends PageRender{
         else if (mDrawCommand == DRAW_FULL_PAGE) {
 
             //this is called when animation is finished
+            //reload the pagelock texture
+            int commandPage = MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock + 1;
+            MainActivity.getSharedInstance().mGestureService.reset();
+            MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(commandPage);
+
+
             MainActivity.getSharedInstance().mDemoView.mDemo.releasePageLock();
             //clear the maxtravel
             MainActivity.getSharedInstance().mDemoView.mDemo.maxTravelDis = 0;
@@ -116,6 +122,13 @@ public abstract class DemoRender extends PageRender{
                     loadPage(itrp);
                     pages[itrp].setFrontTexture(mBitmap);
                 }
+
+                if(pages[itrp].waiting4TextureUpdate == true)
+                {
+                    loadPageWithCommands(itrp, cRIds[itrp]);
+                    pages[itrp].updateFrontTexture(mBitmap);
+                }
+
             }
 
             mPageFlipAbstract.drawPageFrame();  //see the difference

@@ -1,5 +1,6 @@
 package com.tenghan.swipeflip;
 
+import android.app.IntentService;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -34,6 +35,12 @@ public class DemoPeel2CommandRender extends DemoRender{
     private int colorBandWidth = 20;
     private float sin45;
 
+    private ArrayList<Integer> fontSizes;
+    private int totalFontSize = 100;
+    private int presentedFontSize = 10;
+    private int fontSizeAnchor = 1;
+    private int fontBandDistance = 20;
+
     public DemoPeel2CommandRender(Context context, PageFlipModifyAbstract pageFlipAbstract,
                                   Handler handler, int pageNo)
     {
@@ -43,6 +50,9 @@ public class DemoPeel2CommandRender extends DemoRender{
         rand = new Random();
         generateColor(totalColor);
         sin45 = (float)Math.sin(Math.PI / 4);
+
+        fontSizes = new ArrayList<Integer>();
+        generateFontSize(totalFontSize);
     }
 
     private void generateColor(int num)
@@ -66,6 +76,18 @@ public class DemoPeel2CommandRender extends DemoRender{
 
             color = Color.argb(a, r, g, b);
             colorCode.add(color);
+        }
+    }
+
+    private void generateFontSize(int num)
+    {
+        int step = 2;
+        int base = 10;
+
+        for(int itrf = 0; itrf < num; itrf++)
+        {
+            int size = calcFontSize(base + step * itrf);
+            fontSizes.add(size);
         }
     }
 
@@ -103,8 +125,8 @@ public class DemoPeel2CommandRender extends DemoRender{
                 loadPageWithCommands(itrp, cRIds[itrp]);
                 pages[itrp].setFrontTexture(mBitmap);
 
-                loadPage(itrp + 5);
-                pages[itrp].setBackTexture(mBitmap);
+                //loadPage(itrp + 5);
+                //pages[itrp].setBackTexture(mBitmap);
             }
         }
     }
@@ -114,13 +136,6 @@ public class DemoPeel2CommandRender extends DemoRender{
     {
         PageModify page = mPageFlipAbstract.getPages()[itrp];
         page.waiting4TextureUpdate = true;
-
-        //page.deleteAllTextures();
-        //loadPageWithCommands(itrp, cRIds[itrp]);
-        //page.updateFrontTexture(mBitmap);
-        //page.setBackTexture(mBitmap);
-        //page.setFirstTextureWithSecond();
-
     }
 
 
@@ -163,65 +178,70 @@ public class DemoPeel2CommandRender extends DemoRender{
         mCanvas.drawText(text, x, y, p);
         */
 
-        //3. load/draw commands on corners
-        for(int itrc = 0; itrc < commandIds.length; itrc++)
+
+        if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == -1)
         {
-            int fontSize = calcFontSize(20);
-            if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == itrc)
+            //3. load/draw commands on corners
+            for(int itrc = 0; itrc < commandIds.length; itrc++)
             {
-                p.setColor(Color.RED);
-            }else
-            {
-                p.setColor(Color.GRAY);
+                int fontSize = calcFontSize(20);
+                if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == itrc)
+                {
+                    p.setColor(Color.RED);
+                }else
+                {
+                    p.setColor(Color.GRAY);
+                }
+
+                p.setStrokeWidth(1);
+                p.setAntiAlias(true);
+                p.setTextSize(fontSize);
+                String text = commandIds[itrc];
+                float textWidth = p.measureText(text);
+                float x, y;
+
+                /**
+                 *    ---------
+                 *   |0       1|
+                 *   |         |
+                 *   |         |
+                 *   |3       2|
+                 *    ---------
+                 */
+
+                float offset = 20.0f;
+                if(itrc == 0 || itrc == 3)
+                {
+                    x = offset;
+                }else
+                {
+                    x = width - offset - textWidth;
+                }
+
+                if(itrc == 0 || itrc == 1)
+                {
+                    y = offset + p.getTextSize()/2;
+                }else
+                {
+                    y = height - offset;
+                }
+
+                mCanvas.save();
+                if(itrc == 0 || itrc == 2)
+                    mCanvas.rotate(-45f, x + textWidth/2, y - p.getTextSize()/2);
+                else if(itrc == 1 || itrc == 3)
+                    mCanvas.rotate(45f, x + textWidth/2, y - p.getTextSize()/2);
+                mCanvas.drawText(text, x, y, p);
+                mCanvas.restore();
             }
-
-            p.setStrokeWidth(1);
-            p.setAntiAlias(true);
-            p.setTextSize(fontSize);
-            String text = commandIds[itrc];
-            float textWidth = p.measureText(text);
-            float x, y;
-
-            /**
-             *    ---------
-             *   |0       1|
-             *   |         |
-             *   |         |
-             *   |3       2|
-             *    ---------
-             */
-
-            float offset = 20.0f;
-            if(itrc == 0 || itrc == 3)
-            {
-                x = offset;
-            }else
-            {
-                x = width - offset - textWidth;
-            }
-
-            if(itrc == 0 || itrc == 1)
-            {
-                y = offset + p.getTextSize()/2;
-            }else
-            {
-                y = height - offset;
-            }
-
-            mCanvas.save();
-            if(itrc == 0 || itrc == 2)
-                mCanvas.rotate(-45f, x + textWidth/2, y - p.getTextSize()/2);
-            else if(itrc == 1 || itrc == 3)
-                mCanvas.rotate(45f, x + textWidth/2, y - p.getTextSize()/2);
-            mCanvas.drawText(text, x, y, p);
-            mCanvas.restore();
         }
-
 
 
         //load color texture
         //this follows the coordinates of android, not opengl
-        if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 1)
+        //check which page and which command
+        if( MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 1 &&
+                MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 1)
         {
             float oriX = width - 3;
             float oriY = 3;
@@ -242,6 +262,42 @@ public class DemoPeel2CommandRender extends DemoRender{
             }
 
         }
+
+
+        //font texture
+
+        /*
+
+        if (MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0 &&
+                MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 0)
+        {
+            mCanvas.save();
+            mCanvas.rotate(-45f, 0, 0);
+
+            p.setColor(Color.GRAY);
+            p.setStrokeWidth(1);
+            p.setAntiAlias(true);
+            String text = "Aa";
+            float y = fontBandDistance * 1 * sin45;
+            float x = fontBandDistance * 1 * sin45;
+
+            for(int itrf = 0; itrf < (0 + presentedFontSize); itrf++)
+            {
+                int fontSize = calcFontSize(fontSizes.get(fontSizeAnchor + itrf));
+                p.setTextSize(fontSize);
+
+                x += fontBandDistance * itrf * sin45;
+                y += (fontBandDistance * itrf * sin45 + fontSize);
+
+                mCanvas.drawText(text, x - p.measureText(text)/2, y, p);
+            }
+
+            mCanvas.restore();
+
+        }
+
+
+        */
 
     }
 
