@@ -291,6 +291,12 @@ public class DemoPeel2CommandRender extends DemoRender{
 
         }
 
+        //list scrolling
+        if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0 &&
+                MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 1)
+        {
+            
+        }
 
     }
 
