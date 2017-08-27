@@ -28,7 +28,7 @@ public abstract class DemoRender extends PageRender{
     private final static String[] Alphabet = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
     //depends on how many pages to support
-    public String[][] cRIds = {{},{"Font", "Cut", "Paste", "Save"},
+    public String[][] cRIds = {{},{"Font", "Cut", "Paste", "Zoom"},
             {"Copy", "Color", "Paste", "Save"},
             {"Copy", "Color", "Paste", "Save"},
             {"Copy", "Color", "Paste", "Save"}};
@@ -95,6 +95,17 @@ public abstract class DemoRender extends PageRender{
                     {
                         loadPageWithCommands(itrp, cRIds[itrp]);
                         pages[itrp].updateFrontTexture(mBitmap);
+
+                        /*
+                        //run on ui thread
+                        MainActivity.getSharedInstance().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //activate the ui draw view
+                                MainActivity.getSharedInstance().mDemoUIView.activate();
+                            }
+                        });*/
+
                     }
                 }
 
@@ -253,6 +264,10 @@ public abstract class DemoRender extends PageRender{
 
             textCursor.x += (p.measureText(textList.get(itrt)) + 10);
         }
+
+
+        //a image
+
 
     }
 

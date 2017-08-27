@@ -35,7 +35,7 @@ public class GestureService {
     public int gestureState = 0;
 
     private float holdDistance;
-    private float curDistance;
+    public float curDistance;
 
 
 
@@ -94,6 +94,15 @@ public class GestureService {
                     MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(comamndPage);
                 }
             }
+
+            //for font zoom in
+            if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0
+                    && activiatedCommandIndex == 3)
+            {
+                curDistance = calPeelDistance(pos);
+                MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(1);
+            }
+
         }
 
     }

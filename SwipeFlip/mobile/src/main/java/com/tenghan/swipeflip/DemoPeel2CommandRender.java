@@ -39,7 +39,7 @@ public class DemoPeel2CommandRender extends DemoRender{
     private int totalFontSize = 100;
     private int presentedFontSize = 10;
     private int fontSizeAnchor = 1;
-    private int fontBandDistance = 20;
+    private int fontBandDistance = 10;
 
     public DemoPeel2CommandRender(Context context, PageFlipModifyAbstract pageFlipAbstract,
                                   Handler handler, int pageNo)
@@ -163,22 +163,6 @@ public class DemoPeel2CommandRender extends DemoRender{
         background.recycle();
         background = null;
 
-        // 2. load/draw page number
-        /*
-        int fontSize = calcFontSize(80);
-        p.setColor(Color.GRAY);
-        p.setStrokeWidth(1);
-        p.setAntiAlias(true);
-        //p.setShadowLayer(5.0f, 8.0f, 8.0f, Color.BLACK);
-        p.setTextSize(fontSize);
-        String text = Alphabet[number];
-        float textWidth = p.measureText(text);
-        float y = height - p.getTextSize() - 20;
-        float x = (width - textWidth) / 2;
-        mCanvas.drawText(text, x, y, p);
-        */
-
-
         if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == -1)
         {
             //3. load/draw commands on corners
@@ -265,39 +249,48 @@ public class DemoPeel2CommandRender extends DemoRender{
 
 
         //font texture
-
-        /*
-
         if (MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0 &&
                 MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 0)
         {
-            mCanvas.save();
-            mCanvas.rotate(-45f, 0, 0);
 
             p.setColor(Color.GRAY);
             p.setStrokeWidth(1);
             p.setAntiAlias(true);
             String text = "Aa";
-            float y = fontBandDistance * 1 * sin45;
-            float x = fontBandDistance * 1 * sin45;
+            float y = 0; //= fontBandDistance * 1 * sin45;
+            float x = 0; //= fontBandDistance * 1 * sin45;
 
             for(int itrf = 0; itrf < (0 + presentedFontSize); itrf++)
             {
                 int fontSize = calcFontSize(fontSizes.get(fontSizeAnchor + itrf));
                 p.setTextSize(fontSize);
 
-                x += fontBandDistance * itrf * sin45;
-                y += (fontBandDistance * itrf * sin45 + fontSize);
+                x += (fontBandDistance + p.measureText(text)) * sin45;
+                y += (fontBandDistance + p.measureText(text)) * sin45;
 
                 mCanvas.drawText(text, x - p.measureText(text)/2, y, p);
             }
 
-            mCanvas.restore();
+        }
+
+        //font size zooms
+        //real time update
+        if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0 &&
+                MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 3)
+        {
+            p.setColor(Color.GRAY);
+            p.setStrokeWidth(1);
+            p.setAntiAlias(true);
+            String text = "Aa";
+            float y = height;
+            float x = 0;
+
+            int fontSize = calcFontSize((int)MainActivity.getSharedInstance().mGestureService.curDistance);
+            p.setTextSize(fontSize/2);
+            mCanvas.drawText(text, x, y, p);
 
         }
 
-
-        */
 
     }
 
