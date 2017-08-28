@@ -955,7 +955,7 @@ public abstract class PageFlipModifyAbstract {
         glUseProgram(mVertexProgram.mProgramRef);
         glActiveTexture(GL_TEXTURE0);
 
-        for(int itrp=0; itrp<PAGE_SIZE; itrp++)
+        for(int itrp=1; itrp<PAGE_SIZE; itrp++)
         //for(int itrp= PAGE_SIZE - 1; itrp>=0; itrp--)
         {
             //Matrix.translateM(mVertexProgram.MVPMatrix, 0, -50.0f, 0.0f, 0.0f);

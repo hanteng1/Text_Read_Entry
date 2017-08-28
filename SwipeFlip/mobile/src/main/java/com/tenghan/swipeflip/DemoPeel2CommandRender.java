@@ -295,7 +295,7 @@ public class DemoPeel2CommandRender extends DemoRender{
         if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0 &&
                 MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 1)
         {
-            
+
         }
 
     }

@@ -90,18 +90,28 @@ public class GestureService {
                     //reload texture
 
                     //the page behind of current lock page
-                    int comamndPage = MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock + 1;
-                    MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(comamndPage);
+                    if(MainActivity.getSharedInstance().activityIndex == 2)
+                    {
+                        int comamndPage = MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock + 1;
+                        MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(comamndPage);
+                    }else if(MainActivity.getSharedInstance().activityIndex == 3)
+                    {
+                        int comamndPage = MainActivity.getSharedInstance().mStudyView.mStudy.currentPageLock + 1;
+                        //MainActivity.getSharedInstance().mStudyView.mPageRender.ReloadTexture(comamndPage);
+                    }
+
+
                 }
             }
 
-            //for font zoom in
-            if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0
-                    && activiatedCommandIndex == 3)
-            {
-                curDistance = calPeelDistance(pos);
-                MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(1);
-            }
+//
+//            //for font zoom in
+//            if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0
+//                    && activiatedCommandIndex == 3)
+//            {
+//                curDistance = calPeelDistance(pos);
+//                MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(1);
+//            }
 
         }
 
