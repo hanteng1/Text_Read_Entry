@@ -16,6 +16,7 @@ import com.eschao.android.widget.pageflip.modify.PageModify;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Created by hanteng on 2017-08-28.
@@ -24,10 +25,6 @@ import java.util.Arrays;
 public class StudyOneRender extends StudyRender{
 
     private final static String TAG = "StudyOneRender";
-
-    private ArrayList<Integer> testingCorner;
-    private ArrayList<Integer> testingAngleSeperation;
-    private ArrayList<Integer> testingDistanceSerperation;
 
     private ArrayList<Path> paths;
 
@@ -40,67 +37,82 @@ public class StudyOneRender extends StudyRender{
     private int FIRST_PAGE = 0;
     private int SECOND_PAGE = 1;
 
+    private int mCorner;
+    private int mAngleTarget;
+    private int mDistanceTargert;
+    private int mAngleNum;
+    private int mDistanceNum;
+
+    private Random rand;
+
+
     public StudyOneRender(Context context, PageFlipModifyAbstract pageFlipAbstract,
                          Handler handler, int pageNo)
     {
         super(context, pageFlipAbstract, handler, pageNo);
 
-        testingAngleSeperation = new ArrayList<Integer>();
-        testingCorner = new ArrayList<Integer>();
-        testingDistanceSerperation = new ArrayList<Integer>();
-
-        //set study conditions
-        testingAngleSeperation.add(2);
-        testingAngleSeperation.add(3);
-        testingAngleSeperation.add(4);
-        testingAngleSeperation.add(5);
-
-        testingDistanceSerperation.add(3);
-        testingDistanceSerperation.add(4);
-        testingDistanceSerperation.add(5);
-        testingDistanceSerperation.add(6);
-
-        /**
-         *    ---------
-         *   |0       1|
-         *   |         |
-         *   |         |
-         *   |3       2|
-         *    ---------
-         */
-        testingCorner.add(0);
-        testingCorner.add(1);
-        testingCorner.add(2);
-        testingCorner.add(3);
 
         paths = new ArrayList<Path>();
-
         sin45 = (float)Math.sin(Math.PI / 4);
+
+        rand = new Random();
+
 
     }
 
     public void LoadTextures(){
+
+        //initial condition
+        int[] curCondition = MainActivity.getSharedInstance().mStudyView.mStudy.obtainNextCondition();
+        mCorner = curCondition[0];
+        mAngleNum = curCondition[1];
+        mDistanceNum = curCondition[2];
+        mAngleTarget = rand.nextInt(mAngleNum);
+        mDistanceTargert = rand.nextInt(mDistanceNum);
+
         mPageFlipAbstract.deleteUnusedTextures();
         PageModify[] pages = mPageFlipAbstract.getPages();
 
         //set the first page
         if(!pages[FIRST_PAGE].isFrontTextureSet())
         {
-            loadPageWithTrialInfo(2, 2, 3, 3, 3);
+            loadPageWithTrialInfo(mCorner, mAngleTarget, mDistanceTargert, mAngleNum, mDistanceNum);
             pages[FIRST_PAGE].setFrontTexture(mBitmap);
         }
 
         //set the second page
         if(!pages[SECOND_PAGE].isFrontTextureSet())
         {
-            loadPageWithCondition(2, 2, 3, 3, 3);
+            loadPageWithCondition(mCorner, mAngleTarget, mDistanceTargert, mAngleNum, mDistanceNum);
             pages[SECOND_PAGE].setFrontTexture(mBitmap);
         }
     }
 
-    public void ReloadTexture(int itrp)
+    //this reload is corresponding to page flip gesture
+    public void ReloadTexture()
     {
-        PageModify page = mPageFlipAbstract.getPages()[itrp];
+        //update the real time target
+
+        PageModify page = mPageFlipAbstract.getPages()[SECOND_PAGE];
+        page.waiting4TextureUpdate = true;
+    }
+
+    //this is called by study trials
+    public void ReloadTrial()
+    {
+        int[] curCondition = MainActivity.getSharedInstance().mStudyView.mStudy.obtainNextCondition();
+        mCorner = curCondition[0];
+        mAngleNum = curCondition[1];
+        mDistanceNum = curCondition[2];
+
+        rand = new Random();
+        mAngleTarget = rand.nextInt(mAngleNum);
+        mDistanceTargert = rand.nextInt(mDistanceNum);
+
+        PageModify page = mPageFlipAbstract.getPages()[FIRST_PAGE];
+        page.waiting4TextureUpdate = true;
+
+        page = mPageFlipAbstract.getPages()[SECOND_PAGE];
         page.waiting4TextureUpdate = true;
     }
 
@@ -192,6 +204,10 @@ public class StudyOneRender extends StudyRender{
 
             mCanvas.drawArc(rectF, corner * maxAngleDegree, maxAngleDegree, false, p);
         }
+
+
+
+        //real time update of selected zone
 
 
     }

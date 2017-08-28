@@ -25,7 +25,7 @@ public class StudyView extends GLSurfaceView implements GLSurfaceView.Renderer {
     int mPageNo;
     int mDuration;
     Handler mHandler;
-    public PageFlipModifyAbstract mStudy;
+    public StudyOne mStudy;
     public StudyOneRender mPageRender;
     ReentrantLock mDrawLock;
 

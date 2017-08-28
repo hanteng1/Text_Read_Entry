@@ -7,6 +7,8 @@ import com.eschao.android.widget.pageflip.GLPoint;
 import com.eschao.android.widget.pageflip.PageFlipState;
 import com.eschao.android.widget.pageflip.modify.PageModify;
 
+import java.util.ArrayList;
+
 /**
  * Created by hanteng on 2017-08-28.
  * Used for Study 1
@@ -17,9 +19,81 @@ public class StudyOne extends PageFlipModifyAbstract{
     private final static String TAG = "Study One";
     private final static int pageSize = 2;
 
+
+    //conditions
+    private ArrayList<Integer> testingCorner;
+    private int cornerCount;
+    private ArrayList<Integer> testingAngleSeperation;
+    private int angleCount;
+    private ArrayList<Integer> testingDistanceSerperation;
+    private int distanceCount;
+
+    public ArrayList<int[]> conditions;
+    public int currentCondition;
+
+
     public StudyOne(Context context)
     {
         super(context, pageSize);
+
+        testingAngleSeperation = new ArrayList<Integer>();
+        testingCorner = new ArrayList<Integer>();
+        testingDistanceSerperation = new ArrayList<Integer>();
+
+        //set study conditions
+        testingAngleSeperation.add(2);
+        testingAngleSeperation.add(3);
+        testingAngleSeperation.add(4);
+        testingAngleSeperation.add(5);
+        angleCount = 4;
+
+        testingDistanceSerperation.add(3);
+        testingDistanceSerperation.add(4);
+        testingDistanceSerperation.add(5);
+        testingDistanceSerperation.add(6);
+        distanceCount = 4;
+
+        /**
+         *    ---------
+         *   |0       1|
+         *   |         |
+         *   |         |
+         *   |3       2|
+         *    ---------
+         */
+        testingCorner.add(0);
+        testingCorner.add(1);
+        testingCorner.add(2);
+        testingCorner.add(3);
+        cornerCount = 4;
+
+        conditions = new ArrayList<int[]>();
+        for(int itrc = 0; itrc < cornerCount; itrc++)
+        {
+            for(int itra = 0; itra < angleCount; itra++)
+            {
+                for(int itrt = 0; itrt < distanceCount; itrt++)
+                {
+                    conditions.add(new int[]{testingCorner.get(itrc), testingAngleSeperation.get(itra), testingDistanceSerperation.get(itrt)});
+                }
+            }
+        }
+
+        currentCondition = -1;
+
+    }
+
+    public int[] obtainNextCondition()
+    {
+        currentCondition++;
+
+        if(currentCondition == conditions.size())
+        {
+            //end the test
+            currentCondition = 0;
+        }
+
+        return conditions.get(currentCondition);
     }
 
     /**

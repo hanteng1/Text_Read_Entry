@@ -30,7 +30,8 @@ public abstract class StudyRender extends PageRender{
 
     //what about loading textures first, then we can get rid of the mDrawCommand thing
     public abstract void LoadTextures();
-    public abstract void ReloadTexture(int itrp);
+    public abstract void ReloadTexture();
+    public abstract void ReloadTrial();
 
     //this is calling the drawing functions
     public void onDrawFrame() {
