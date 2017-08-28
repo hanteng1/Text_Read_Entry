@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Handler;
 import android.os.health.PackageHealthStats;
 import android.util.Log;
@@ -35,6 +36,7 @@ public class StudyOneRender extends StudyRender{
     //set the base
     private float maxDistance = 160.0f;
     private float maxAngle = (float)Math.PI / 2;
+    private float maxAngleDegree = 90.0f;
     private int FIRST_PAGE = 0;
     private int SECOND_PAGE = 1;
 
@@ -84,14 +86,14 @@ public class StudyOneRender extends StudyRender{
         //set the first page
         if(!pages[FIRST_PAGE].isFrontTextureSet())
         {
-            loadPageWithTrialInfo(0, 2, 3, 3, 3);
+            loadPageWithTrialInfo(2, 2, 3, 3, 3);
             pages[FIRST_PAGE].setFrontTexture(mBitmap);
         }
 
         //set the second page
         if(!pages[SECOND_PAGE].isFrontTextureSet())
         {
-            loadPageWithCondition(0, 2, 3, 3, 3);
+            loadPageWithCondition(2, 2, 3, 3, 3);
             pages[SECOND_PAGE].setFrontTexture(mBitmap);
         }
     }
@@ -141,8 +143,9 @@ public class StudyOneRender extends StudyRender{
         Paint p = new Paint();
         p.setFilterBitmap(true);
         p.setColor(Color.GRAY);
-        p.setStrokeWidth(1);
+        p.setStrokeWidth(3);
         p.setAntiAlias(true);
+        p.setStyle(Paint.Style.STROKE);
 
         // 1. load/draw background bitmap
         Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
@@ -180,7 +183,15 @@ public class StudyOneRender extends StudyRender{
         }
 
         //distance paths
-    
+        for(int itrd = 1; itrd < distanceNum; itrd++)
+        {
+            float segDis = maxDistance / distanceNum;
+
+            RectF rectF = new RectF(origin.x - segDis * itrd, origin.y - segDis * itrd,
+                    origin.x + segDis * itrd, origin.y + segDis * itrd);
+
+            mCanvas.drawArc(rectF, corner * maxAngleDegree, maxAngleDegree, false, p);
+        }
 
 
     }
