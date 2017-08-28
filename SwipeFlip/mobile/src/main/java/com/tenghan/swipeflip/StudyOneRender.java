@@ -9,6 +9,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.health.PackageHealthStats;
+import android.util.Log;
 
 import com.eschao.android.widget.pageflip.modify.PageModify;
 
@@ -33,7 +34,7 @@ public class StudyOneRender extends StudyRender{
 
     //set the base
     private float maxDistance = 160.0f;
-    private float maxAngle = 90.0f;
+    private float maxAngle = (float)Math.PI / 2;
     private int FIRST_PAGE = 0;
     private int SECOND_PAGE = 1;
 
@@ -90,7 +91,7 @@ public class StudyOneRender extends StudyRender{
         //set the second page
         if(!pages[SECOND_PAGE].isFrontTextureSet())
         {
-            loadPageWithCondition(0, 2,3, 3,3);
+            loadPageWithCondition(0, 2, 3, 3, 3);
             pages[SECOND_PAGE].setFrontTexture(mBitmap);
         }
     }
@@ -172,38 +173,15 @@ public class StudyOneRender extends StudyRender{
         for(int itra = 1; itra < angleNum; itra++)
         {
             float segAngle = maxAngle / angleNum;
-            Path path = new Path();
-            path.moveTo(origin.x, origin.y);
 
-            /*
-            switch (corner)
-            {
-                case 0:
+            mCanvas.drawLine(origin.x, origin.y , origin.x + maxDistance * (float)Math.cos(segAngle * itra + (Math.PI/2) * corner),
+                    origin.y + maxDistance * (float)Math.sin(segAngle * itra + (Math.PI/2) * corner), p);
 
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-            }*/
-
-            path.lineTo(origin.x + (float)Math.cos(segAngle * itra + (Math.PI/2) * corner),
-                    origin.y + (float)Math.sin(segAngle * itra + (Math.PI/2) * corner));
-
-            paths.add(path);
         }
 
         //distance paths
+    
 
-
-
-        //draw
-        for(int itrp = 0; itrp < paths.size(); itrp++)
-        {
-            mCanvas.drawPath(paths.get(itrp), p);
-        }
 
     }
 
