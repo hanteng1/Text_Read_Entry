@@ -19,7 +19,6 @@ public class StudyOne extends PageFlipModifyAbstract{
     private final static String TAG = "Study One";
     private final static int pageSize = 2;
 
-
     //conditions
     private ArrayList<Integer> testingCorner;
     private int cornerCount;

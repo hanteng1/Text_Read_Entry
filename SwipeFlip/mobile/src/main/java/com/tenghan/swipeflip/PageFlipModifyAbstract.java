@@ -490,7 +490,8 @@ public abstract class PageFlipModifyAbstract {
         Point end = new Point(0, 0);
 
         //see the gesture state
-        if(MainActivity.getSharedInstance().mGestureService.gestureState == 2)
+        if(MainActivity.getSharedInstance().activityIndex == 2 &&
+                MainActivity.getSharedInstance().mGestureService.gestureState == 2)
         {
             setPageLock();
             return false;

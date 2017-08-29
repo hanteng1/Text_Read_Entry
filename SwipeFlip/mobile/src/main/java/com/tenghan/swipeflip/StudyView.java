@@ -105,12 +105,6 @@ public class StudyView extends GLSurfaceView implements GLSurfaceView.Renderer {
         }
     }
 
-    public void onFingerFlick()
-    {
-        //lock the flipped page
-        mStudy.setPageLock();
-    }
-
     public void onFingerUp(float x, float y) // will auto check the animation first
     {
         if (!mStudy.isAnimating()) {

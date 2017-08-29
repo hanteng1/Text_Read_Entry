@@ -34,8 +34,7 @@ public class StudyOneRender extends StudyRender{
     private float maxDistance = 160.0f;
     private float maxAngle = (float)Math.PI / 2;
     private float maxAngleDegree = 90.0f;
-    private int FIRST_PAGE = 0;
-    private int SECOND_PAGE = 1;
+
 
     private int mCorner;
     private int mAngleTarget;
@@ -57,13 +56,14 @@ public class StudyOneRender extends StudyRender{
 
         rand = new Random();
 
-
     }
 
     public void LoadTextures(){
 
         //initial condition
         int[] curCondition = MainActivity.getSharedInstance().mStudyView.mStudy.obtainNextCondition();
+        MainActivity.getSharedInstance().mStudyView.mStudy.currentCondition--;
+
         mCorner = curCondition[0];
         mAngleNum = curCondition[1];
         mDistanceNum = curCondition[2];
@@ -76,14 +76,14 @@ public class StudyOneRender extends StudyRender{
         //set the first page
         if(!pages[FIRST_PAGE].isFrontTextureSet())
         {
-            loadPageWithTrialInfo(mCorner, mAngleTarget, mDistanceTargert, mAngleNum, mDistanceNum);
+            loadPageWithTrialInfo();
             pages[FIRST_PAGE].setFrontTexture(mBitmap);
         }
 
         //set the second page
         if(!pages[SECOND_PAGE].isFrontTextureSet())
         {
-            loadPageWithCondition(mCorner, mAngleTarget, mDistanceTargert, mAngleNum, mDistanceNum);
+            loadPageWithCondition();
             pages[SECOND_PAGE].setFrontTexture(mBitmap);
         }
     }
@@ -116,7 +116,7 @@ public class StudyOneRender extends StudyRender{
         page.waiting4TextureUpdate = true;
     }
 
-    public void loadPageWithTrialInfo(int corner, int angleTarget, int distanceTargert, int angleNum, int distanceNum)
+    public void loadPageWithTrialInfo()
     {
         final int width = mCanvas.getWidth();
         final int height = mCanvas.getHeight();
@@ -137,7 +137,7 @@ public class StudyOneRender extends StudyRender{
         p.setAntiAlias(true);
         p.setTextSize(fontSize);
 
-        String conditionText = "AngleNum " + angleNum + " , DistanceNum " + distanceNum;
+        String conditionText = "AngleNum " + mAngleNum + " , DistanceNum " + mDistanceNum;
 
         float textWidth = p.measureText(conditionText);
         float y = height / 2;
@@ -146,7 +146,7 @@ public class StudyOneRender extends StudyRender{
         mCanvas.drawText(conditionText, x, y, p);
     }
 
-    public void loadPageWithCondition(int corner, int angleTarget, int distanceTargert, int angleNum, int distanceNum)
+    public void loadPageWithCondition()
     {
         final int width = mCanvas.getWidth();
         final int height = mCanvas.getHeight();
@@ -169,40 +169,40 @@ public class StudyOneRender extends StudyRender{
         //draw conditions
 
         PointF origin = new PointF();
-        if(corner == 0)
+        if(mCorner == 0)
         {
             origin.set(0, 0);
-        }else if(corner == 1)
+        }else if(mCorner == 1)
         {
             origin.set(width, 0);
-        }else if(corner == 2)
+        }else if(mCorner == 2)
         {
             origin.set(width, height);
-        }else if(corner == 3)
+        }else if(mCorner == 3)
         {
             origin.set(0, height);
         }
 
         paths.clear();
         //angle paths
-        for(int itra = 1; itra < angleNum; itra++)
+        for(int itra = 1; itra < mAngleNum; itra++)
         {
-            float segAngle = maxAngle / angleNum;
+            float segAngle = maxAngle / mAngleNum;
 
-            mCanvas.drawLine(origin.x, origin.y , origin.x + maxDistance * (float)Math.cos(segAngle * itra + (Math.PI/2) * corner),
-                    origin.y + maxDistance * (float)Math.sin(segAngle * itra + (Math.PI/2) * corner), p);
+            mCanvas.drawLine(origin.x, origin.y , origin.x + maxDistance * (float)Math.cos(segAngle * itra + (Math.PI/2) * mCorner),
+                    origin.y + maxDistance * (float)Math.sin(segAngle * itra + (Math.PI/2) * mCorner), p);
 
         }
 
         //distance paths
-        for(int itrd = 1; itrd < distanceNum; itrd++)
+        for(int itrd = 1; itrd < mDistanceNum; itrd++)
         {
-            float segDis = maxDistance / distanceNum;
+            float segDis = maxDistance / mDistanceNum;
 
             RectF rectF = new RectF(origin.x - segDis * itrd, origin.y - segDis * itrd,
                     origin.x + segDis * itrd, origin.y + segDis * itrd);
 
-            mCanvas.drawArc(rectF, corner * maxAngleDegree, maxAngleDegree, false, p);
+            mCanvas.drawArc(rectF, mCorner * maxAngleDegree, maxAngleDegree, false, p);
         }
 
 

@@ -23,6 +23,9 @@ public abstract class StudyRender extends PageRender{
 
     private final static String TAG = "StudyRender";
 
+    public int FIRST_PAGE = 0;
+    public int SECOND_PAGE = 1;
+
     public StudyRender(Context context, PageFlipModifyAbstract pageFlipAbstract,
                       Handler handler, int pageNo) {
         super(context, pageFlipAbstract, handler, pageNo);
@@ -82,9 +85,9 @@ public abstract class StudyRender extends PageRender{
 
             //this is called when animation is finished
             //reload the pagelock texture
-            //int commandPage = MainActivity.getSharedInstance().mStudyView.mStudy.currentPageLock + 1;
-            //MainActivity.getSharedInstance().mGestureService.reset();
-            //MainActivity.getSharedInstance().mStudyView.mPageRender.ReloadTexture(commandPage);
+            //set to next trial
+            MainActivity.getSharedInstance().mGestureService.reset();
+            MainActivity.getSharedInstance().mStudyView.mPageRender.ReloadTrial();
 
 
             MainActivity.getSharedInstance().mStudyView.mStudy.releasePageLock();
@@ -93,6 +96,21 @@ public abstract class StudyRender extends PageRender{
 
             for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
             {
+                if(pages[FIRST_PAGE].waiting4TextureUpdate)
+                {
+                    //update the first page
+                    loadPageWithTrialInfo();
+                    pages[FIRST_PAGE].updateFrontTexture(mBitmap);
+
+                }
+
+                if(pages[SECOND_PAGE].waiting4TextureUpdate)
+                {
+                    //update the second page
+                    loadPageWithCondition();
+                    pages[SECOND_PAGE].updateFrontTexture(mBitmap);
+
+                }
 //
 //                if (!pages[itrp].isFrontTextureSet()) {
 //                    loadPage(itrp);
@@ -104,6 +122,7 @@ public abstract class StudyRender extends PageRender{
 //                    loadPageWithCommands(itrp, cRIds[itrp]);
 //                    pages[itrp].updateFrontTexture(mBitmap);
 //                }
+
 
             }
 
@@ -179,8 +198,8 @@ public abstract class StudyRender extends PageRender{
         return false;
     }
 
-    public abstract void loadPageWithTrialInfo(int corner, int angleTarget, int distanceTargert, int angleNum, int distanceNum);
-    public abstract void loadPageWithCondition(int corner, int angleTarget, int distanceTargert, int angleNum, int distanceNum);
+    public abstract void loadPageWithTrialInfo();
+    public abstract void loadPageWithCondition();
 
     public boolean canFlipForward()
     {
