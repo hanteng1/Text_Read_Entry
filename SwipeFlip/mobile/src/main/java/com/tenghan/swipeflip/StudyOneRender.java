@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.os.health.PackageHealthStats;
+import android.os.health.SystemHealthManager;
 import android.util.Log;
 
 import com.eschao.android.widget.pageflip.modify.PageModify;
@@ -137,13 +138,30 @@ public class StudyOneRender extends StudyRender{
         p.setAntiAlias(true);
         p.setTextSize(fontSize);
 
-        String conditionText = "AngleNum " + mAngleNum + " , DistanceNum " + mDistanceNum;
+        String conditionText = "trial " + (MainActivity.getSharedInstance().mStudyView.mStudy.currentCondition + 1)
+                + " / " + MainActivity.getSharedInstance().mStudyView.mStudy.conditions.size();
 
         float textWidth = p.measureText(conditionText);
         float y = height / 2;
         float x = width / 2 - textWidth / 2;
-
         mCanvas.drawText(conditionText, x, y, p);
+
+        conditionText = "AngleNum " + mAngleNum;
+        textWidth = p.measureText(conditionText);
+        y += (10 + fontSize);
+        x = width / 2 - textWidth / 2;
+        mCanvas.drawText(conditionText, x, y, p);
+
+        conditionText =  "DistanceNum " + mDistanceNum;
+        textWidth = p.measureText(conditionText);
+        y += (10 + fontSize);
+        x = width / 2 - textWidth / 2;
+        mCanvas.drawText(conditionText, x, y, p);
+
+
+        //draw target indicators
+        
+
     }
 
     public void loadPageWithCondition()
