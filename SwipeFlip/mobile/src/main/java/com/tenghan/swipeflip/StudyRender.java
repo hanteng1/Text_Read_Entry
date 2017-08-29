@@ -83,10 +83,10 @@ public abstract class StudyRender extends PageRender{
                     pages[FIRST_PAGE].updateFrontTexture(mBitmap);
                 }
 
-
                 if(pages[SECOND_PAGE].waiting4TextureUpdate == true)
                 {
-
+                    loadPageWithCondition();
+                    pages[SECOND_PAGE].updateFrontTexture(mBitmap);
                 }
 
                 mPageFlipAbstract.drawFlipFrameWithIndex(mPageFlipAbstract.currentPageLock);
