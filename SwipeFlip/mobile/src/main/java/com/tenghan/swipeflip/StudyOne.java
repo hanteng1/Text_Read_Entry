@@ -1,6 +1,7 @@
 package com.tenghan.swipeflip;
 
 import android.content.Context;
+import android.graphics.PointF;
 import android.util.Log;
 
 import com.eschao.android.widget.pageflip.GLPoint;
@@ -132,6 +133,10 @@ public class StudyOne extends PageFlipModifyAbstract{
             //set origin
             MainActivity.getSharedInstance().mGestureService.setOrigin(new float[]{touchX, touchY});
             MainActivity.getSharedInstance().mGestureService.handleData(new float[]{touchX, touchY});
+
+            //reload the first page texture
+            MainActivity.getSharedInstance().mStudyView.mPageRender.ReloadFirstPageTexture();
+
 
             // compute max degree between X axis and line from TouchP to OriginP
             // and max degree between X axis and line from TouchP to
@@ -399,6 +404,28 @@ public class StudyOne extends PageFlipModifyAbstract{
             }
         }
 
+        //grab some key values of the page
+        PointF xfoldpc = mPages[FIRST_PAGE].mXFoldPc;
+        PointF yfoldpc = mPages[FIRST_PAGE].mYFoldPc;
+
+        GLPoint originer = mPages[FIRST_PAGE].originP;
+        PointF corner = mPages[FIRST_PAGE].mFakeTouchP;
+
+        //translate to canvas cordinate
+        MainActivity.getSharedInstance().mDemoUIView.peelOne.set(fromOpenGLX(xfoldpc.x), fromOpenGLY(xfoldpc.y));
+        MainActivity.getSharedInstance().mDemoUIView.peelTwo.set(fromOpenGLX(yfoldpc.x), fromOpenGLY(yfoldpc.y));
+        MainActivity.getSharedInstance().mDemoUIView.origin.set(fromOpenGLX(originer.x), fromOpenGLY(originer.y));
+        MainActivity.getSharedInstance().mDemoUIView.corner.set(fromOpenGLX(corner.x), fromOpenGLY(corner.y));
+        MainActivity.getSharedInstance().mDemoUIView.invalidate();
+
+    }
+
+    private float fromOpenGLX(float x) {
+        return x + 160.0f;
+    }
+
+    private float fromOpenGLY(float y) {
+        return 160.0f - y;
     }
 
 }

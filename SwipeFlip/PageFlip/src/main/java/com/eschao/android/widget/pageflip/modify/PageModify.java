@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.opengl.GLUtils;
+import android.support.annotation.MainThread;
 import android.util.Log;
 
 import com.eschao.android.widget.pageflip.FoldBackVertexProgram;
@@ -153,8 +154,8 @@ public class PageModify {
     public GLPoint originP;
     public GLPoint diagonalP;
 
-    private GLPoint mXFoldP;
-    private GLPoint mYFoldP;
+    public GLPoint mXFoldP;
+    public GLPoint mYFoldP;
 
     // vertexes and texture coordinates buffer for full page
     private FloatBuffer mFullPageVexBuf;
@@ -186,11 +187,17 @@ public class PageModify {
     //computing vertexes
     public PointF mMiddleP;
     public PointF mYFoldPc;
-    private PointF mYFoldP0c;
+    public PointF mYFoldP0c;
     public PointF mYFoldP1c;
-    private PointF mXFoldPc;
-    private PointF mXFoldP0c;
-    private PointF mXFoldP1c;
+    public PointF mXFoldPc;
+    public PointF mXFoldP0c;
+    public PointF mXFoldP1c;
+
+
+    //rotated
+    public PointF mXFoldPcR;
+    public PointF mYFoldPcR;
+
 
     //translation with x
     public float mTransOffX;
@@ -319,6 +326,9 @@ public class PageModify {
         mXFoldPc = new PointF();
         mXFoldP0c = new PointF();
         mXFoldP1c = new PointF();
+
+        mXFoldPcR = new PointF();
+        mYFoldPcR = new PointF();
 
         mViewRect = new GLViewRect();
         mIsVertical = false;
@@ -1353,6 +1363,12 @@ public class PageModify {
 
         // compute mesh count
         computeMeshCount();
+
+
+        //this is for study purpose
+
+
+
     }
 
 
@@ -1393,7 +1409,6 @@ public class PageModify {
         mFoldBackVertexes.reset();
 
         // add the first 3 float numbers is fold triangle
-        //looks like the point was not used in rendering
         mFoldBackVertexes.addVertex(mFakeTouchP.x, mFakeTouchP.y, 1, 0, cOX, cOY);
 
         // compute vertexes for fold back part
@@ -1674,6 +1689,11 @@ public class PageModify {
         float cx = x * cosA + y * sinA + oX;
         float cy = y * cosA - x * sinA + oY;
         mFoldBackVertexes.addVertex(cx, cy, cz, (float)sinR, coordX, coordY);
+
+        //the cx, cy
+
+
+
 
         //print the vertex
         //Log.d(TAG, "" + cx + ", " + cy + ", " + cz);

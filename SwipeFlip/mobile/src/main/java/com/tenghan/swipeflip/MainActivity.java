@@ -135,6 +135,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         mStudyView = (StudyView)findViewById(R.id.study_view);
         mGestureDetector = new GestureDetector(this, this);
 
+        mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
+        mDemoUIView.setDimension(320, 320);
+
         if(Build.VERSION.SDK_INT < 16)
         {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -146,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                     View.SYSTEM_UI_FLAG_IMMERSIVE |
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
-
 
 
     }

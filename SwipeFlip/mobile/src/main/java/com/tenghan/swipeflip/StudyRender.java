@@ -33,7 +33,8 @@ public abstract class StudyRender extends PageRender{
 
     //what about loading textures first, then we can get rid of the mDrawCommand thing
     public abstract void LoadTextures();
-    public abstract void ReloadTexture();
+    public abstract void ReloadFirstPageTexture();
+    public abstract void ReloadSecondPageTexture();
     public abstract void ReloadTrial();
 
     //this is calling the drawing functions
@@ -75,6 +76,18 @@ public abstract class StudyRender extends PageRender{
 //
 //                    }
 //                }
+
+                if(pages[FIRST_PAGE].waiting4TextureUpdate == true)
+                {
+                    loadPageWithoutTrialInfo();
+                    pages[FIRST_PAGE].updateFrontTexture(mBitmap);
+                }
+
+
+                if(pages[SECOND_PAGE].waiting4TextureUpdate == true)
+                {
+
+                }
 
                 mPageFlipAbstract.drawFlipFrameWithIndex(mPageFlipAbstract.currentPageLock);
             }
@@ -198,8 +211,11 @@ public abstract class StudyRender extends PageRender{
         return false;
     }
 
+    public abstract void loadPageWithoutTrialInfo();
     public abstract void loadPageWithTrialInfo();
     public abstract void loadPageWithCondition();
+    public abstract void loadPageWithRealTimeFeedback();
+
 
     public boolean canFlipForward()
     {
