@@ -197,6 +197,7 @@ public class PageModify {
     //rotated
     public PointF mXFoldPcR;
     public PointF mYFoldPcR;
+    public float mCosA;
 
 
     //translation with x
@@ -1390,6 +1391,9 @@ public class PageModify {
         float sinA = (mFakeTouchP.y - oY) / mLenOfTouchOrigin;
         float cosA = (oX - mFakeTouchP.x) / mLenOfTouchOrigin;
 
+        mCosA = cosA;
+
+
         // need to translate before rotate, and then translate back
         int count = mMeshCount;
         float xFoldP1 = (mXFoldP1c.x - oX) * cosA;
@@ -1455,6 +1459,8 @@ public class PageModify {
                     textureY(y + oY), oX, oY);
         }
 
+        mXFoldPcR = computePeeledVertex(x, 0, xFoldP1, sinA, cosA, oX, oY);
+        mYFoldPcR = computePeeledVertex(0, y, xFoldP1, sinA, cosA, oX, oY);
         //Log.d(TAG, "end of compute back points within the page");
 
 
@@ -1509,6 +1515,10 @@ public class PageModify {
                 computeBackVertex(x1, d2oY, xFoldP1, sinA, cosA,
                         textureX(x1 + oX), cDY, oX, oY);
             }
+
+            mXFoldPcR = computePeeledVertex(x, 0, xFoldP1, sinA, cosA, oX, oY);
+            mYFoldPcR = computePeeledVertex(mKValue * (y + oY - dY), d2oY, xFoldP1, sinA, cosA, oX, oY);
+
         }
 
         //to this step, the back vertexes of fold back is set
@@ -1690,11 +1700,6 @@ public class PageModify {
         float cy = y * cosA - x * sinA + oY;
         mFoldBackVertexes.addVertex(cx, cy, cz, (float)sinR, coordX, coordY);
 
-        //the cx, cy
-
-
-
-
         //print the vertex
         //Log.d(TAG, "" + cx + ", " + cy + ", " + cz);
 
@@ -1704,6 +1709,29 @@ public class PageModify {
         mFoldEdgesShadow.addVertexes(isX, cx, cy,
                 sx * cosA + sy * sinA + oX,
                 sy * cosA - sx * sinA + oY);
+    }
+
+    private PointF computePeeledVertex(float x0, float y0,
+                                       float tX, float sinA, float cosA,
+                                      float oX, float oY)
+    {
+
+        PointF peeledPoint = new PointF();
+        // rotate degree A
+        float x = x0 * cosA - y0 * sinA;
+        float y = x0 * sinA + y0 * cosA;
+
+        // compute mapping point on cylinder
+        float rad = (x - tX) / mR;
+        double sinR = Math.sin(rad);
+        x = (float) (tX + mR * sinR);
+
+        // rotate degree -A, sin(-A) = -sin(A), cos(-A) = cos(A)
+        float cx = x * cosA + y * sinA + oX;
+        float cy = y * cosA - x * sinA + oY;
+
+        peeledPoint.set(cx, cy);
+        return peeledPoint;
     }
 
     /**
@@ -1741,6 +1769,7 @@ public class PageModify {
         float cy = y * cosA - x * sinA + oY;
         mFoldBackVertexes.addVertex(cx, cy, cz, (float)sinR, coordX, coordY);
     }
+
 
     /**
      * Compute front vertex and base shadow vertex of fold page

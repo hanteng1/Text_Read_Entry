@@ -405,9 +405,9 @@ public class StudyOne extends PageFlipModifyAbstract{
         }
 
         //grab some key values of the page
-        PointF xfoldpc = mPages[FIRST_PAGE].mXFoldPc;
-        PointF yfoldpc = mPages[FIRST_PAGE].mYFoldPc;
-
+        PointF xfoldpc = mPages[FIRST_PAGE].mXFoldPcR;
+        PointF yfoldpc = mPages[FIRST_PAGE].mYFoldPcR;
+        
         GLPoint originer = mPages[FIRST_PAGE].originP;
         PointF corner = mPages[FIRST_PAGE].mFakeTouchP;
 
