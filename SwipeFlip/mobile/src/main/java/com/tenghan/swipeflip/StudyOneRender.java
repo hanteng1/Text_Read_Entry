@@ -189,51 +189,102 @@ public class StudyOneRender extends StudyRender{
         x = width / 2 - textWidth / 2;
         mCanvas.drawText(conditionText, x, y, p);
 
-
         //draw target indicators
         p.setStyle(Paint.Style.STROKE);
 
-        PointF origin = new PointF();
-        if(mCorner == 0)
+
+        if(mCorner < 4)
         {
-            origin.set(0, 0);
-        }else if(mCorner == 1)
+            //corners
+            PointF origin = new PointF();
+            if(mCorner == 0)
+            {
+                origin.set(0, 0);
+            }else if(mCorner == 1)
+            {
+                origin.set(width, 0);
+            }else if(mCorner == 2)
+            {
+                origin.set(width, height);
+            }else if(mCorner == 3)
+            {
+                origin.set(0, height);
+            }
+
+            //angle paths
+            float segAngle = maxAngle / mAngleNum;
+            for(int itra = 1; itra < mAngleNum; itra++)
+            {
+                mCanvas.drawLine(origin.x, origin.y , origin.x + maxDistance * (float)Math.cos(segAngle * itra + (Math.PI/2) * mCorner),
+                        origin.y + maxDistance * (float)Math.sin(segAngle * itra + (Math.PI/2) * mCorner), p);
+
+            }
+
+            //distance paths
+            float segDis = maxDistance / mDistanceNum;
+            for(int itrd = 1; itrd < mDistanceNum; itrd++)
+            {
+                RectF rectF = new RectF(origin.x - segDis * itrd, origin.y - segDis * itrd,
+                        origin.x + segDis * itrd, origin.y + segDis * itrd);
+
+                mCanvas.drawArc(rectF, mCorner * maxAngleDegree, maxAngleDegree, false, p);
+            }
+
+            //target
+            float targetLength = segDis * (mDistanceTargert + 0.5f);
+            float targetAngle = segAngle * ( mAngleTarget + 0.5f) + maxAngle * mCorner;
+            float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
+            float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
+
+            drawTargetCross(mCanvas, p, targetX, targetY);
+
+        }else
         {
-            origin.set(width, 0);
-        }else if(mCorner == 2)
-        {
-            origin.set(width, height);
-        }else if(mCorner == 3)
-        {
-            origin.set(0, height);
+            //edges
+            float left = 0;
+            float top = 0;
+            float right = width;
+            float bottom = height;
+
+            ArrayList<float[]> lines = new ArrayList<float[]>();
+            float segDis = maxDistance / mDistanceNum;
+
+            if(mCorner == 4)
+            {
+                //top
+                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                {
+                    lines.add(new float[]{left, segDis * itrd, right, segDis * itrd});
+                }
+            }else if(mCorner == 5)
+            {
+                //right
+                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                {
+                    lines.add(new float[]{right - segDis * itrd, top, right - segDis * itrd, bottom});
+                }
+            }else if(mCorner == 6)
+            {
+                //bottom
+                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                {
+                    lines.add(new float[]{left, bottom - segDis * itrd, right, bottom - segDis * itrd});
+                }
+            }else if(mCorner == 7)
+            {
+                //left
+                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                {
+                    lines.add(new float[]{left + segDis * itrd, top, left + segDis * itrd, bottom});
+                }
+            }
+
+            for(int itrl = 0; itrl < lines.size(); itrl++)
+            {
+                mCanvas.drawLine(lines.get(itrl)[0], lines.get(itrl)[1], lines.get(itrl)[2], lines.get(itrl)[3], p);
+            }
+
         }
-
-        //angle paths
-        float segAngle = maxAngle / mAngleNum;
-        for(int itra = 1; itra < mAngleNum; itra++)
-        {
-            mCanvas.drawLine(origin.x, origin.y , origin.x + maxDistance * (float)Math.cos(segAngle * itra + (Math.PI/2) * mCorner),
-                    origin.y + maxDistance * (float)Math.sin(segAngle * itra + (Math.PI/2) * mCorner), p);
-
-        }
-
-        //distance paths
-        float segDis = maxDistance / mDistanceNum;
-        for(int itrd = 1; itrd < mDistanceNum; itrd++)
-        {
-            RectF rectF = new RectF(origin.x - segDis * itrd, origin.y - segDis * itrd,
-                    origin.x + segDis * itrd, origin.y + segDis * itrd);
-
-            mCanvas.drawArc(rectF, mCorner * maxAngleDegree, maxAngleDegree, false, p);
-        }
-
-        //target
-        float targetLength = segDis * (mDistanceTargert + 0.5f);
-        float targetAngle = segAngle * ( mAngleTarget + 0.5f) + maxAngle * mCorner;
-        float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
-        float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
-
-        drawTargetCross(mCanvas, p, targetX, targetY);
 
     }
 
@@ -259,59 +310,71 @@ public class StudyOneRender extends StudyRender{
 
         //draw conditions
 
-        PointF origin = new PointF();
-        if(mCorner == 0)
+        if(mCorner < 4)
         {
-            origin.set(0, 0);
-        }else if(mCorner == 1)
+            //corners
+            PointF origin = new PointF();
+            if(mCorner == 0)
+            {
+                origin.set(0, 0);
+            }else if(mCorner == 1)
+            {
+                origin.set(width, 0);
+            }else if(mCorner == 2)
+            {
+                origin.set(width, height);
+            }else if(mCorner == 3)
+            {
+                origin.set(0, height);
+            }
+
+            paths.clear();
+
+            //angle paths
+            float segAngle = maxAngle / mAngleNum;
+            for(int itra = 1; itra < mAngleNum; itra++)
+            {
+                mCanvas.drawLine(origin.x, origin.y , origin.x + maxDistance * (float)Math.cos(segAngle * itra + (Math.PI/2) * mCorner),
+                        origin.y + maxDistance * (float)Math.sin(segAngle * itra + (Math.PI/2) * mCorner), p);
+
+            }
+
+            //distance paths
+            float segDis = maxDistance / mDistanceNum;
+            for(int itrd = 1; itrd < mDistanceNum; itrd++)
+            {
+                RectF rectF = new RectF(origin.x - segDis * itrd, origin.y - segDis * itrd,
+                        origin.x + segDis * itrd, origin.y + segDis * itrd);
+
+                mCanvas.drawArc(rectF, mCorner * maxAngleDegree, maxAngleDegree, false, p);
+            }
+
+            //target
+            float targetLength = segDis * (mDistanceTargert + 0.5f);
+            float targetAngle = segAngle * ( mAngleTarget + 0.5f) + maxAngle * mCorner;
+            float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
+            float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
+
+            drawTargetCross(mCanvas, p, targetX, targetY);
+
+            if(mAngleActual != -1 && mDistanceActual != -1)
+            {
+                float actualLength = segDis * (mDistanceActual + 0.5f);
+                float actualAngle = segAngle * ( mAngleActual + 0.5f) + maxAngle * mCorner;
+                float actualX = origin.x + actualLength * (float)Math.cos(actualAngle);
+                float actualY = origin.y + actualLength * (float)Math.sin(actualAngle);
+
+                drawMoveCross(mCanvas, p, actualX, actualY);
+            }
+
+        }else
         {
-            origin.set(width, 0);
-        }else if(mCorner == 2)
-        {
-            origin.set(width, height);
-        }else if(mCorner == 3)
-        {
-            origin.set(0, height);
+            //edges
+
+
         }
 
-        paths.clear();
 
-        //angle paths
-        float segAngle = maxAngle / mAngleNum;
-        for(int itra = 1; itra < mAngleNum; itra++)
-        {
-            mCanvas.drawLine(origin.x, origin.y , origin.x + maxDistance * (float)Math.cos(segAngle * itra + (Math.PI/2) * mCorner),
-                    origin.y + maxDistance * (float)Math.sin(segAngle * itra + (Math.PI/2) * mCorner), p);
-
-        }
-
-        //distance paths
-        float segDis = maxDistance / mDistanceNum;
-        for(int itrd = 1; itrd < mDistanceNum; itrd++)
-        {
-            RectF rectF = new RectF(origin.x - segDis * itrd, origin.y - segDis * itrd,
-                    origin.x + segDis * itrd, origin.y + segDis * itrd);
-
-            mCanvas.drawArc(rectF, mCorner * maxAngleDegree, maxAngleDegree, false, p);
-        }
-
-        //target
-        float targetLength = segDis * (mDistanceTargert + 0.5f);
-        float targetAngle = segAngle * ( mAngleTarget + 0.5f) + maxAngle * mCorner;
-        float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
-        float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
-
-        drawTargetCross(mCanvas, p, targetX, targetY);
-
-        if(mAngleActual != -1 && mDistanceActual != -1)
-        {
-            float actualLength = segDis * (mDistanceActual + 0.5f);
-            float actualAngle = segAngle * ( mAngleActual + 0.5f) + maxAngle * mCorner;
-            float actualX = origin.x + actualLength * (float)Math.cos(actualAngle);
-            float actualY = origin.y + actualLength * (float)Math.sin(actualAngle);
-
-            drawMoveCross(mCanvas, p, actualX, actualY);
-        }
 
     }
 

@@ -23,6 +23,8 @@ public class StudyOne extends PageFlipModifyAbstract{
     //conditions
     private ArrayList<Integer> testingCorner;
     private int cornerCount;
+    private ArrayList<Integer> testingEdge;
+    private int edgeCount;
     private ArrayList<Integer> testingAngleSeperation;
     private int angleCount;
     private ArrayList<Integer> testingDistanceSerperation;
@@ -41,6 +43,7 @@ public class StudyOne extends PageFlipModifyAbstract{
 
         testingAngleSeperation = new ArrayList<Integer>();
         testingCorner = new ArrayList<Integer>();
+        testingEdge = new ArrayList<Integer>();
         testingDistanceSerperation = new ArrayList<Integer>();
 
         //set study conditions
@@ -57,18 +60,26 @@ public class StudyOne extends PageFlipModifyAbstract{
         distanceCount = 4;
 
         /**
+         *        4
          *    ---------
          *   |0       1|
          *   |         |
-         *   |         |
+         * 7 |         |  5
          *   |3       2|
          *    ---------
+         *        6
          */
         testingCorner.add(0);
         testingCorner.add(1);
         testingCorner.add(2);
         testingCorner.add(3);
         cornerCount = 4;
+
+        testingEdge.add(4);
+        testingEdge.add(5);
+        testingEdge.add(6);
+        testingEdge.add(7);
+        edgeCount = 4 ;
 
         conditions = new ArrayList<int[]>();
         for(int itrc = 0; itrc < cornerCount; itrc++)
@@ -79,6 +90,14 @@ public class StudyOne extends PageFlipModifyAbstract{
                 {
                     conditions.add(new int[]{testingCorner.get(itrc), testingAngleSeperation.get(itra), testingDistanceSerperation.get(itrt)});
                 }
+            }
+        }
+
+        for(int itrc = 0; itrc < edgeCount; itrc++)
+        {
+            for(int itrt = 0; itrt < distanceCount; itrt++)
+            {
+                conditions.add(new int[]{testingEdge.get(itrc), 1, testingDistanceSerperation.get(itrt)});
             }
         }
 
