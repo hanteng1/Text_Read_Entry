@@ -104,14 +104,18 @@ public class GestureService {
                 }
             }
 
-//
-//            //for font zoom in
-//            if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0
-//                    && activiatedCommandIndex == 3)
-//            {
-//                curDistance = calPeelDistance(pos);
-//                MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(1);
-//            }
+
+            //for font zoom in
+            if(MainActivity.getSharedInstance().activityIndex == 2)
+            {
+                if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0
+                        && activiatedCommandIndex == 3)
+                {
+                    curDistance = calPeelDistance(pos);
+                    MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(1);
+                }
+            }
+
 
         }
 
