@@ -433,15 +433,22 @@ public class StudyOne extends PageFlipModifyAbstract{
         GLPoint originer = mPages[FIRST_PAGE].originP;
         PointF corner = mPages[FIRST_PAGE].mFakeTouchP;
 
-        //translate to canvas cordinate
-        MainActivity.getSharedInstance().mDemoUIView.peelOne.set(fromOpenGLX(xfoldpc.x), fromOpenGLY(xfoldpc.y));
-        MainActivity.getSharedInstance().mDemoUIView.peelTwo.set(fromOpenGLX(yfoldpc.x), fromOpenGLY(yfoldpc.y));
-        MainActivity.getSharedInstance().mDemoUIView.origin.set(fromOpenGLX(originer.x), fromOpenGLY(originer.y));
-        MainActivity.getSharedInstance().mDemoUIView.corner.set(fromOpenGLX(corner.x), fromOpenGLY(corner.y));
-        MainActivity.getSharedInstance().mDemoUIView.invalidate();
+//        //translate to canvas cordinate
+//        MainActivity.getSharedInstance().mDemoUIView.peelOne.set(fromOpenGLX(xfoldpc.x), fromOpenGLY(xfoldpc.y));
+//        MainActivity.getSharedInstance().mDemoUIView.peelTwo.set(fromOpenGLX(yfoldpc.x), fromOpenGLY(yfoldpc.y));
+//        MainActivity.getSharedInstance().mDemoUIView.origin.set(fromOpenGLX(originer.x), fromOpenGLY(originer.y));
+//        MainActivity.getSharedInstance().mDemoUIView.corner.set(fromOpenGLX(corner.x), fromOpenGLY(corner.y));
+//        MainActivity.getSharedInstance().mDemoUIView.invalidate();
 
-        cursor = calIntersection(originer.x, originer.y, corner.x, corner.y,
-                xfoldpc.x, xfoldpc.y, yfoldpc.x, yfoldpc.y);
+        if(conditions.get(currentCondition)[0] < 4)
+        {
+            cursor = calIntersection(originer.x, originer.y, corner.x, corner.y,
+                    xfoldpc.x, xfoldpc.y, yfoldpc.x, yfoldpc.y);
+        }else
+        {
+            cursor = calMiddle(xfoldpc.x, xfoldpc.y, yfoldpc.x, yfoldpc.y);
+        }
+
 
         MainActivity.getSharedInstance().mStudyView.mPageRender.selectedSegment(cursor);
     }
@@ -500,6 +507,55 @@ public class StudyOne extends PageFlipModifyAbstract{
             return cross;
         }
 
+    }
+
+    //calculate the middle point of two peel
+    private PointF calMiddle(float x1, float y1, float x2, float y2)
+    {
+        PointF middlep = new PointF();
+        x1 = fromOpenGLX(x1);
+        y1 = fromOpenGLY(y1);
+        x2 = fromOpenGLX(x2);
+        y2 = fromOpenGLY(y2);
+
+        //it's not the middle point
+        //float width = getSurfaceWidth();
+        //float height = getSurfaceHeight();
+
+        if(x1 == x2)
+        {
+            middlep.set(x1, (y1 + y2 )/ 2);
+            return middlep;
+        }
+
+
+        float a = (y1 - y2) / (x1 - x2);
+        float b = y1 - a * x1;
+
+
+        if(conditions.get(currentCondition)[0] == 4 ||
+                conditions.get(currentCondition)[0] == 6)
+        {
+            float xm = getSurfaceWidth() / 2;
+            float ym = a * xm + b;
+
+            middlep.set(xm, ym);
+
+
+        }else if(conditions.get(currentCondition)[0] == 5 ||
+                conditions.get(currentCondition)[0] == 7)
+        {
+            float xtop = (0 - b) / a;
+            float xbot = (getSurfaceHeight() - b) / a;
+            float xm = (xtop + xbot) / 2;
+            float ym = a * xm + b;
+
+            middlep.set(xm, ym);
+        }
+
+
+
+        return middlep;
     }
 
 }

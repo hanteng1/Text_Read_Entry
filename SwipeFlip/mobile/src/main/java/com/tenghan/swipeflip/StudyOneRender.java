@@ -191,7 +191,7 @@ public class StudyOneRender extends StudyRender{
 
         //draw target indicators
         p.setStyle(Paint.Style.STROKE);
-
+        p.setStrokeWidth(3);
 
         if(mCorner < 4)
         {
@@ -249,6 +249,10 @@ public class StudyOneRender extends StudyRender{
             ArrayList<float[]> lines = new ArrayList<float[]>();
             float segDis = maxDistance / mDistanceNum;
 
+            float targetlength = segDis * (mDistanceTargert + 0.5f);
+            float targetX = 0;
+            float targetY = 0;
+
             if(mCorner == 4)
             {
                 //top
@@ -256,6 +260,9 @@ public class StudyOneRender extends StudyRender{
                 {
                     lines.add(new float[]{left, segDis * itrd, right, segDis * itrd});
                 }
+
+                targetX = (left + right) / 2;
+                targetY = top + targetlength;
             }else if(mCorner == 5)
             {
                 //right
@@ -263,6 +270,9 @@ public class StudyOneRender extends StudyRender{
                 {
                     lines.add(new float[]{right - segDis * itrd, top, right - segDis * itrd, bottom});
                 }
+
+                targetX = right - targetlength;
+                targetY = (top + bottom) / 2;
             }else if(mCorner == 6)
             {
                 //bottom
@@ -270,6 +280,9 @@ public class StudyOneRender extends StudyRender{
                 {
                     lines.add(new float[]{left, bottom - segDis * itrd, right, bottom - segDis * itrd});
                 }
+
+                targetX = (left + right) / 2;
+                targetY = bottom - targetlength;
             }else if(mCorner == 7)
             {
                 //left
@@ -277,6 +290,9 @@ public class StudyOneRender extends StudyRender{
                 {
                     lines.add(new float[]{left + segDis * itrd, top, left + segDis * itrd, bottom});
                 }
+
+                targetX = left + targetlength;
+                targetY = (top + bottom) / 2;
             }
 
             for(int itrl = 0; itrl < lines.size(); itrl++)
@@ -284,6 +300,8 @@ public class StudyOneRender extends StudyRender{
                 mCanvas.drawLine(lines.get(itrl)[0], lines.get(itrl)[1], lines.get(itrl)[2], lines.get(itrl)[3], p);
             }
 
+            //target
+            drawTargetCross(mCanvas, p, targetX, targetY);
         }
 
     }
@@ -370,11 +388,90 @@ public class StudyOneRender extends StudyRender{
         }else
         {
             //edges
+            float left = 0;
+            float top = 0;
+            float right = width;
+            float bottom = height;
 
+            ArrayList<float[]> lines = new ArrayList<float[]>();
+            float segDis = maxDistance / mDistanceNum;
+
+            float targetlength = segDis * (mDistanceTargert + 0.5f);
+            float targetX = 0;
+            float targetY = 0;
+            float actualLength = segDis * (mDistanceActual + 0.5f);
+            float actualX = 0;
+            float actualY = 0;
+
+            if(mCorner == 4)
+            {
+                //top
+                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                {
+                    lines.add(new float[]{left, segDis * itrd, right, segDis * itrd});
+                }
+
+                targetX = (left + right) / 2;
+                targetY = top + targetlength;
+
+                actualX = targetX;
+                actualY = top + actualLength;
+            }else if(mCorner == 5)
+            {
+                //right
+                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                {
+                    lines.add(new float[]{right - segDis * itrd, top, right - segDis * itrd, bottom});
+                }
+
+                targetX = right - targetlength;
+                targetY = (top + bottom) / 2;
+
+                actualX = right - actualLength;
+                actualY = targetY;
+            }else if(mCorner == 6)
+            {
+                //bottom
+                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                {
+                    lines.add(new float[]{left, bottom - segDis * itrd, right, bottom - segDis * itrd});
+                }
+
+                targetX = (left + right) / 2;
+                targetY = bottom - targetlength;
+
+                actualX = targetX;
+                actualY = bottom - actualLength;
+            }else if(mCorner == 7)
+            {
+                //left
+                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                {
+                    lines.add(new float[]{left + segDis * itrd, top, left + segDis * itrd, bottom});
+                }
+
+                targetX = left + targetlength;
+                targetY = (top + bottom) / 2;
+
+                actualX = left + actualLength;
+                actualY = targetY;
+            }
+
+            for(int itrl = 0; itrl < lines.size(); itrl++)
+            {
+                mCanvas.drawLine(lines.get(itrl)[0], lines.get(itrl)[1], lines.get(itrl)[2], lines.get(itrl)[3], p);
+            }
+
+            //target
+            drawTargetCross(mCanvas, p, targetX, targetY);
+
+            //draw actual
+            if(mDistanceActual != -1)
+            {
+                drawMoveCross(mCanvas, p, actualX, actualY);
+            }
 
         }
-
-
 
     }
 
@@ -442,57 +539,90 @@ public class StudyOneRender extends StudyRender{
         final int width = mCanvas.getWidth();
         final int height = mCanvas.getHeight();
 
-        PointF origin = new PointF();
-        if(mCorner == 0)
+        if(mCorner < 4)
         {
-            origin.set(0, 0);
-        }else if(mCorner == 1)
-        {
-            origin.set(width, 0);
-        }else if(mCorner == 2)
-        {
-            origin.set(width, height);
-        }else if(mCorner == 3)
-        {
-            origin.set(0, height);
-        }
+            PointF origin = new PointF();
+            if(mCorner == 0)
+            {
+                origin.set(0, 0);
+            }else if(mCorner == 1)
+            {
+                origin.set(width, 0);
+            }else if(mCorner == 2)
+            {
+                origin.set(width, height);
+            }else if(mCorner == 3)
+            {
+                origin.set(0, height);
+            }
 
-        //first dis
-        float dis = (float)Math.sqrt((cursor.x -  origin.x) * (cursor.x -  origin.x) +
-                (cursor.y - origin.y) * (cursor.y - origin.y));
+            //first dis
+            float dis = (float)Math.sqrt((cursor.x -  origin.x) * (cursor.x -  origin.x) +
+                    (cursor.y - origin.y) * (cursor.y - origin.y));
 
-        float segDis = maxDistance / mDistanceNum;
-        int disSegs = (int) (dis / segDis);
+            float segDis = maxDistance / mDistanceNum;
+            int disSegs = (int) (dis / segDis);
 
-        //then angle
-        float ang = 0;
-        if(mCorner == 0 || mCorner == 2)
-        {
-            ang = (float)Math.asin( Math.abs(cursor.y - origin.y)  / Math.abs(dis) );
+            //then angle
+            float ang = 0;
+            if(mCorner == 0 || mCorner == 2)
+            {
+                ang = (float)Math.asin( Math.abs(cursor.y - origin.y)  / Math.abs(dis) );
+            }else
+            {
+                ang = (float)Math.asin( Math.abs(cursor.x - origin.x)  / Math.abs(dis) );
+            }
+
+            float segAngle = maxAngle / mAngleNum;
+            int angSegs = (int) (ang / segAngle);
+
+            //float targetLength = segDis * (disSegs + 0.5f);
+            //float targetAngle = segAngle * ( angSegs + 0.5f) + maxAngle * mCorner;
+            //float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
+            //float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
+
+            if(disSegs != mDistanceActual || angSegs != mAngleActual)
+            {
+                mDistanceActual = disSegs;
+
+                //Log.d(TAG, "dis actual "  + mDistanceActual);
+
+                mAngleActual = angSegs;
+
+                ReloadSecondPageTexture();
+            }
         }else
         {
-            ang = (float)Math.asin( Math.abs(cursor.x - origin.x)  / Math.abs(dis) );
+            float left = 0;
+            float top = 0;
+            float right = width;
+            float bottom = height;
+
+            float segDis = maxDistance / mDistanceNum;
+            float dis = 0;
+
+            if(mCorner == 4)
+            {
+                dis = Math.abs(cursor.y - top);
+            }else if(mCorner == 5)
+            {
+                dis = Math.abs(cursor.x - right);
+            }else if(mCorner == 6)
+            {
+                dis = Math.abs(cursor.y - bottom);
+            }else if(mCorner == 7)
+            {
+                dis = Math.abs(cursor.x - left);
+            }
+
+            int disSegs = (int) (dis / segDis);
+
+            if(disSegs != mDistanceActual)
+            {
+                mDistanceActual = disSegs;
+                ReloadSecondPageTexture();
+            }
         }
-
-        float segAngle = maxAngle / mAngleNum;
-        int angSegs = (int) (ang / segAngle);
-
-        //float targetLength = segDis * (disSegs + 0.5f);
-        //float targetAngle = segAngle * ( angSegs + 0.5f) + maxAngle * mCorner;
-        //float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
-        //float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
-
-        if(disSegs != mDistanceActual || angSegs != mAngleActual)
-        {
-            mDistanceActual = disSegs;
-
-            Log.d(TAG, "dis actual "  + mDistanceActual);
-
-            mAngleActual = angSegs;
-
-            ReloadSecondPageTexture();
-        }
-
 
     }
 
