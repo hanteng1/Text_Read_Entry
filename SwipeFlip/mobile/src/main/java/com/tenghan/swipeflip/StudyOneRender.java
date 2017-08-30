@@ -38,14 +38,14 @@ public class StudyOneRender extends StudyRender{
     private float maxAngleDegree = 90.0f;
     private float crossLength = 20;
 
-    private int mCorner;
-    private int mAngleTarget = -1;
-    private int mDistanceTargert = -1;
-    private int mAngleNum;
-    private int mDistanceNum;
+    public int mCorner;
+    public int mAngleTarget = -1;
+    public int mDistanceTargert = -1;
+    public int mAngleNum;
+    public int mDistanceNum;
 
-    private int mAngleActual = -1;
-    private int mDistanceActual = -1;
+    public int mAngleActual = -1;
+    public int mDistanceActual = -1;
 
     private Random rand;
 

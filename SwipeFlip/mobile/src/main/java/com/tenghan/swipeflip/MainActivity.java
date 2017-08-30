@@ -37,6 +37,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     //intent for gesture recognition service
     public GestureService mGestureService;
 
+
+    //storage
+    public DataStorage storage;
+
+
+
+
     private final static String TAG = "MainActivity";
 
     public static MainActivity instance;
@@ -70,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         layoutParams.width = 320;
         layoutParams.height = 320;
         frameLayout.setLayoutParams(layoutParams);
+
+        storage = DataStorage.getInstance();
+        storage.clearData();
 
         /**
          * function test group
@@ -150,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
 
-
     }
 
     @Override
@@ -184,6 +193,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         {
             mStudyView.onPause();
         }
+
+        storage.save();
 
         LoadBitmapTask.get(this).stop();
     }

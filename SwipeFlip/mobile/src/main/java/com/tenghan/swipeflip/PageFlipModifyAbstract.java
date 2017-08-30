@@ -497,6 +497,18 @@ public abstract class PageFlipModifyAbstract {
             return false;
         }
 
+        //save the result
+        long timestamp = System.currentTimeMillis();
+        DataStorage.AddSample(MainActivity.getSharedInstance().mStudyView.mStudy.currentCondition,
+                MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner,
+                MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleNum,
+                MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceNum,
+                MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget,
+                MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert,
+                MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleActual,
+                MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceActual,
+                timestamp);
+
         // forward flipping
         if (mFlipState == PageFlipState.FORWARD_FLIP ||
                 mFlipState == PageFlipState.BACKWARD_FLIP ||

@@ -112,6 +112,9 @@ public class StudyOne extends PageFlipModifyAbstract{
         if(currentCondition == conditions.size())
         {
             //end the test
+            //save
+            MainActivity.getSharedInstance().storage.save();
+
             currentCondition = 0;
         }
 
@@ -159,6 +162,16 @@ public class StudyOne extends PageFlipModifyAbstract{
             //reload the first page texture
             MainActivity.getSharedInstance().mStudyView.mPageRender.ReloadFirstPageTexture();
 
+            //save data, a trial starts
+            long timestamp = System.currentTimeMillis();
+            DataStorage.AddSample(currentCondition,
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner,
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleNum,
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceNum,
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget,
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert,
+                    -1, -1,
+                    timestamp);
 
             // compute max degree between X axis and line from TouchP to OriginP
             // and max degree between X axis and line from TouchP to
