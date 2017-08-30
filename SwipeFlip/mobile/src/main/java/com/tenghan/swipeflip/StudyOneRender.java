@@ -33,7 +33,7 @@ public class StudyOneRender extends StudyRender{
     private float sin45;
 
     //set the base
-    private float maxDistance = 200.0f;
+    private float maxDistance = 160.0f;
     private float maxAngle = (float)Math.PI / 2;
     private float maxAngleDegree = 90.0f;
     private float crossLength = 20;
@@ -55,6 +55,7 @@ public class StudyOneRender extends StudyRender{
     {
         super(context, pageFlipAbstract, handler, pageNo);
 
+        //maxDistance = mCanvas.getWidth() / 2;
 
         paths = new ArrayList<Path>();
         sin45 = (float)Math.sin(Math.PI / 4);

@@ -467,11 +467,11 @@ public class StudyOne extends PageFlipModifyAbstract{
     }
 
     private float fromOpenGLX(float x) {
-        return x + 160.0f;
+        return x + getSurfaceWidth() / 2;
     }
 
     private float fromOpenGLY(float y) {
-        return 160.0f - y;
+        return getSurfaceHeight() / 2 - y;
     }
 
     //calcuate the intersection point of line 1-2 and 3-4
