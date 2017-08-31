@@ -33,10 +33,19 @@ public class StudyOneRender extends StudyRender{
     private float sin45;
 
     //set the base
+
+    //need to change
     private float maxDistance = 160.0f;
+
+    //need to test and change
+    //the value is in pixels
+    private float reservedDistance = 40.0f;
+
+
     private float maxAngle = (float)Math.PI / 2;
     private float maxAngleDegree = 90.0f;
     private float crossLength = 20;
+
 
     public int mCorner;
     public int mAngleTarget = -1;
@@ -216,27 +225,41 @@ public class StudyOneRender extends StudyRender{
             float segAngle = maxAngle / mAngleNum;
             for(int itra = 1; itra < mAngleNum; itra++)
             {
-                mCanvas.drawLine(origin.x, origin.y , origin.x + maxDistance * (float)Math.cos(segAngle * itra + (Math.PI/2) * mCorner),
-                        origin.y + maxDistance * (float)Math.sin(segAngle * itra + (Math.PI/2) * mCorner), p);
+
+                mCanvas.drawLine(origin.x +  reservedDistance * (float)Math.cos(segAngle * itra + (Math.PI/2) * mCorner),
+                        origin.y + reservedDistance * (float)Math.sin(segAngle * itra + (Math.PI/2) * mCorner),
+                        origin.x + (maxDistance + reservedDistance) * (float)Math.cos(segAngle * itra + (Math.PI/2) * mCorner),
+                        origin.y + (maxDistance + reservedDistance) * (float)Math.sin(segAngle * itra + (Math.PI/2) * mCorner), p);
 
             }
 
             //distance paths
             float segDis = maxDistance / mDistanceNum;
-            for(int itrd = 1; itrd < mDistanceNum; itrd++)
+            for(int itrd = 0; itrd < mDistanceNum + 1; itrd++)
             {
-                RectF rectF = new RectF(origin.x - segDis * itrd, origin.y - segDis * itrd,
-                        origin.x + segDis * itrd, origin.y + segDis * itrd);
+
+                //beging and end
+                if(itrd == 0 || itrd == mDistanceNum)
+                {
+                    p.setColor(Color.RED);
+                }else
+                {
+                    p.setColor(Color.GRAY);
+                }
+
+                RectF rectF = new RectF(origin.x - segDis * itrd - reservedDistance, origin.y - segDis * itrd - reservedDistance,
+                        origin.x + segDis * itrd + reservedDistance, origin.y + segDis * itrd + reservedDistance);
 
                 mCanvas.drawArc(rectF, mCorner * maxAngleDegree, maxAngleDegree, false, p);
             }
 
             //target
-            float targetLength = segDis * (mDistanceTargert + 0.5f);
+            float targetLength = segDis * (mDistanceTargert + 0.5f) + reservedDistance;
             float targetAngle = segAngle * ( mAngleTarget + 0.5f) + maxAngle * mCorner;
             float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
             float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
 
+            p.setColor(Color.BLUE);
             drawTargetCross(mCanvas, p, targetX, targetY);
 
         }else
@@ -257,51 +280,60 @@ public class StudyOneRender extends StudyRender{
             if(mCorner == 4)
             {
                 //top
-                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                for(int itrd = 0; itrd < mDistanceNum + 1; itrd++)
                 {
-                    lines.add(new float[]{left, segDis * itrd, right, segDis * itrd});
+                    lines.add(new float[]{left, segDis * itrd + reservedDistance, right, segDis * itrd + reservedDistance});
                 }
 
                 targetX = (left + right) / 2;
-                targetY = top + targetlength;
+                targetY = top + targetlength + reservedDistance;
             }else if(mCorner == 5)
             {
                 //right
-                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                for(int itrd = 0; itrd < mDistanceNum + 1; itrd++)
                 {
-                    lines.add(new float[]{right - segDis * itrd, top, right - segDis * itrd, bottom});
+                    lines.add(new float[]{right - segDis * itrd - reservedDistance, top, right - segDis * itrd - reservedDistance, bottom});
                 }
 
-                targetX = right - targetlength;
+                targetX = right - targetlength - reservedDistance;
                 targetY = (top + bottom) / 2;
             }else if(mCorner == 6)
             {
                 //bottom
-                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                for(int itrd = 0; itrd < mDistanceNum + 1; itrd++)
                 {
-                    lines.add(new float[]{left, bottom - segDis * itrd, right, bottom - segDis * itrd});
+                    lines.add(new float[]{left, bottom - segDis * itrd - reservedDistance, right, bottom - segDis * itrd - reservedDistance});
                 }
 
                 targetX = (left + right) / 2;
-                targetY = bottom - targetlength;
+                targetY = bottom - targetlength - reservedDistance;
             }else if(mCorner == 7)
             {
                 //left
-                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                for(int itrd = 0; itrd < mDistanceNum + 1; itrd++)
                 {
-                    lines.add(new float[]{left + segDis * itrd, top, left + segDis * itrd, bottom});
+                    lines.add(new float[]{left + segDis * itrd + reservedDistance, top, left + segDis * itrd + reservedDistance, bottom});
                 }
 
-                targetX = left + targetlength;
+                targetX = left + targetlength + reservedDistance;
                 targetY = (top + bottom) / 2;
             }
 
             for(int itrl = 0; itrl < lines.size(); itrl++)
             {
+                //begin and end
+                if(itrl == 0 || itrl == (lines.size() - 1))
+                {
+                    p.setColor(Color.RED);
+                }else
+                {
+                    p.setColor(Color.GRAY);
+                }
                 mCanvas.drawLine(lines.get(itrl)[0], lines.get(itrl)[1], lines.get(itrl)[2], lines.get(itrl)[3], p);
             }
 
             //target
+            p.setColor(Color.BLUE);
             drawTargetCross(mCanvas, p, targetX, targetY);
         }
 
@@ -353,36 +385,48 @@ public class StudyOneRender extends StudyRender{
             float segAngle = maxAngle / mAngleNum;
             for(int itra = 1; itra < mAngleNum; itra++)
             {
-                mCanvas.drawLine(origin.x, origin.y , origin.x + maxDistance * (float)Math.cos(segAngle * itra + (Math.PI/2) * mCorner),
-                        origin.y + maxDistance * (float)Math.sin(segAngle * itra + (Math.PI/2) * mCorner), p);
+                mCanvas.drawLine(origin.x +  reservedDistance * (float)Math.cos(segAngle * itra + (Math.PI/2) * mCorner),
+                        origin.y + reservedDistance * (float)Math.sin(segAngle * itra + (Math.PI/2) * mCorner),
+                        origin.x + (maxDistance + reservedDistance) * (float)Math.cos(segAngle * itra + (Math.PI/2) * mCorner),
+                        origin.y + (maxDistance + reservedDistance) * (float)Math.sin(segAngle * itra + (Math.PI/2) * mCorner), p);
 
             }
 
             //distance paths
             float segDis = maxDistance / mDistanceNum;
-            for(int itrd = 1; itrd < mDistanceNum; itrd++)
+            for(int itrd = 0; itrd < mDistanceNum + 1; itrd++)
             {
-                RectF rectF = new RectF(origin.x - segDis * itrd, origin.y - segDis * itrd,
-                        origin.x + segDis * itrd, origin.y + segDis * itrd);
+                //beging and end
+                if(itrd == 0 || itrd == mDistanceNum)
+                {
+                    p.setColor(Color.RED);
+                }else
+                {
+                    p.setColor(Color.GRAY);
+                }
+
+                RectF rectF = new RectF(origin.x - segDis * itrd - reservedDistance, origin.y - segDis * itrd - reservedDistance,
+                        origin.x + segDis * itrd + reservedDistance, origin.y + segDis * itrd + reservedDistance);
 
                 mCanvas.drawArc(rectF, mCorner * maxAngleDegree, maxAngleDegree, false, p);
             }
 
             //target
-            float targetLength = segDis * (mDistanceTargert + 0.5f);
+            float targetLength = segDis * (mDistanceTargert + 0.5f) + reservedDistance;
             float targetAngle = segAngle * ( mAngleTarget + 0.5f) + maxAngle * mCorner;
             float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
             float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
 
+            p.setColor(Color.BLUE);
             drawTargetCross(mCanvas, p, targetX, targetY);
 
             if(mAngleActual != -1 && mDistanceActual != -1)
             {
-                float actualLength = segDis * (mDistanceActual + 0.5f);
+                float actualLength = segDis * (mDistanceActual + 0.5f) + reservedDistance;
                 float actualAngle = segAngle * ( mAngleActual + 0.5f) + maxAngle * mCorner;
                 float actualX = origin.x + actualLength * (float)Math.cos(actualAngle);
                 float actualY = origin.y + actualLength * (float)Math.sin(actualAngle);
-
+                p.setColor(Color.GREEN);
                 drawMoveCross(mCanvas, p, actualX, actualY);
             }
 
@@ -407,68 +451,78 @@ public class StudyOneRender extends StudyRender{
             if(mCorner == 4)
             {
                 //top
-                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                for(int itrd = 0; itrd < mDistanceNum + 1; itrd++)
                 {
-                    lines.add(new float[]{left, segDis * itrd, right, segDis * itrd});
+                    lines.add(new float[]{left, segDis * itrd  + reservedDistance, right, segDis * itrd + reservedDistance});
                 }
 
                 targetX = (left + right) / 2;
-                targetY = top + targetlength;
+                targetY = top + targetlength + reservedDistance;
 
                 actualX = targetX;
-                actualY = top + actualLength;
+                actualY = top + actualLength + reservedDistance;
             }else if(mCorner == 5)
             {
                 //right
-                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                for(int itrd = 0; itrd < mDistanceNum + 1; itrd++)
                 {
-                    lines.add(new float[]{right - segDis * itrd, top, right - segDis * itrd, bottom});
+                    lines.add(new float[]{right - segDis * itrd - reservedDistance, top, right - segDis * itrd - reservedDistance, bottom});
                 }
 
-                targetX = right - targetlength;
+                targetX = right - targetlength - reservedDistance;
                 targetY = (top + bottom) / 2;
 
-                actualX = right - actualLength;
+                actualX = right - actualLength - reservedDistance;
                 actualY = targetY;
             }else if(mCorner == 6)
             {
                 //bottom
-                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                for(int itrd = 0; itrd < mDistanceNum + 1; itrd++)
                 {
-                    lines.add(new float[]{left, bottom - segDis * itrd, right, bottom - segDis * itrd});
+                    lines.add(new float[]{left, bottom - segDis * itrd - reservedDistance, right, bottom - segDis * itrd - reservedDistance});
                 }
 
                 targetX = (left + right) / 2;
-                targetY = bottom - targetlength;
+                targetY = bottom - targetlength - reservedDistance;
 
                 actualX = targetX;
-                actualY = bottom - actualLength;
+                actualY = bottom - actualLength - reservedDistance;
             }else if(mCorner == 7)
             {
                 //left
-                for(int itrd = 1; itrd < mDistanceNum; itrd++)
+                for(int itrd = 0; itrd < mDistanceNum + 1; itrd++)
                 {
-                    lines.add(new float[]{left + segDis * itrd, top, left + segDis * itrd, bottom});
+                    lines.add(new float[]{left + segDis * itrd + reservedDistance, top, left + segDis * itrd + reservedDistance, bottom});
                 }
 
-                targetX = left + targetlength;
+                targetX = left + targetlength + reservedDistance;
                 targetY = (top + bottom) / 2;
 
-                actualX = left + actualLength;
+                actualX = left + actualLength + reservedDistance;
                 actualY = targetY;
             }
 
             for(int itrl = 0; itrl < lines.size(); itrl++)
             {
+                //begin and end
+                if(itrl == 0 || itrl == (lines.size() - 1))
+                {
+                    p.setColor(Color.RED);
+                }else
+                {
+                    p.setColor(Color.GRAY);
+                }
                 mCanvas.drawLine(lines.get(itrl)[0], lines.get(itrl)[1], lines.get(itrl)[2], lines.get(itrl)[3], p);
             }
 
             //target
+            p.setColor(Color.BLUE);
             drawTargetCross(mCanvas, p, targetX, targetY);
 
             //draw actual
             if(mDistanceActual != -1)
             {
+                p.setColor(Color.GREEN);
                 drawMoveCross(mCanvas, p, actualX, actualY);
             }
 
@@ -559,10 +613,10 @@ public class StudyOneRender extends StudyRender{
 
             //first dis
             float dis = (float)Math.sqrt((cursor.x -  origin.x) * (cursor.x -  origin.x) +
-                    (cursor.y - origin.y) * (cursor.y - origin.y));
+                    (cursor.y - origin.y) * (cursor.y - origin.y)) ;
 
             float segDis = maxDistance / mDistanceNum;
-            int disSegs = (int) (dis / segDis);
+            int disSegs = (int) ( (dis - reservedDistance )/ segDis);
 
             //then angle
             float ang = 0;
@@ -582,7 +636,8 @@ public class StudyOneRender extends StudyRender{
             //float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
             //float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
 
-            if(disSegs != mDistanceActual || angSegs != mAngleActual)
+            if(dis >= reservedDistance &&
+                    disSegs != mDistanceActual || angSegs != mAngleActual)
             {
                 mDistanceActual = disSegs;
 
@@ -604,21 +659,22 @@ public class StudyOneRender extends StudyRender{
 
             if(mCorner == 4)
             {
-                dis = Math.abs(cursor.y - top);
+                dis = Math.abs(cursor.y - top) - reservedDistance;
             }else if(mCorner == 5)
             {
-                dis = Math.abs(cursor.x - right);
+                dis = Math.abs(cursor.x - right) - reservedDistance;
             }else if(mCorner == 6)
             {
-                dis = Math.abs(cursor.y - bottom);
+                dis = Math.abs(cursor.y - bottom) - reservedDistance;
             }else if(mCorner == 7)
             {
-                dis = Math.abs(cursor.x - left);
+                dis = Math.abs(cursor.x - left) - reservedDistance;
             }
 
             int disSegs = (int) (dis / segDis);
 
-            if(disSegs != mDistanceActual)
+            if(disSegs >= 0 &&
+                    disSegs != mDistanceActual)
             {
                 mDistanceActual = disSegs;
                 ReloadSecondPageTexture();

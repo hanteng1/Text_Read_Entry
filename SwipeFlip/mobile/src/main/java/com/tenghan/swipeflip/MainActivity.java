@@ -38,6 +38,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public GestureService mGestureService;
 
 
+    //android view parameters
+    //540 * 960 on s4 mini
+    public int watchedge = 320;
+    public int offsetx = 110;
+    public int offsety = 320;
+
     //storage
     public DataStorage storage;
 
@@ -66,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //getWindow().addFlags(WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY);
         setContentView(R.layout.activity_main);
 
         instance = this;
@@ -73,9 +80,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         mGestureService = new GestureService();
 
         FrameLayout frameLayout = (FrameLayout)findViewById(R.id.frame_layout);
-        ViewGroup.LayoutParams layoutParams = (ViewGroup.LayoutParams) frameLayout.getLayoutParams();
-        layoutParams.width = 320;
-        layoutParams.height = 320;
+        //ViewGroup.LayoutParams layoutParams = (ViewGroup.LayoutParams) frameLayout.getLayoutParams();
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) frameLayout.getLayoutParams();
+
+        layoutParams.width = watchedge;
+        layoutParams.height = watchedge;
+        layoutParams.setMargins(offsetx, offsety, 0, 0);
+
         frameLayout.setLayoutParams(layoutParams);
 
         storage = DataStorage.getInstance();
@@ -116,49 +127,49 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
          * demo group
          */
 
-        activityIndex = 2;
-
-        mDemoView = (DemoView)findViewById(R.id.demo_view);
-        mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
-        mDemoUIView.setDimension(320, 320);
-
-        mGestureDetector = new GestureDetector(this, this);
-
-        if(Build.VERSION.SDK_INT < 16)
-        {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }else
-        {
-            mDemoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN |
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                    View.SYSTEM_UI_FLAG_IMMERSIVE |
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
-
-
-        /**
-         * study group
-         */
-
-//        activityIndex = 3;
-//        mStudyView = (StudyView)findViewById(R.id.study_view);
-//        mGestureDetector = new GestureDetector(this, this);
+//        activityIndex = 2;
 //
+//        mDemoView = (DemoView)findViewById(R.id.demo_view);
 //        mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
 //        mDemoUIView.setDimension(320, 320);
+//
+//        mGestureDetector = new GestureDetector(this, this);
 //
 //        if(Build.VERSION.SDK_INT < 16)
 //        {
 //            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 //        }else
 //        {
-//            mStudyView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN |
+//            mDemoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN |
 //                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
 //                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
 //                    View.SYSTEM_UI_FLAG_IMMERSIVE |
 //                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 //        }
+
+
+        /**
+         * study group
+         */
+
+        activityIndex = 3;
+        mStudyView = (StudyView)findViewById(R.id.study_view);
+        mGestureDetector = new GestureDetector(this, this);
+
+        mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
+        mDemoUIView.setDimension(watchedge, watchedge);
+
+        if(Build.VERSION.SDK_INT < 16)
+        {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }else
+        {
+            mStudyView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN |
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                    View.SYSTEM_UI_FLAG_IMMERSIVE |
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
 
     }
 
@@ -217,13 +228,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         if (event.getAction() == MotionEvent.ACTION_UP) {
             if(activityIndex == 1)
             {
-                mPageFlipView.onFingerUp(event.getX(), event.getY());
+                mPageFlipView.onFingerUp(event.getX() - offsetx, event.getY() - offsety);
             }else if(activityIndex == 2)
             {
-                mDemoView.onFingerUp(event.getX(), event.getY());
+                mDemoView.onFingerUp(event.getX()- offsetx, event.getY() - offsety);
             }else if(activityIndex == 3)
             {
-                mStudyView.onFingerUp(event.getX(), event.getY());
+                mStudyView.onFingerUp(event.getX() - offsetx, event.getY() - offsety);
             }
 
             return true;  // there is no event detectale afterwards
@@ -238,13 +249,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public boolean onDown(MotionEvent e) {
         if(activityIndex == 1) {
-            mPageFlipView.onFingerDown(e.getX(), e.getY());
+            mPageFlipView.onFingerDown(e.getX() - offsetx, e.getY() - offsety);
         }else if(activityIndex == 2)
         {
-            mDemoView.onFingerDown(e.getX(), e.getY());
+            mDemoView.onFingerDown(e.getX() - offsetx, e.getY() - offsety);
         }else if(activityIndex == 3)
         {
-            mStudyView.onFingerDown(e.getX(), e.getY());
+            mStudyView.onFingerDown(e.getX() - offsetx, e.getY() - offsety);
         }
         return true;
     }
@@ -286,13 +297,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                             float distanceY) {
         if(activityIndex == 1)
         {
-            mPageFlipView.onFingerMove(e2.getX(), e2.getY());
+            mPageFlipView.onFingerMove(e2.getX() - offsetx, e2.getY() - offsety);
         }else if(activityIndex == 2)
         {
-            mDemoView.onFingerMove(e2.getX(), e2.getY());
+            mDemoView.onFingerMove(e2.getX() - offsetx, e2.getY() - offsety);
         }else if(activityIndex == 3)
         {
-            mStudyView.onFingerMove(e2.getX(), e2.getY());
+            mStudyView.onFingerMove(e2.getX() - offsetx, e2.getY() - offsety);
         }
 
         return true;
