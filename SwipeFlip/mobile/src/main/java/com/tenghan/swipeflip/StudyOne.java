@@ -9,6 +9,7 @@ import com.eschao.android.widget.pageflip.PageFlipState;
 import com.eschao.android.widget.pageflip.modify.PageModify;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by hanteng on 2017-08-28.
@@ -29,6 +30,15 @@ public class StudyOne extends PageFlipModifyAbstract{
     private int angleCount;
     private ArrayList<Integer> testingDistanceSerperation;
     private int distanceCount;
+
+    //close target
+    private int closeBound = 34;
+    private int middleBound = 67;
+    private int farBound = 100;
+
+    private Random rand;
+
+    private int repeat = 5;
 
     public ArrayList<int[]> conditions;
     public int currentCondition;
@@ -56,6 +66,8 @@ public class StudyOne extends PageFlipModifyAbstract{
         testingDistanceSerperation.add(5);
         testingDistanceSerperation.add(7);
         distanceCount = 3;
+
+        rand = new Random();
 
         /**
          *        4
@@ -86,18 +98,34 @@ public class StudyOne extends PageFlipModifyAbstract{
             {
                 for(int itrt = 0; itrt < distanceCount; itrt++)
                 {
-                    conditions.add(new int[]{testingCorner.get(itrc), testingAngleSeperation.get(itra), testingDistanceSerperation.get(itrt)});
+                    for(int itr = 0; itr < repeat; itr++)
+                    {
+                        //close
+                        int close = rand.nextInt(closeBound);
+                        conditions.add(new int[]{testingCorner.get(itrc), testingAngleSeperation.get(itra), testingDistanceSerperation.get(itrt), 1, close});
+                        //middle
+                        int middle = rand.nextInt(closeBound) + closeBound;
+                        conditions.add(new int[]{testingCorner.get(itrc), testingAngleSeperation.get(itra), testingDistanceSerperation.get(itrt), 2, middle});
+                        //far
+                        int far = rand.nextInt(closeBound) + middleBound;
+                        conditions.add(new int[]{testingCorner.get(itrc), testingAngleSeperation.get(itra), testingDistanceSerperation.get(itrt), 3, far});
+
+                    }
                 }
             }
         }
 
-        for(int itrc = 0; itrc < edgeCount; itrc++)
-        {
-            for(int itrt = 0; itrt < distanceCount; itrt++)
-            {
-                conditions.add(new int[]{testingEdge.get(itrc), 1, testingDistanceSerperation.get(itrt)});
-            }
-        }
+        Log.d(TAG, "total trials " + conditions.size());
+
+        //ignore the edge condition for now
+//
+//        for(int itrc = 0; itrc < edgeCount; itrc++)
+//        {
+//            for(int itrt = 0; itrt < distanceCount; itrt++)
+//            {
+//                conditions.add(new int[]{testingEdge.get(itrc), 1, testingDistanceSerperation.get(itrt)});
+//            }
+//        }
 
         currentCondition = -1;
 
@@ -166,6 +194,7 @@ public class StudyOne extends PageFlipModifyAbstract{
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleNum,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceNum,
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.mClose,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert,
                     -1, -1,

@@ -26,7 +26,11 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
     int mDuration;
     Handler mHandler;
     public PageFlipModifyAbstract mDemo;
-    public DemoPeel2CommandRender mPageRender;
+
+
+//    public DemoPeel2CommandRender mPageRender;
+    public DemoNotificationRender mPageRender;
+
     ReentrantLock mDrawLock;
 
     public DemoView(Context context, AttributeSet attrs)
@@ -39,18 +43,33 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
         boolean isAuto = false;
 
         //create pageflip
-        mDemo = new DemoPeel2Command(context);
-        setEGLContextClientVersion(2);
 
+
+        //for general demo
+//        mDemo = new DemoPeel2Command(context);
+//        setEGLContextClientVersion(2);
+//        // create render
+//        mPageNo = mDemo.PAGE_SIZE;  //need to change, should equal to Page_Size in mPageFlip
+//        mDrawLock = new ReentrantLock();
+//        // init others
+//        mPageNo = 1;
+//        mPageRender = new DemoPeel2CommandRender(context, mDemo, mHandler, mPageNo);
+
+
+        //for notification demo
+        mDemo = new DemoNotification(context);
+        setEGLContextClientVersion(2);
         // create render
         mPageNo = mDemo.PAGE_SIZE;  //need to change, should equal to Page_Size in mPageFlip
         mDrawLock = new ReentrantLock();
-
         // init others
         mPageNo = 1;
-        mDrawLock = new ReentrantLock();
+        mPageRender = new DemoNotificationRender(context, mDemo, mHandler, mPageNo);
 
-        mPageRender = new DemoPeel2CommandRender(context, mDemo, mHandler, mPageNo);
+
+
+
+
 
         // configure render
         setRenderer(this);
@@ -172,13 +191,30 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
 
             int pageNo = mPageRender.getPageNo();
 
-            if(!(mPageRender instanceof DemoPeel2CommandRender)){
+//
+//            if(!(mPageRender instanceof DemoPeel2CommandRender)){
+//                mPageRender.release();
+//                mPageRender = new DemoPeel2CommandRender(getContext(),
+//                        mDemo,
+//                        mHandler,
+//                        pageNo);
+//            }
+
+
+            if(!(mPageRender instanceof DemoNotificationRender)){
                 mPageRender.release();
-                mPageRender = new DemoPeel2CommandRender(getContext(),
+                mPageRender = new DemoNotificationRender(getContext(),
                         mDemo,
                         mHandler,
                         pageNo);
             }
+
+
+
+
+
+
+
 
             mPageRender.onSurfaceChanged(width, height);
 

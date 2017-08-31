@@ -506,6 +506,7 @@ public abstract class PageFlipModifyAbstract {
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleNum,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceNum,
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.mClose,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleActual,

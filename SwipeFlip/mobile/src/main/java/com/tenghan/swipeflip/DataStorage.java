@@ -20,13 +20,13 @@ public class DataStorage {
         samples = new ArrayList<DataSample>(100000);
     }
 
-    public static boolean AddSample(int _trial, int _corner, int _anglenum, int _distancenum,
+    public static boolean AddSample(int _trial, int _corner, int _anglenum, int _distancenum, int _close,
                                     int _angletarget, int _distancetarget, int _angleactual, int _distanceactual,
                                     long _timestamp)
     {
         if(instance != null)
         {
-            instance.add(_trial,  _corner,  _anglenum,  _distancenum,
+            instance.add(_trial,  _corner,  _anglenum,  _distancenum, _close,
              _angletarget,  _distancetarget,  _angleactual,  _distanceactual,
              _timestamp);
             return true;
@@ -35,13 +35,13 @@ public class DataStorage {
         return false;
     }
 
-    public void add(int _trial, int _corner, int _anglenum, int _distancenum,
+    public void add(int _trial, int _corner, int _anglenum, int _distancenum, int _close,
                     int _angletarget, int _distancetarget, int _angleactual, int _distanceactual,
                     long _timestamp)
     {
         if(samples != null)
         {
-            DataSample sample = new DataSample(_trial,  _corner,  _anglenum,  _distancenum,
+            DataSample sample = new DataSample(_trial,  _corner,  _anglenum,  _distancenum, _close,
                     _angletarget,  _distancetarget,  _angleactual,  _distanceactual,
                     _timestamp);
             samples.add(sample);

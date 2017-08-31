@@ -65,7 +65,7 @@ public class PageFlipView extends GLSurfaceView implements GLSurfaceView.Rendere
 
         // init others
         mPageNo = 1;
-        mDrawLock = new ReentrantLock();
+        //mDrawLock = new ReentrantLock();
 
         mPageRender = new SinglePageRender(context, mPageFlip, mHandler, mPageNo);
         //mPageRender = new TestSinglePageRender(context, mPageFlip, mHandler, mPageNo);

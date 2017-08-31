@@ -48,6 +48,8 @@ public class StudyOneRender extends StudyRender{
     private float crossLength = 20;
 
     public int mCorner;
+    public int mClose = -1;  //1 - close, 2 - middle, 3 - far
+    public float mCloseValue;
     public int mAngleTarget = -1;
     public int mDistanceTargert = -1;
     public int mAngleNum;
@@ -82,6 +84,7 @@ public class StudyOneRender extends StudyRender{
         mCorner = curCondition[0];
         mAngleNum = curCondition[1];
         mDistanceNum = curCondition[2];
+
         mAngleTarget = rand.nextInt(mAngleNum);
         mDistanceTargert = rand.nextInt(mDistanceNum);
 
@@ -125,10 +128,13 @@ public class StudyOneRender extends StudyRender{
         mCorner = curCondition[0];
         mAngleNum = curCondition[1];
         mDistanceNum = curCondition[2];
+        mClose = curCondition[3];
+        mCloseValue = curCondition[4] / 100.0f;
 
-        rand = new Random();
         mAngleTarget = rand.nextInt(mAngleNum);
-        mDistanceTargert = rand.nextInt(mDistanceNum);
+        //mDistanceTargert = rand.nextInt(mDistanceNum);
+        mDistanceTargert = (int)(mDistanceNum * mCloseValue);
+
 
         mDistanceActual = -1;
         mAngleActual = -1;
@@ -418,6 +424,11 @@ public class StudyOneRender extends StudyRender{
             float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
 
             p.setColor(Color.BLUE);
+            if(mDistanceTargert == mDistanceActual &&
+                    mAngleTarget == mAngleActual)
+            {
+                p.setColor(Color.GREEN);
+            }
             drawTargetCross(mCanvas, p, targetX, targetY);
 
             if(mAngleActual != -1 && mDistanceActual != -1)
@@ -516,7 +527,12 @@ public class StudyOneRender extends StudyRender{
             }
 
             //target
+
             p.setColor(Color.BLUE);
+            if(mDistanceTargert == mDistanceActual)
+            {
+                p.setColor(Color.GREEN);
+            }
             drawTargetCross(mCanvas, p, targetX, targetY);
 
             //draw actual
@@ -651,6 +667,7 @@ public class StudyOneRender extends StudyRender{
                         mCorner,
                         mAngleNum,
                         mDistanceNum,
+                        mClose,
                         mAngleTarget,
                         mDistanceTargert,
                         mAngleActual,
@@ -695,6 +712,7 @@ public class StudyOneRender extends StudyRender{
                         mCorner,
                         mAngleNum,
                         mDistanceNum,
+                        mClose,
                         mAngleTarget,
                         mDistanceTargert,
                         mAngleActual,
