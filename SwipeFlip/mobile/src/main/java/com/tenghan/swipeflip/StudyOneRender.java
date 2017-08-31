@@ -12,6 +12,7 @@ import android.graphics.RectF;
 import android.os.Handler;
 import android.os.health.PackageHealthStats;
 import android.os.health.SystemHealthManager;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.eschao.android.widget.pageflip.modify.PageModify;
@@ -45,7 +46,6 @@ public class StudyOneRender extends StudyRender{
     private float maxAngle = (float)Math.PI / 2;
     private float maxAngleDegree = 90.0f;
     private float crossLength = 20;
-
 
     public int mCorner;
     public int mAngleTarget = -1;
@@ -179,11 +179,11 @@ public class StudyOneRender extends StudyRender{
         p.setAntiAlias(true);
         p.setTextSize(fontSize);
 
-        String conditionText = "trial " + (MainActivity.getSharedInstance().mStudyView.mStudy.currentCondition + 1)
+        String conditionText = "" + (MainActivity.getSharedInstance().mStudyView.mStudy.currentCondition + 1)
                 + " / " + MainActivity.getSharedInstance().mStudyView.mStudy.conditions.size();
 
         float textWidth = p.measureText(conditionText);
-        float y = height / 2 - 30;
+        float y = height / 2;
         float x = width / 2 - textWidth / 2;
         mCanvas.drawText(conditionText, x, y, p);
 
@@ -191,13 +191,13 @@ public class StudyOneRender extends StudyRender{
         textWidth = p.measureText(conditionText);
         y += (10 + fontSize);
         x = width / 2 - textWidth / 2;
-        mCanvas.drawText(conditionText, x, y, p);
+        //mCanvas.drawText(conditionText, x, y, p);
 
         conditionText =  "DistanceNum " + mDistanceNum;
         textWidth = p.measureText(conditionText);
         y += (10 + fontSize);
         x = width / 2 - textWidth / 2;
-        mCanvas.drawText(conditionText, x, y, p);
+        //mCanvas.drawText(conditionText, x, y, p);
 
         //draw target indicators
         p.setStyle(Paint.Style.STROKE);
@@ -644,8 +644,18 @@ public class StudyOneRender extends StudyRender{
                 //Log.d(TAG, "dis actual "  + mDistanceActual);
 
                 mAngleActual = angSegs;
-
                 ReloadSecondPageTexture();
+                //record the data
+                long timestamp = System.currentTimeMillis();
+                DataStorage.AddSample(MainActivity.getSharedInstance().mStudyView.mStudy.currentCondition,
+                        mCorner,
+                        mAngleNum,
+                        mDistanceNum,
+                        mAngleTarget,
+                        mDistanceTargert,
+                        mAngleActual,
+                        mDistanceActual,
+                        timestamp);
             }
         }else
         {
@@ -678,6 +688,18 @@ public class StudyOneRender extends StudyRender{
             {
                 mDistanceActual = disSegs;
                 ReloadSecondPageTexture();
+
+                //record the data
+                long timestamp = System.currentTimeMillis();
+                DataStorage.AddSample(MainActivity.getSharedInstance().mStudyView.mStudy.currentCondition,
+                        mCorner,
+                        mAngleNum,
+                        mDistanceNum,
+                        mAngleTarget,
+                        mDistanceTargert,
+                        mAngleActual,
+                        mDistanceActual,
+                        timestamp);
             }
         }
 

@@ -40,15 +40,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     //android view parameters
     //540 * 960 on s4 mini
-    public int watchedge = 320;
-    public int offsetx = 110;
-    public int offsety = 320;
+    public int watchedge =  320;//640;///320;
+    public int offsetx = 110;//400;  //110;
+    public int offsety =  320;//960; ///320;
 
     //storage
     public DataStorage storage;
-
-
-
 
     private final static String TAG = "MainActivity";
 

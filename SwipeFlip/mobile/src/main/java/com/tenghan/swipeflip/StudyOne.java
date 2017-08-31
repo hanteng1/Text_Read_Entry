@@ -47,17 +47,15 @@ public class StudyOne extends PageFlipModifyAbstract{
         testingDistanceSerperation = new ArrayList<Integer>();
 
         //set study conditions
-        testingAngleSeperation.add(2);
         testingAngleSeperation.add(3);
-        testingAngleSeperation.add(4);
         testingAngleSeperation.add(5);
-        angleCount = 4;
+        testingAngleSeperation.add(7);
+        angleCount = 3;
 
         testingDistanceSerperation.add(3);
-        testingDistanceSerperation.add(4);
         testingDistanceSerperation.add(5);
-        testingDistanceSerperation.add(6);
-        distanceCount = 4;
+        testingDistanceSerperation.add(7);
+        distanceCount = 3;
 
         /**
          *        4
