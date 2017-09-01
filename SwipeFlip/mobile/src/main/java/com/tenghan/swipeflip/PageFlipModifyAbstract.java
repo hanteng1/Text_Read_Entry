@@ -94,7 +94,7 @@ public abstract class PageFlipModifyAbstract {
     public PageFlipState mFlipState;
 
     // use for flip animation
-    private Scroller mScroller;
+    public Scroller mScroller;
     private Context mContext;
 
     // pages and page mode, many pages, default 10

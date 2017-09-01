@@ -6,6 +6,9 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.eschao.android.widget.pageflip.GLPoint;
+import com.eschao.android.widget.pageflip.modify.PageModify;
+
 /**
  * Created by hanteng on 2017-08-31.
  */
@@ -17,6 +20,7 @@ public class DemoNotification extends PageFlipModifyAbstract {
     private final static int pageSize = 2;
 
     private final static int FRONT_PAGE = 0;
+
 
 
     //task schedule
@@ -34,8 +38,24 @@ public class DemoNotification extends PageFlipModifyAbstract {
             @Override
             public void run() {
                 Log.d(TAG, "" + System.currentTimeMillis());
+
+                //start the
+                //set origin
+                PageModify page = mPages[FRONT_PAGE];
+                GLPoint originP = page.originP;
+                GLPoint diagonalP = page.diagonalP;
+                page.autoSetOriginAndDiagonalPoints();
+
+                //define the start and end point
+                
+
+                //activate
+
+
+
+
             }
-        }, 1000);
+        }, 5000);
 
     }
 

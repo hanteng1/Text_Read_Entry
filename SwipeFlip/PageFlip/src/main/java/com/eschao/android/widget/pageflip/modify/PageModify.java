@@ -533,6 +533,25 @@ public class PageModify {
         return this;
     }
 
+
+    public PageModify autoSetOriginAndDiagonalPoints()
+    {
+        originP.x = right;
+        diagonalP.x = left;
+
+        originP.y = top;
+        diagonalP.y = bottom;
+
+        computeIndexOfApexOrder();
+
+        // set texture coordinates
+        originP.texX = (originP.x - left) / texWidth;
+        originP.texY = (top - originP.y) / texHeight;
+        diagonalP.texX = (diagonalP.x - left) / texWidth;
+        diagonalP.texY = (top - diagonalP.y) / texHeight;
+        return this;
+    }
+
     /**
      * Set orginal point and diagonal point
      *
