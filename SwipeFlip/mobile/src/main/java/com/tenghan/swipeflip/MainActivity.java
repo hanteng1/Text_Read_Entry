@@ -223,6 +223,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
+
+            if(isreseting)
+            {
+                isreseting = false;
+                return false;
+            }
+
             if(activityIndex == 1)
             {
                 mPageFlipView.onFingerUp(event.getX() - offsetx, event.getY() - offsety);
@@ -283,10 +290,16 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
 
+    public boolean isreseting = false;
+
     @Override
     public void onLongPress(MotionEvent e) {
 
         //could do something
+
+        //save the data and count -1
+        storage.save();
+        isreseting = true;
     }
 
     @Override

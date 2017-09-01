@@ -41,6 +41,7 @@ public class StudyOne extends PageFlipModifyAbstract{
     private int repeat = 5;
 
     public ArrayList<int[]> conditions;
+    public ArrayList<int[]> tempConditions;
     public int currentCondition;
 
     //cursor position
@@ -92,6 +93,7 @@ public class StudyOne extends PageFlipModifyAbstract{
         edgeCount = 4 ;
 
         conditions = new ArrayList<int[]>();
+        tempConditions = new ArrayList<int[]>();
         for(int itrc = 0; itrc < cornerCount; itrc++)
         {
             for(int itra = 0; itra < angleCount; itra++)
@@ -102,20 +104,20 @@ public class StudyOne extends PageFlipModifyAbstract{
                     {
                         //close
                         int close = rand.nextInt(closeBound);
-                        conditions.add(new int[]{testingCorner.get(itrc), testingAngleSeperation.get(itra), testingDistanceSerperation.get(itrt), 1, close});
+                        tempConditions.add(new int[]{testingCorner.get(itrc), testingAngleSeperation.get(itra), testingDistanceSerperation.get(itrt), 1, close});
                         //middle
                         int middle = rand.nextInt(closeBound) + closeBound;
-                        conditions.add(new int[]{testingCorner.get(itrc), testingAngleSeperation.get(itra), testingDistanceSerperation.get(itrt), 2, middle});
+                        tempConditions.add(new int[]{testingCorner.get(itrc), testingAngleSeperation.get(itra), testingDistanceSerperation.get(itrt), 2, middle});
                         //far
                         int far = rand.nextInt(closeBound) + middleBound;
-                        conditions.add(new int[]{testingCorner.get(itrc), testingAngleSeperation.get(itra), testingDistanceSerperation.get(itrt), 3, far});
+                        tempConditions.add(new int[]{testingCorner.get(itrc), testingAngleSeperation.get(itra), testingDistanceSerperation.get(itrt), 3, far});
 
                     }
                 }
             }
         }
 
-        Log.d(TAG, "total trials " + conditions.size());
+        Log.d(TAG, "total trials " + tempConditions.size());
 
         //ignore the edge condition for now
 //
@@ -127,6 +129,37 @@ public class StudyOne extends PageFlipModifyAbstract{
 //            }
 //        }
 
+
+        //randomize the order
+        int csize = tempConditions.size();
+        ArrayList<Integer> order = new ArrayList<Integer>();
+        for(int itro = 0; itro < csize; itro++)
+        {
+            order.add(itro);
+        }
+
+
+        for(int itrc = 0; itrc < csize; itrc++)
+        {
+            int picked = rand.nextInt(order.size());
+            int temp = order.get(picked);
+            conditions.add(tempConditions.get(temp));
+
+            for(int itrr = 0; itrr < order.size(); itrr++)
+            {
+                if(order.get(itrr) == temp)
+                {
+                    order.remove(itrr);
+                    continue;
+                }
+            }
+
+            Log.d(TAG, "picked " + temp);
+        }
+
+
+        Log.d(TAG, "total trials " + conditions.size());
+
         currentCondition = -1;
 
     }
@@ -134,6 +167,12 @@ public class StudyOne extends PageFlipModifyAbstract{
     public int[] obtainNextCondition()
     {
         currentCondition++;
+
+
+        if(currentCondition == 100 || currentCondition == 200 || currentCondition == 300 || currentCondition == 400)
+        {
+            MainActivity.getSharedInstance().storage.save();
+        }
 
         if(currentCondition == conditions.size())
         {
