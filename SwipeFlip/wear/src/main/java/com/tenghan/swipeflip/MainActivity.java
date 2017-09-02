@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements GestureDetector.OnGestureListener {
@@ -39,10 +40,16 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.rect_activity_main);
 
         instance = this;
-        //final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
+
+//        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
+//        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
+//            @Override
+//            public void onLayoutInflated(WatchViewStub stub) {
+//                mTextView = (TextView) stub.findViewById(R.id.text);
+
 
         mGestureService = new GestureService();
 
@@ -54,6 +61,12 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         mGestureDetector = new GestureDetector(this, this);
 
         //keep full screen and always one
+        mStudyView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_IMMERSIVE |
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
 
     }
 
