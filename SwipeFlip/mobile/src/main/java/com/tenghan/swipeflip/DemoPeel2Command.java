@@ -1,6 +1,7 @@
 package com.tenghan.swipeflip;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.util.Log;
 
@@ -22,6 +23,13 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
     public DemoPeel2Command(Context context)
     {
         super(context, pageSize);
+    }
+
+
+
+    public void computeScrollPointsForAutoFlip(boolean isForward, Point start, Point end)
+    {
+
     }
 
     /**

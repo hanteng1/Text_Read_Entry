@@ -666,6 +666,7 @@ public abstract class PageFlipModifyAbstract {
         }
     }
 
+    //public abstract void computeScrollPointsForAutoFlip(boolean isforwarding, Point start, Point end);
 
 
     /**

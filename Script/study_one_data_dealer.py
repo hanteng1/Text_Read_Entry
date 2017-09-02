@@ -9,7 +9,7 @@ import argparse
 #clean each data
 def clean_raw_data():
 	#change this path based on machine
-	data_dir = "/Users/hanteng/Dropbox/flippage_study/study_one_data"
+	data_dir = "/Users/hanteng/Dropbox/Ring-TextEntry-Flip/flippage_study/study_one_data"
 	cleaned_data = []
 	#state 0 - nothing, 1 - start, 2 - during, 3 - end
 
@@ -38,11 +38,17 @@ def clean_raw_data():
 					cleaned_data.append(row)
 
 
-	with open('/Users/hanteng/Dropbox/flippage_study/study_one_data/cleaned_data.csv', 'w') as csvfile:
-		writer = csv.writer(csvfile)
-		writer.writerow(['user', 'trial', 'corner', 'anglenum', 'distancenum', 'closeness', 'angletarget', 'distancetarget', 'angleactual', 'distanceactual','timestamp'])
+	# with open('/Users/hanteng/Dropbox/Ring-TextEntry-Flip/flippage_study/study_one_data/cleaned_data.csv', 'w') as csvfile:
+	# 	writer = csv.writer(csvfile)
+	# 	writer.writerow(['user', 'trial', 'corner', 'anglenum', 'distancenum', 'closeness', 'angletarget', 'distancetarget', 'angleactual', 'distanceactual','timestamp'])
+	# 	for data in cleaned_data:
+	# 		writer.writerow(data)
+	
+	with open("/Users/hanteng/Dropbox/Ring-TextEntry-Flip/flippage_study/study_one_data/cleaned_data.txt", "w") as text_file:
+		title = ['user', 'trial', 'corner', 'anglenum', 'distancenum', 'closeness', 'angletarget', 'distancetarget', 'angleactual', 'distanceactual','timestamp']
+		text_file.write("{}".format(title))
 		for data in cleaned_data:
-			writer.writerow(data)
+			text_file.write("{}".format(data))
 
 
 #put all data together
