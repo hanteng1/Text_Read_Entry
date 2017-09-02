@@ -20,14 +20,15 @@ public class DataStorage {
         samples = new ArrayList<DataSample>(100000);
     }
 
-    public static boolean AddSample(int _trial, int _corner, int _anglenum, int _distancenum, int _close,
+    public static boolean AddSample(int _trial, int _trialAttempt, int _corner, int _anglenum, int _distancenum, int _close,
                                     int _angletarget, int _distancetarget, int _angleactual, int _distanceactual,
+                                    int _state,
                                     long _timestamp)
     {
         if(instance != null)
         {
-            instance.add(_trial,  _corner,  _anglenum,  _distancenum, _close,
-             _angletarget,  _distancetarget,  _angleactual,  _distanceactual,
+            instance.add(_trial, _trialAttempt,  _corner,  _anglenum,  _distancenum, _close,
+             _angletarget,  _distancetarget,  _angleactual,  _distanceactual, _state,
              _timestamp);
             return true;
         }
@@ -35,19 +36,56 @@ public class DataStorage {
         return false;
     }
 
-    public void add(int _trial, int _corner, int _anglenum, int _distancenum, int _close,
+    public void add(int _trial, int _trialAttempt, int _corner, int _anglenum, int _distancenum, int _close,
                     int _angletarget, int _distancetarget, int _angleactual, int _distanceactual,
+                    int _state,
                     long _timestamp)
     {
         if(samples != null)
         {
-            DataSample sample = new DataSample(_trial,  _corner,  _anglenum,  _distancenum, _close,
-                    _angletarget,  _distancetarget,  _angleactual,  _distanceactual,
+            DataSample sample = new DataSample(_trial, _trialAttempt, _corner,  _anglenum,  _distancenum, _close,
+                    _angletarget,  _distancetarget,  _angleactual,  _distanceactual, _state,
                     _timestamp);
             samples.add(sample);
         }
     }
 
+
+
+    //version two
+    public static boolean AddSample(int _trial, int _trialAttempt, int _corner, int _anglenum, int _distancenum, int _close,
+                                    int _angletarget, int _distancetarget, int _angleactual, int _distanceactual,
+                                    int _state,
+                                    long _timestamp,
+                                    int _isCorrect, int _numVistedCells, int _numOvershoot, long _trialDuration)
+    {
+        if(instance != null)
+        {
+            instance.add(_trial, _trialAttempt,  _corner,  _anglenum,  _distancenum, _close,
+                    _angletarget,  _distancetarget,  _angleactual,  _distanceactual, _state,
+                    _timestamp,
+                    _isCorrect, _numVistedCells, _numOvershoot, _trialDuration);
+            return true;
+        }
+
+        return false;
+    }
+
+    public void add(int _trial, int _trialAttempt, int _corner, int _anglenum, int _distancenum, int _close,
+                    int _angletarget, int _distancetarget, int _angleactual, int _distanceactual,
+                    int _state,
+                    long _timestamp,
+                    int _isCorrect, int _numVistedCells, int _numOvershoot, long _trialDuration)
+    {
+        if(samples != null)
+        {
+            DataSample sample = new DataSample(_trial, _trialAttempt, _corner,  _anglenum,  _distancenum, _close,
+                    _angletarget,  _distancetarget,  _angleactual,  _distanceactual, _state,
+                    _timestamp,
+                    _isCorrect, _numVistedCells, _numOvershoot, _trialDuration);
+            samples.add(sample);
+        }
+    }
 
     public static DataStorage getInstance()
     {

@@ -8,15 +8,15 @@
     tools:context="com.tenghan.swipeflip.MainActivity">
 
 
-    <com.tenghan.swipeflip.DemoView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/demo_view"/>
-
-    <!--<com.tenghan.swipeflip.StudyView-->
+    <!--<com.tenghan.swipeflip.DemoView-->
         <!--android:layout_width="fill_parent"-->
         <!--android:layout_height="fill_parent"-->
-        <!--android:id="@+id/study_view"/>-->
+        <!--android:id="@+id/demo_view"/>-->
+
+    <com.tenghan.swipeflip.StudyView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/study_view"/>
 
     <com.tenghan.swipeflip.DemoUIView
         android:layout_width="fill_parent"

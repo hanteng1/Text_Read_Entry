@@ -58,6 +58,8 @@ public class StudyOneRender extends StudyRender{
     public int mAngleActual = -1;
     public int mDistanceActual = -1;
 
+    public boolean obtainNext = true;
+
     private Random rand;
 
 
@@ -124,7 +126,18 @@ public class StudyOneRender extends StudyRender{
     //this is called by study trials
     public void ReloadTrial()
     {
-        int[] curCondition = MainActivity.getSharedInstance().mStudyView.mStudy.obtainNextCondition();
+        int[] curCondition;
+        //check if obtain next or remain current
+        if(obtainNext == true)
+        {
+            curCondition = MainActivity.getSharedInstance().mStudyView.mStudy.obtainNextCondition();
+        }else
+        {
+            curCondition = MainActivity.getSharedInstance().mStudyView.mStudy.obtainCurrentCondition();
+        }
+
+        obtainNext = false;
+
         mCorner = curCondition[0];
         mAngleNum = curCondition[1];
         mDistanceNum = curCondition[2];
@@ -134,7 +147,6 @@ public class StudyOneRender extends StudyRender{
         mAngleTarget = rand.nextInt(mAngleNum);
         //mDistanceTargert = rand.nextInt(mDistanceNum);
         mDistanceTargert = (int)(mDistanceNum * mCloseValue);
-
 
         mDistanceActual = -1;
         mAngleActual = -1;
@@ -656,14 +668,24 @@ public class StudyOneRender extends StudyRender{
                     disSegs != mDistanceActual || angSegs != mAngleActual)
             {
                 mDistanceActual = disSegs;
-
                 //Log.d(TAG, "dis actual "  + mDistanceActual);
-
                 mAngleActual = angSegs;
                 ReloadSecondPageTexture();
+
+
+                //update the recrod
+                MainActivity.getSharedInstance().mStudyView.mStudy.numVistedCells++;
+                int overshot = mDistanceActual - mDistanceTargert;
+                if(overshot > MainActivity.getSharedInstance().mStudyView.mStudy.numOvershoot)
+                {
+                    MainActivity.getSharedInstance().mStudyView.mStudy.numOvershoot = overshot;
+                }
+
                 //record the data
                 long timestamp = System.currentTimeMillis();
+                MainActivity.getSharedInstance().mStudyView.mStudy.trialState = 2;
                 DataStorage.AddSample(MainActivity.getSharedInstance().mStudyView.mStudy.currentCondition,
+                        MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
                         mCorner,
                         mAngleNum,
                         mDistanceNum,
@@ -672,6 +694,7 @@ public class StudyOneRender extends StudyRender{
                         mDistanceTargert,
                         mAngleActual,
                         mDistanceActual,
+                        MainActivity.getSharedInstance().mStudyView.mStudy.trialState,
                         timestamp);
             }
         }else
@@ -706,9 +729,19 @@ public class StudyOneRender extends StudyRender{
                 mDistanceActual = disSegs;
                 ReloadSecondPageTexture();
 
+                //update the recrod
+                MainActivity.getSharedInstance().mStudyView.mStudy.numVistedCells++;
+                int overshot = mDistanceActual - mDistanceTargert;
+                if(overshot > MainActivity.getSharedInstance().mStudyView.mStudy.numOvershoot)
+                {
+                    MainActivity.getSharedInstance().mStudyView.mStudy.numOvershoot = overshot;
+                }
+
                 //record the data
                 long timestamp = System.currentTimeMillis();
+                MainActivity.getSharedInstance().mStudyView.mStudy.trialState = 2;
                 DataStorage.AddSample(MainActivity.getSharedInstance().mStudyView.mStudy.currentCondition,
+                        MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
                         mCorner,
                         mAngleNum,
                         mDistanceNum,
@@ -717,6 +750,7 @@ public class StudyOneRender extends StudyRender{
                         mDistanceTargert,
                         mAngleActual,
                         mDistanceActual,
+                        MainActivity.getSharedInstance().mStudyView.mStudy.trialState,
                         timestamp);
             }
         }

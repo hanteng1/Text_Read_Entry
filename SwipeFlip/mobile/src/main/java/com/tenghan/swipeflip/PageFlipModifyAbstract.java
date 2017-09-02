@@ -502,9 +502,33 @@ public abstract class PageFlipModifyAbstract {
 
         if(MainActivity.getSharedInstance().activityIndex == 3)
         {
+            //check the result
+            if( MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget == MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleActual
+                    && MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert == MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceActual)
+            {
+                //correct, save, and move to the next
+                MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = true;
+                MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 1;
+            }else
+            {
+                //incorrect
+                MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = false;
+                MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 0;
+            }
+
             //save the result
             long timestamp = System.currentTimeMillis();
+
+            MainActivity.getSharedInstance().mStudyView.mStudy.trialEndTime = timestamp;
+            if(MainActivity.getSharedInstance().mStudyView.mStudy.trialStartTime != 0)
+            {
+                MainActivity.getSharedInstance().mStudyView.mStudy.trialDuration =
+                        MainActivity.getSharedInstance().mStudyView.mStudy.trialEndTime
+                        - MainActivity.getSharedInstance().mStudyView.mStudy.trialStartTime;
+            }
+
             DataStorage.AddSample(MainActivity.getSharedInstance().mStudyView.mStudy.currentCondition,
+                    MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleNum,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceNum,
@@ -512,8 +536,13 @@ public abstract class PageFlipModifyAbstract {
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleActual,
-                    MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceActual,
-                    timestamp);
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceActual, 3,
+                    timestamp,
+                    MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect,
+                    MainActivity.getSharedInstance().mStudyView.mStudy.numVistedCells,
+                    MainActivity.getSharedInstance().mStudyView.mStudy.numOvershoot,
+                    MainActivity.getSharedInstance().mStudyView.mStudy.trialDuration
+                    );
         }
 
 
