@@ -127,7 +127,6 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
     public void onFingerFlick()
     {
         //lock the flipped page
-        mDemo.setPageLock();
     }
 
     public void onFingerUp(float x, float y) // will auto check the animation first

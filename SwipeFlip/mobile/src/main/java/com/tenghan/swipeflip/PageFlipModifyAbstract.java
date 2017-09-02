@@ -112,6 +112,7 @@ public abstract class PageFlipModifyAbstract {
 
     //page locking
     public int currentPageLock = 0;  //first page never gets locked
+    public boolean enablePageLock = false;
     public float maxTravelDis = 0;
     public boolean singlePageMode = true;
 
@@ -491,7 +492,8 @@ public abstract class PageFlipModifyAbstract {
 
         //see the gesture state
         if(MainActivity.getSharedInstance().activityIndex == 2 &&
-                MainActivity.getSharedInstance().mGestureService.gestureState == 2)
+                MainActivity.getSharedInstance().mGestureService.gestureState == 2
+                && enablePageLock == true)
         {
             setPageLock();
             return false;
@@ -685,10 +687,13 @@ public abstract class PageFlipModifyAbstract {
 
         if (isAnimating) {
             // get new (x, y)
+
+            Log.d(TAG, "is called");
+
             mScroller.computeScrollOffset();
             mTouchP.set(mScroller.getCurrX(), mScroller.getCurrY());
 
-            for(int itrp = 0; itrp < PAGE_SIZE; itrp++)
+            for(int itrp = 0; itrp < (currentPageLock + 1); itrp++)
             {
                 PageModify page = mPages[itrp];
                 GLPoint originP = page.originP;
@@ -793,21 +798,21 @@ public abstract class PageFlipModifyAbstract {
         }
         // continue animation and compute vertexes
         else if (mIsVertical) {
-            for(int itrp =0; itrp < PAGE_SIZE; itrp++)
+            for(int itrp =0; itrp < (currentPageLock + 1); itrp++)
             {
                 PageModify page = mPages[itrp];
                 page.computeVertexesWhenVertical();
             }
         } else if(mIsHorizontal)
         {
-            for(int itrp =0; itrp < PAGE_SIZE; itrp++)
+            for(int itrp =0; itrp < (currentPageLock + 1); itrp++)
             {
                 PageModify page = mPages[itrp];
                 page.computeVertexesWhenHorizontal();
             }
         }
         else {
-            for(int itrp =0; itrp < PAGE_SIZE; itrp++) {
+            for(int itrp =0; itrp < (currentPageLock + 1); itrp++) {
                 PageModify page = mPages[itrp];
                 page.computeVertexesWhenSlope();
             }
