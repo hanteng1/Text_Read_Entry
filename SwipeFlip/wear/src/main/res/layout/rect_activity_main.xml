@@ -7,9 +7,11 @@
     tools:context="com.tenghan.swipeflip.MainActivity"
     tools:deviceIds="wear_square">
 
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_square" />
+
+    <com.tenghan.swipeflip.StudyView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/watch_study_view"/>
+
+
 </LinearLayout>

@@ -11,10 +11,5 @@
     tools:deviceIds="wear">
 
 
-    <com.tenghan.swipeflip.StudyView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/watch_study_view"/>
-
 
 </android.support.wearable.view.WatchViewStub>
