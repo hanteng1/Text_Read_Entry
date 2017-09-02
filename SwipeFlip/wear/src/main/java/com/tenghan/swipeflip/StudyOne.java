@@ -31,9 +31,9 @@ public class StudyOne extends PageFlipModifyAbstract{
     private int distanceCount;
 
     //close target
-    private int closeBound = 34;
-    private int middleBound = 67;
-    private int farBound = 100;
+    private int closeBound = 33;
+    private int middleBound = 66;
+    private int farBound = 99;
 
     private Random rand;
 
@@ -42,6 +42,19 @@ public class StudyOne extends PageFlipModifyAbstract{
     public ArrayList<int[]> conditions;
     public ArrayList<int[]> tempConditions;
     public int currentCondition;
+    public int currentAttempt;
+
+    //1 - start, 2 - move, 3 - end
+    public int trialState;
+
+    public long trialDuration;
+    public long trialStartTime = 0;
+    public long trialEndTime = 0;
+    public int isCorrect;  // 1 - correct, 0 - incorrect
+    public int numVistedCells;
+    public int numOvershoot;
+
+
 
     //cursor position
     public PointF cursor = new PointF();
@@ -116,7 +129,7 @@ public class StudyOne extends PageFlipModifyAbstract{
             }
         }
 
-        Log.d(TAG, "total trials " + tempConditions.size());
+        //Log.d(TAG, "total trials " + tempConditions.size());
 
         //ignore the edge condition for now
 //
@@ -166,11 +179,21 @@ public class StudyOne extends PageFlipModifyAbstract{
     public int[] obtainNextCondition()
     {
         currentCondition++;
+        currentAttempt = 1;
 
-        if(currentCondition == 100 || currentCondition == 200 || currentCondition == 300 || currentCondition == 400)
-        {
-            MainActivity.getSharedInstance().storage.save();
-        }
+        //this is reset every trial
+        trialState = 0;
+        trialDuration = 0;
+        trialStartTime = 0;
+        trialEndTime = 0;
+        isCorrect = 0;
+        numVistedCells = 0;
+        numOvershoot = 0;
+
+//        if(currentCondition == 100 || currentCondition == 200 || currentCondition == 300 || currentCondition == 400)
+//        {
+//            MainActivity.getSharedInstance().storage.save();
+//        }
 
         if(currentCondition == conditions.size())
         {
@@ -180,6 +203,21 @@ public class StudyOne extends PageFlipModifyAbstract{
 
             currentCondition = 0;
         }
+
+        return conditions.get(currentCondition);
+    }
+
+    public int[] obtainCurrentCondition()
+    {
+        currentAttempt++;
+
+        trialState = 0;
+        trialDuration = 0;
+        trialStartTime = 0;
+        trialEndTime = 0;
+        isCorrect = 0;
+        numVistedCells = 0;
+        numOvershoot = 0;
 
         return conditions.get(currentCondition);
     }
@@ -202,7 +240,7 @@ public class StudyOne extends PageFlipModifyAbstract{
 
         // begin to flip
         if (mFlipState == PageFlipState.BEGIN_FLIP
-            // && (Math.abs(dx) > mViewRect.width * 0.05f)
+//             && (Math.abs(dx) > mViewRect.width * 0.05f)
                 ) {
 
             //for (int itrp = 0; itrp < PAGE_SIZE; itrp++) {
@@ -227,14 +265,16 @@ public class StudyOne extends PageFlipModifyAbstract{
 
             //save data, a trial starts
             long timestamp = System.currentTimeMillis();
-            DataStorage.AddSample(currentCondition,
+            trialState = 1;
+            trialStartTime = timestamp;
+            DataStorage.AddSample(currentCondition, currentAttempt,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleNum,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceNum,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mClose,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert,
-                    -1, -1,
+                    -1, -1, trialState,
                     timestamp);
 
             // compute max degree between X axis and line from TouchP to OriginP
@@ -525,6 +565,7 @@ public class StudyOne extends PageFlipModifyAbstract{
         {
             cursor = calMiddle(xfoldpc.x, xfoldpc.y, yfoldpc.x, yfoldpc.y);
         }
+
 
         MainActivity.getSharedInstance().mStudyView.mPageRender.selectedSegment(cursor);
     }

@@ -32,9 +32,9 @@ public class StudyOne extends PageFlipModifyAbstract{
     private int distanceCount;
 
     //close target
-    private int closeBound = 34;
-    private int middleBound = 67;
-    private int farBound = 100;
+    private int closeBound = 33;
+    private int middleBound = 66;
+    private int farBound = 99;
 
     private Random rand;
 
@@ -130,7 +130,7 @@ public class StudyOne extends PageFlipModifyAbstract{
             }
         }
 
-        Log.d(TAG, "total trials " + tempConditions.size());
+        //Log.d(TAG, "total trials " + tempConditions.size());
 
         //ignore the edge condition for now
 //

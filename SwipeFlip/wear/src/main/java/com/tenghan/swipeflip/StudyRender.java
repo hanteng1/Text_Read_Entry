@@ -95,7 +95,6 @@ public abstract class StudyRender extends PageRender{
             MainActivity.getSharedInstance().mGestureService.reset();
             MainActivity.getSharedInstance().mStudyView.mPageRender.ReloadTrial();
 
-
             MainActivity.getSharedInstance().mStudyView.mStudy.releasePageLock();
             //clear the maxtravel
             MainActivity.getSharedInstance().mStudyView.mStudy.maxTravelDis = 0;
