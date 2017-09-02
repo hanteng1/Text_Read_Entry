@@ -8,4 +8,13 @@
     app:rectLayout="@layout/rect_activity_main"
     app:roundLayout="@layout/round_activity_main"
     tools:context="com.tenghan.swipeflip.MainActivity"
-    tools:deviceIds="wear"></android.support.wearable.view.WatchViewStub>
+    tools:deviceIds="wear">
+
+
+    <com.tenghan.swipeflip.StudyView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/watch_study_view"/>
+
+
+</android.support.wearable.view.WatchViewStub>
