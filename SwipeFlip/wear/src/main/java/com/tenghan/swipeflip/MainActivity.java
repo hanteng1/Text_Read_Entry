@@ -2,13 +2,14 @@ package com.tenghan.swipeflip;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements GestureDetector.OnGestureListener {
+public class MainActivity extends WearableActivity implements GestureDetector.OnGestureListener {
 
     public StudyView mStudyView;
 
@@ -41,15 +42,10 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rect_activity_main);
-
+        setAmbientEnabled();
         instance = this;
 
-//        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
-//        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
-//            @Override
-//            public void onLayoutInflated(WatchViewStub stub) {
-//                mTextView = (TextView) stub.findViewById(R.id.text);
-
+        //setAmbientEnabled();
 
         mGestureService = new GestureService();
 
@@ -60,15 +56,17 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         mStudyView = (StudyView)findViewById(R.id.watch_study_view);
         mGestureDetector = new GestureDetector(this, this);
 
-        //keep full screen and always one
-        mStudyView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_IMMERSIVE |
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-
-
     }
+
+//    @Override
+//    public void onEnterAmbient(Bundle ambientDetails) {
+//        super.onEnterAmbient(ambientDetails);
+//    }
+//
+//    @Override
+//    public void onExitAmbient() {
+//        super.onExitAmbient();
+//    }
 
     @Override
     protected void onResume()
@@ -129,12 +127,20 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
 
     public boolean isreseting = false;
+    public int isexisting = 0;
 
     @Override
     public void onLongPress(MotionEvent e) {
 
         //could do something
+        isexisting++;
 
+        if(isexisting == 2)
+        {
+            //exist
+            finish();
+            moveTaskToBack(true);
+        }
         //save the data and count -1
         if(activityIndex == 3)
         {
