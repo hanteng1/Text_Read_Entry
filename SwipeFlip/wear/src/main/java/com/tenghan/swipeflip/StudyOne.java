@@ -166,7 +166,7 @@ public class StudyOne extends PageFlipModifyAbstract{
                 }
             }
 
-            Log.d(TAG, "picked " + temp);
+            //Log.d(TAG, "picked " + temp);
         }
 
 

@@ -2,8 +2,10 @@ package com.tenghan.swipeflip;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -47,6 +49,9 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
 
         //setAmbientEnabled();
 
+        //Log.d(TAG, "" + Environment.getExternalStorageDirectory().getAbsolutePath());
+        //Log.d(TAG, "" + Environment.getDataDirectory());
+
         mGestureService = new GestureService();
 
         storage = DataStorage.getInstance();
@@ -84,7 +89,7 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
 
         mStudyView.onPause();
 
-        //storage.save();
+        storage.save();
 
         LoadBitmapTask.get(this).stop();
     }
