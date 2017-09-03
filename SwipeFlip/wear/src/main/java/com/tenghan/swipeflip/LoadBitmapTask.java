@@ -56,13 +56,10 @@ public class LoadBitmapTask implements Runnable {
         mQueue = new LinkedList<Bitmap>();
 
         // init all available bitmaps
-        mPortraitBGs = new int[][] {
-                new int[] {R.drawable.p2_480, R.drawable.p1_480, R.drawable.p3_480, R.drawable.p4_480, R.drawable.p5_480, R.drawable.p6_480}
-        };
+        mPortraitBGs = new int[][] {};
 
         mWatchBG = R.drawable.p2_320;
     }
-
 
     public Bitmap getBitmap() {
         Bitmap b = null;
