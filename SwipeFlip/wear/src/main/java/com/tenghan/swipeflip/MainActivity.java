@@ -159,7 +159,7 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
                             float distanceY) {
-
+        isexisting = 0;
         mStudyView.onFingerMove(e2.getX() - offsetx, e2.getY() - offsety);
         return true;
     }
