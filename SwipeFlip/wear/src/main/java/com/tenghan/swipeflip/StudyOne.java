@@ -616,7 +616,7 @@ public class StudyOne extends PageFlipModifyAbstract{
         {
             cross.set(x0, a1*x0 + b1);
 
-            Log.d(TAG, "x " + cross.x + " , y " + cross.y);
+            //Log.d(TAG, "x " + cross.x + " , y " + cross.y);
 
             return cross;
         }else
