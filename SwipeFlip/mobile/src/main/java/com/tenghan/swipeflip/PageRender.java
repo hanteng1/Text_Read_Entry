@@ -101,6 +101,20 @@ public abstract class PageRender implements OnPageFlipListener{
         return false;
     }
 
+    public boolean onAutoFlip()
+    {
+        if(mPageFlip != null && mPageFlip.animating())  //when finger up, auto check the animation progress
+        {
+            mDrawCommand = DRAW_ANIMATING_FRAME;
+            return true;
+        }else if(mPageFlipAbstract != null && mPageFlipAbstract.animating())
+        {
+            mDrawCommand = DRAW_ANIMATING_FRAME;
+            return true;
+        }
+        return false;
+    }
+
     //caculate font size
     protected int calcFontSize(int size)
     {

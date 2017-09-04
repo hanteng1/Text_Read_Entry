@@ -717,7 +717,7 @@ public abstract class PageFlipModifyAbstract {
         if (isAnimating) {
             // get new (x, y)
 
-            Log.d(TAG, "is called");
+            //Log.d(TAG, "is called");
 
             mScroller.computeScrollOffset();
             mTouchP.set(mScroller.getCurrX(), mScroller.getCurrY());

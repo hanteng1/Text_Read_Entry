@@ -36,43 +36,55 @@ public class DemoNotification extends PageFlipModifyAbstract {
 
         //start a timer
         handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                Log.d(TAG, "" + System.currentTimeMillis());
-//
-//                //start the
-//                //set origin
-//                PageModify page = mPages[FRONT_PAGE];
-//
-//                //define the start and end point
-//                Point start = new Point();
-//                Point end = new Point();
-//
-//                mIsVertical = false;
-//                mIsHorizontal = false;
-//                mFlipState = PageFlipState.END_FLIP;
-//                page.autoSetOriginAndDiagonalPoints();
-//
-//                //activate
-//                computeScrollPointsForAutoFlip(true, start, end);
-//
-//                if (mFlipState == PageFlipState.FORWARD_FLIP ||
-//                        mFlipState == PageFlipState.BACKWARD_FLIP ||
-//                        mFlipState == PageFlipState.UPWARD_FLIP ||
-//                        mFlipState == PageFlipState.RESTORE_FLIP) {
-//
-//                    //activiate the job sheduling
-//
-//                    Log.d(TAG, "scroll starts");
-//                    mScroller.startScroll(start.x, start.y,
-//                            end.x - start.x, end.y - start.y,
-//                            10000);
-//                }
-//
-//
-//            }
-//        }, 5000);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "" + System.currentTimeMillis());
+
+                //start the
+                //set origin
+                PageModify page = mPages[FRONT_PAGE];
+
+                //define the start and end point
+                Point start = new Point();
+                Point end = new Point();
+
+                mIsVertical = false;
+                mIsHorizontal = false;
+                mFlipState = PageFlipState.END_FLIP;
+                page.autoSetOriginAndDiagonalPoints();
+
+                //activate
+                computeScrollPointsForAutoFlip(true, start, end);
+
+                if (mFlipState == PageFlipState.FORWARD_FLIP ||
+                        mFlipState == PageFlipState.BACKWARD_FLIP ||
+                        mFlipState == PageFlipState.UPWARD_FLIP ||
+                        mFlipState == PageFlipState.RESTORE_FLIP) {
+
+                    //activiate the job sheduling
+
+                    Log.d(TAG, "scroll starts");
+                    mScroller.startScroll(start.x, start.y,
+                            end.x - start.x, end.y - start.y,
+                            10000);
+
+                    try {
+                        MainActivity.getSharedInstance().mDemoView.mDrawLock.lock();
+                        if (MainActivity.getSharedInstance().mDemoView.mPageRender != null &&
+                                MainActivity.getSharedInstance().mDemoView.mPageRender.onAutoFlip() ) {
+                            MainActivity.getSharedInstance().mDemoView.requestRender();
+                        }
+                    }
+                    finally {
+                        MainActivity.getSharedInstance().mDemoView.mDrawLock.unlock();
+                    }
+
+                }
+
+
+            }
+        }, 5000);
 
     }
 

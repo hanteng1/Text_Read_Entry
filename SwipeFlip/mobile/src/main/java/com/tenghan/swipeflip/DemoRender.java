@@ -109,6 +109,9 @@ public abstract class DemoRender extends PageRender{
                     }
                 }
 
+
+                //
+                Log.d(TAG, "draw flip called");
                 mPageFlipAbstract.drawFlipFrameWithIndex(mPageFlipAbstract.currentPageLock);
             }
 
@@ -118,9 +121,14 @@ public abstract class DemoRender extends PageRender{
 
             //this is called when animation is finished
             //reload the pagelock texture
-            int commandPage = MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock + 1;
-            MainActivity.getSharedInstance().mGestureService.reset();
-            MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(commandPage);
+
+
+            if(MainActivity.getSharedInstance().demoIndex == 1)
+            {
+                int commandPage = MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock + 1;
+                MainActivity.getSharedInstance().mGestureService.reset();
+                MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(commandPage);
+            }
 
 
             MainActivity.getSharedInstance().mDemoView.mDemo.releasePageLock();
@@ -152,6 +160,9 @@ public abstract class DemoRender extends PageRender{
         Message msg = Message.obtain();
         msg.what = MSG_ENDED_DRAWING_FRAME;
         msg.arg1 = mDrawCommand;
+
+
+        Log.d(TAG, "send message called");
         mHandler.sendMessage(msg);
     }
 
@@ -181,6 +192,9 @@ public abstract class DemoRender extends PageRender{
     public boolean onEndedDrawing(int what) {  //this is called with handler event, to examine whether the animating is done, return true only if the animating the done
         if (what == DRAW_ANIMATING_FRAME) {
             boolean isAnimating = mPageFlipAbstract.animating();
+
+            //Log.d(TAG, "check point");
+
             // continue animating
             if (isAnimating) {
                 mDrawCommand = DRAW_ANIMATING_FRAME;

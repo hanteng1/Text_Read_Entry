@@ -244,7 +244,7 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
                         try{
                             mDrawLock.lock();
                             if(mPageRender != null && mPageRender.onEndedDrawing(msg.arg1)){
-                                requestRender();  //this is not called until the animating is done
+                                requestRender();
                             }
                         }
                         finally {
