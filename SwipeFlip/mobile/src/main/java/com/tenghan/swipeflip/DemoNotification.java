@@ -73,6 +73,10 @@ public class DemoNotification extends PageFlipModifyAbstract {
                         MainActivity.getSharedInstance().mDemoView.mDrawLock.lock();
                         if (MainActivity.getSharedInstance().mDemoView.mPageRender != null &&
                                 MainActivity.getSharedInstance().mDemoView.mPageRender.onAutoFlip() ) {
+
+                            //indicating this is auto flip
+                            flipType = 2;
+
                             MainActivity.getSharedInstance().mDemoView.requestRender();
                         }
                     }
@@ -81,8 +85,6 @@ public class DemoNotification extends PageFlipModifyAbstract {
                     }
 
                 }
-
-
             }
         }, 5000);
 
@@ -130,25 +132,42 @@ public class DemoNotification extends PageFlipModifyAbstract {
 
             // compute start.x
             if (originP.x < 0) {
-                start.x = (int)(originP.x + page.width * 0.25f);
+                start.x = (int)(originP.x + page.width * 0.05f);
             }
             else {
-                start.x = (int)(originP.x - page.width * 0.25f);
+                start.x = (int)(originP.x - page.width * 0.05f);
             }
 
             // compute start.y
             start.y = (int)(originP.y + (start.x - originP.x) * page.mKValue);
 
-            // compute end.x
-            // left page in double page mode
+
+            //this is to peel the whole page over
+
+//            // compute end.x
+//            // left page in double page mode
+//            if (originP.x < 0) {
+//                end.x = (int)(diagonalP.x + page.width);
+//            }
+//            // right page in double page mode
+//            else {
+//                end.x = (int)(diagonalP.x - page.width);
+//            }
+//            end.y = (int)(originP.y);
+//
+
+            //this is to peel just a corner
+
             if (originP.x < 0) {
-                end.x = (int)(diagonalP.x + page.width);
+                end.x = (int)(originP.x + page.width * 0.25f);
             }
-            // right page in double page mode
             else {
-                end.x = (int)(diagonalP.x - page.width);
+                end.x = (int)(originP.x - page.width * 0.25f);
             }
-            end.y = (int)(originP.y);
+
+            // compute start.y
+            end.y = (int)(originP.y + (end.x - originP.x) * page.mKValue);
+
         }
 
     }

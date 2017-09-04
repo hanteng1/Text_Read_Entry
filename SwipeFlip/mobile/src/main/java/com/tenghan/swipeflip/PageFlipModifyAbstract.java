@@ -116,6 +116,12 @@ public abstract class PageFlipModifyAbstract {
     public float maxTravelDis = 0;
     public boolean singlePageMode = true;
 
+
+    //flip type, 1 - after finger up, 2 - auto flip
+    public int flipType = 0;
+
+
+
     /**
      * Constructor
      */
@@ -499,6 +505,8 @@ public abstract class PageFlipModifyAbstract {
             return false;
         }
 
+        //indicate this is the flip after finger up
+        flipType = 1;
 
         if(MainActivity.getSharedInstance().activityIndex == 3)
         {

@@ -111,7 +111,7 @@ public abstract class DemoRender extends PageRender{
 
 
                 //
-                Log.d(TAG, "draw flip called");
+               // Log.d(TAG, "draw flip called");
                 mPageFlipAbstract.drawFlipFrameWithIndex(mPageFlipAbstract.currentPageLock);
             }
 
@@ -162,7 +162,7 @@ public abstract class DemoRender extends PageRender{
         msg.arg1 = mDrawCommand;
 
 
-        Log.d(TAG, "send message called");
+        //Log.d(TAG, "send message called");
         mHandler.sendMessage(msg);
     }
 
@@ -200,6 +200,7 @@ public abstract class DemoRender extends PageRender{
                 mDrawCommand = DRAW_ANIMATING_FRAME;
                 return true;
             } else {
+
                 final PageFlipState state = mPageFlipAbstract.getFlipState();
                 // update page number for backward flip
                 if (state == PageFlipState.END_WITH_BACKWARD) {
@@ -221,7 +222,15 @@ public abstract class DemoRender extends PageRender{
                     //mPageNo++;
                 }
 
-                mDrawCommand = DRAW_FULL_PAGE;
+                //which whether it is auto flip , or it is restore flip
+                if(MainActivity.getSharedInstance().mDemoView.mDemo.flipType == 1)
+                {
+                    mDrawCommand = DRAW_FULL_PAGE;
+                }else
+                {
+                    mDrawCommand = DRAW_MOVING_FRAME;
+                }
+
                 return true;
             }
         }
