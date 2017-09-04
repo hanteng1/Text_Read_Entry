@@ -30,6 +30,8 @@ public class DemoNotification extends PageFlipModifyAbstract {
     //task schedule
     Handler handler;
 
+    private boolean isForwardingAutoFlip = true;
+
     public DemoNotification(Context context)
     {
         super(context, pageSize);
@@ -195,8 +197,9 @@ public class DemoNotification extends PageFlipModifyAbstract {
             //there is auto start and end points
             //continue flip to move on, and reverse flip to cancel
             if(mFlipState == PageFlipState.BEGIN_FLIP
-                    && ((Math.abs(dx)  > mViewRect.width * 0.05f) ||
-                    (Math.abs(dy) > mViewRect.height * 0.05f)) )
+//                    && ((Math.abs(dx)  > mViewRect.width * 0.05f) ||
+//                    (Math.abs(dy) > mViewRect.height * 0.05f))
+                    )
             {
                 PageModify page = mPages[FRONT_PAGE];
                 GLPoint originP = page.originP;
@@ -204,10 +207,10 @@ public class DemoNotification extends PageFlipModifyAbstract {
 
                 //cause the page original and diagonal point are already set
                 //check the original point and diagonal point to see if they are matched
-                if(!page.checkOriginAndDiagonalPoints(dx, dy, mStartTouchP.x, mStartTouchP.y))
-                {
-                    return false;
-                }
+                //if(!page.checkOriginAndDiagonalPoints(dx, dy, mStartTouchP.x, mStartTouchP.y))
+                //{
+                //    return false;
+                //}
 
                 //origin match, continue
                 //clear the variables
@@ -236,29 +239,32 @@ public class DemoNotification extends PageFlipModifyAbstract {
                 }
 
                 //keep / resume the moving direction
-                if(Math.abs(dx) > Math.abs(dy))
-                {
-                    if (dx > 0 &&
-                            mListener != null &&
-                            mListener.canFlipBackward()) {
-                        mStartTouchP.x = originP.x;
-                        dx = (touchX - mStartTouchP.x);
-                        mFlipState = PageFlipState.BACKWARD_FLIP;
-                        //Log.d(TAG, "back FLIP");
-                    } else if (mListener != null &&
-                            mListener.canFlipForward() &&
-                            (dx < 0 && originP.x > 0 || dx > 0 && originP.x < 0)) {
-                        mFlipState = PageFlipState.FORWARD_FLIP;
-                        //Log.d(TAG, "forward FLIP");
-                    }
-                }else
-                {
-                    if(mListener != null)
-                    {
-                        mFlipState = PageFlipState.UPWARD_FLIP;
-                    }
-                }
+               // if(mFlipState == )
 
+//                if(Math.abs(dx) > Math.abs(dy))
+//                {
+//                    if (dx > 0 &&
+//                            mListener != null &&
+//                            mListener.canFlipBackward()) {
+//                        mStartTouchP.x = originP.x;
+//                        dx = (touchX - mStartTouchP.x);
+//                        mFlipState = PageFlipState.BACKWARD_FLIP;
+//                        //Log.d(TAG, "back FLIP");
+//                    } else if (mListener != null &&
+//                            mListener.canFlipForward() &&
+//                            (dx < 0 && originP.x > 0 || dx > 0 && originP.x < 0)) {
+//                        mFlipState = PageFlipState.FORWARD_FLIP;
+//                        //Log.d(TAG, "forward FLIP");
+//                    }
+//                }else
+//                {
+//                    if(mListener != null)
+//                    {
+//                        mFlipState = PageFlipState.UPWARD_FLIP;
+//                    }
+//                }
+
+                    mFlipState = PageFlipState.FORWARD_FLIP;
 
 
             }
@@ -312,23 +318,24 @@ public class DemoNotification extends PageFlipModifyAbstract {
                 // 1. invert max curling angle
                 // 2. invert Y of original point and diagonal point
 
-                if(mFlipState == PageFlipState.FORWARD_FLIP || mFlipState == PageFlipState.BACKWARD_FLIP)
-                {
-                    if ((dy < 0 && originP.y < 0) || (dy > 0 && originP.y > 0)
-                            ) {
-                        float t = page.mMaxT2DAngleTan;
-                        page.mMaxT2DAngleTan = page.mMaxT2OAngleTan;
-                        page.mMaxT2OAngleTan = t;
-                        page.invertYOfOriginPoint();
-                    }
-                }else if(mFlipState == PageFlipState.UPWARD_FLIP)
-                {
-                    if((dx < 0 && originP.x < 0) || (dx > 0 && originP.x > 0))
-                    {
-                        //invert the x of original point and diagonal point
-                        page.invertXOfOriginPoint();
-                    }
-                }
+//                if(mFlipState == PageFlipState.FORWARD_FLIP || mFlipState == PageFlipState.BACKWARD_FLIP)
+//                {
+//                    if ((dy < 0 && originP.y < 0) || (dy > 0 && originP.y > 0)
+//                            ) {
+//                        float t = page.mMaxT2DAngleTan;
+//                        page.mMaxT2DAngleTan = page.mMaxT2OAngleTan;
+//                        page.mMaxT2OAngleTan = t;
+//                        page.invertYOfOriginPoint();
+//
+//                    }
+//                }else if(mFlipState == PageFlipState.UPWARD_FLIP)
+//                {
+//                    if((dx < 0 && originP.x < 0) || (dx > 0 && originP.x > 0))
+//                    {
+//                        //invert the x of original point and diagonal point
+//                        page.invertXOfOriginPoint();
+//                    }
+//                }
 
                 // set touchP(x, y) and middleP(x, y)
 
@@ -484,6 +491,7 @@ public class DemoNotification extends PageFlipModifyAbstract {
                         page.mMaxT2DAngleTan = page.mMaxT2OAngleTan;
                         page.mMaxT2OAngleTan = t;
                         page.invertYOfOriginPoint();
+
                     }
                 }else if(mFlipState == PageFlipState.UPWARD_FLIP)
                 {
