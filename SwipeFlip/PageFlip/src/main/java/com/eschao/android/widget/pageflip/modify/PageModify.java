@@ -552,6 +552,65 @@ public class PageModify {
         return this;
     }
 
+    public boolean checkOriginAndDiagonalPoints(float dx, float dy, float startx, float starty)
+    {
+        GLPoint newOriginP = new GLPoint();
+        GLPoint newDiagonalP = new GLPoint();
+
+        if(Math.abs(dx) > Math.abs(dy))
+        {
+            if(startx >= 0)
+            {
+                newOriginP.x = right;
+                newDiagonalP.x = left;
+            }else
+            {
+                newOriginP.x = left;
+                newDiagonalP.x = right;
+            }
+
+            if (dy > 0) {
+                newOriginP.y = bottom;
+                newDiagonalP.y = top;
+
+            }
+            else {
+                newOriginP.y = top;
+                newDiagonalP.y = bottom;
+            }
+        }else
+        {
+            if(starty >= 0)
+            {
+                newOriginP.y = top;
+                newDiagonalP.y = bottom;
+            }else
+            {
+                newOriginP.y = bottom;
+                newDiagonalP.y = top;
+            }
+
+            if (dx > 0) {
+                newOriginP.x = left;
+                newDiagonalP.x = right;
+            }
+            else {
+                newOriginP.x = right;
+                newDiagonalP.x = left;
+            }
+        }
+
+        if(originP.x == newOriginP.x && originP.y == newOriginP.y
+                && diagonalP.x == newDiagonalP.x && diagonalP.y == newDiagonalP.y)
+        {
+            return true;
+        }else
+        {
+            return false;
+        }
+
+    }
+
     /**
      * Set orginal point and diagonal point
      *
