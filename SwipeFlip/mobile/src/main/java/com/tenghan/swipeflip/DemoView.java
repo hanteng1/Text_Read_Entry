@@ -38,7 +38,8 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
         super(context, attrs);
         newHandler();
 
-        mDuration = 1000;  //an interesting number to try, 1000 is fine
+        //change this value based on demos as well
+        mDuration = 10000;  //an interesting number to try, 1000 is fine
         int pixelsOfMesh = 10;
         boolean isAuto = false;
 

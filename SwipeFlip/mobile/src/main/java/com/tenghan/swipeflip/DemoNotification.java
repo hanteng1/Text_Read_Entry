@@ -76,7 +76,7 @@ public class DemoNotification extends PageFlipModifyAbstract {
                     Log.d(TAG, "scroll starts");
                     mScroller.startScroll(start.x, start.y,
                             end.x - start.x, end.y - start.y,
-                            10000);
+                            4000);
 
                     try {
                         MainActivity.getSharedInstance().mDemoView.mDrawLock.lock();

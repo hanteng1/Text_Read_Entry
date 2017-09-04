@@ -59,7 +59,8 @@ public abstract class PageFlipModifyAbstract {
 
     // width ratio of triggering restore flip
     //1.0 means it is always restoring when finger's up
-    private final static float WIDTH_RATIO_OF_RESTORE_FLIP = 1.0f;
+    //change this value based on demos
+    private final static float WIDTH_RATIO_OF_RESTORE_FLIP = 0.5f;
 
     // pages and index
     public final static int FIRST_PAGE = 0;

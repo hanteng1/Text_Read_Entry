@@ -36,8 +36,15 @@ public class DemoNotificationRender extends DemoRender{
             pages[0].setFrontTexture(mBitmap);
         }
 
-        //set the rest
-        for(int itrp = 1; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
+        //set the second page
+        if(!pages[1].isFrontTextureSet())
+        {
+            loadPageWithFacebook();
+            pages[1].setFrontTexture(mBitmap);
+        }
+
+//        //set the rest, if any
+        for(int itrp = 2; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
         {
             if(!pages[itrp].isFrontTextureSet())
             {
@@ -136,6 +143,37 @@ public class DemoNotificationRender extends DemoRender{
                 mCanvas.restore();
             }
         }
+    }
+
+
+    //for notification demo
+    public void loadPageWithFacebook()
+    {
+        final int width = mCanvas.getWidth();
+        final int height = mCanvas.getHeight();
+
+        //general purpose
+        Paint p = new Paint();
+        p.setFilterBitmap(true);
+
+        //color panel
+        Paint panelPaint = new Paint();
+        panelPaint.setAntiAlias(true);
+        panelPaint.setStrokeWidth(0);
+        panelPaint.setColor(Color.RED);
+        panelPaint.setStyle(Paint.Style.FILL);
+
+
+        // 1. load/draw background bitmap
+        Bitmap background = LoadBitmapTask.get(mContext).getFacebook(1);  //get the bitmap in queue
+        Rect rect = new Rect(0, 0, width, height);
+        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
+        background.recycle();
+        background = null;
+
+        Bitmap global = LoadBitmapTask.get(mContext).getFacebook(3);
+        mCanvas.drawBitmap(global, width - 56, 0, p);
+
     }
 
 
