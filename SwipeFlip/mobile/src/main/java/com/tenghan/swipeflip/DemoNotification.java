@@ -102,7 +102,7 @@ public class DemoNotification extends PageFlipModifyAbstract {
 
                 }
             }
-        }, 3000);
+        }, 5000);
 
     }
 
