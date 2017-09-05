@@ -155,6 +155,10 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
         {
             Log.d(TAG, "double tapping task done");
 
+            MainActivity.getSharedInstance().mDemoUIView.onTapUp(x, y);
+            MainActivity.getSharedInstance().mDemoUIView.isdrawing = false;
+
+
             mDemo.isDoubleTappingTask = false;
 
             return;
