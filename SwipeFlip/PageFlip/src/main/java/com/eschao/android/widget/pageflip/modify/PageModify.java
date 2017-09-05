@@ -534,13 +534,24 @@ public class PageModify {
     }
 
 
-    public PageModify autoSetOriginAndDiagonalPoints()
+    public PageModify autoSetOriginAndDiagonalPoints(boolean isForward)
     {
-        originP.x = right;
-        diagonalP.x = left;
+        if(isForward)
+        {
+            originP.x = right;
+            diagonalP.x = left;
 
-        originP.y = top;
-        diagonalP.y = bottom;
+            originP.y = top;
+            diagonalP.y = bottom;
+        }else
+        {
+            originP.x = left;
+            diagonalP.x = right;
+
+            originP.y = top;
+            diagonalP.y = bottom;
+        }
+
 
         computeIndexOfApexOrder();
 

@@ -63,7 +63,7 @@ public class DemoNotification extends PageFlipModifyAbstract {
                 mIsVertical = false;
                 mIsHorizontal = false;
                 mFlipState = PageFlipState.END_FLIP;
-                page.autoSetOriginAndDiagonalPoints();
+                page.autoSetOriginAndDiagonalPoints(false);
 
                 //activate
                 computeScrollPointsForAutoFlip(true, start, end);
@@ -122,6 +122,18 @@ public class DemoNotification extends PageFlipModifyAbstract {
             tanOfBackwardAngle = -tanOfBackwardAngle;
         }
 
+
+        //
+        if(mListener.canFlipBackward())
+        {
+            Log.d(TAG, "can flip backward");
+        }
+
+        if(mListener.canFlipForward())
+        {
+            Log.d(TAG, "can flip forward");
+        }
+
         // backward flip
         if (
                 !isForward &&
@@ -158,6 +170,8 @@ public class DemoNotification extends PageFlipModifyAbstract {
             start.y = (int)(originP.y + (start.x - originP.x) * page.mKValue);
 
 
+            Log.d(TAG, "start x " + start.x + ", start y " + start.y);
+
             //this is to peel the whole page over
 
 //            // compute end.x
@@ -183,6 +197,9 @@ public class DemoNotification extends PageFlipModifyAbstract {
 
             // compute start.y
             end.y = (int)(originP.y + (end.x - originP.x) * page.mKValue);
+
+
+            Log.d(TAG, "end x " + end.x + ", end y " + end.y);
 
         }
 

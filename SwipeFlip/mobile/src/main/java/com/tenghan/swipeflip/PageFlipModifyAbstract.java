@@ -823,7 +823,8 @@ public abstract class PageFlipModifyAbstract {
 
             // in single page mode, check if the whole fold page is outside the
             // screen and animating should be stopped
-            if (mFlipState == PageFlipState.FORWARD_FLIP) {
+            if (mFlipState == PageFlipState.FORWARD_FLIP
+                    && mPages[FIRST_PAGE].originP.x > 0 ) {
                 PageModify page = mPages[FIRST_PAGE];
                 GLPoint originP = page.originP;
                 GLPoint diagonalP = page.diagonalP;

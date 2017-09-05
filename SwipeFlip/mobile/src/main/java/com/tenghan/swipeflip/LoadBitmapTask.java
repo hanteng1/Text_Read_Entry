@@ -43,6 +43,8 @@ public final class LoadBitmapTask implements Runnable {
     int mFacebookBgEmpty;
     int mFacebookBgFull;
     int mFacebookGlobal;
+    int mFacebookMsg;
+    int mFacebookCont;
 
 
     public static LoadBitmapTask get(Context context) {
@@ -72,6 +74,9 @@ public final class LoadBitmapTask implements Runnable {
         mFacebookBgEmpty = R.drawable.fb_bg_empty;
         mFacebookBgFull = R.drawable.fb_bg_full;
         mFacebookGlobal = R.drawable.fb_global;
+        mFacebookMsg = R.drawable.fb_msg;
+        mFacebookCont = R.drawable.fb_cont;
+
     }
 
 
@@ -101,10 +106,10 @@ public final class LoadBitmapTask implements Runnable {
 
         if(tindex == 1)
         {
-            b = BitmapFactory.decodeResource(mResources, mFacebookBgEmpty);
+            b = BitmapFactory.decodeResource(mResources, mFacebookMsg);
         }else if(tindex == 2)
         {
-            b = BitmapFactory.decodeResource(mResources, mFacebookBgFull);
+            b = BitmapFactory.decodeResource(mResources, mFacebookCont);
         }else if(tindex == 3)
         {
             b = BitmapFactory.decodeResource(mResources, mFacebookGlobal);

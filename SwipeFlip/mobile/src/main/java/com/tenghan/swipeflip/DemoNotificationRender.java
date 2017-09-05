@@ -174,7 +174,7 @@ public class DemoNotificationRender extends DemoRender{
             background = null;
 
             Bitmap global = LoadBitmapTask.get(mContext).getFacebook(3);
-            mCanvas.drawBitmap(global, width - 56, 0, p);
+            mCanvas.drawBitmap(global, 0, 0, p);
         }else if (fbstate == 2)
         {
             //previewing, real-time update
@@ -186,18 +186,7 @@ public class DemoNotificationRender extends DemoRender{
 
             //draw global icon
             Bitmap global = LoadBitmapTask.get(mContext).getFacebook(3);
-            mCanvas.drawBitmap(global, width - 56, 0, p);
-
-            //update the zoomable text
-            String text = "New message from Jason";
-            int fontSize = calcFontSize((int)MainActivity.getSharedInstance().mDemoView.mDemo.peelDistance);
-            panelPaint.setTextSize(fontSize / 5);
-            float textWidth = panelPaint.measureText(text);
-
-            //mCanvas.save();
-            //mCanvas.rotate(45f, width - textWidth / 2, 30);
-            mCanvas.drawText(text, width - textWidth, 30, panelPaint);
-            //mCanvas.restore();
+            mCanvas.drawBitmap(global, 0, 0, p);
 
         }else if(fbstate == 3)
         {
@@ -207,6 +196,10 @@ public class DemoNotificationRender extends DemoRender{
             mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
             background.recycle();
             background = null;
+
+            //draw global icon
+            Bitmap global = LoadBitmapTask.get(mContext).getFacebook(3);
+            mCanvas.drawBitmap(global, 0, 0, p);
         }
 
 
