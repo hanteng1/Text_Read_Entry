@@ -89,12 +89,15 @@ public abstract class DemoRender extends PageRender{
                 //mPageFlipAbstract.drawFlipFrame();  //see the difference
 
                 //what about updating the texture here
-                for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
+                if(MainActivity.getSharedInstance().demoIndex == 1)
                 {
-                    if(pages[itrp].waiting4TextureUpdate == true)
+
+                    for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
                     {
-                        loadPageWithCommands(itrp, cRIds[itrp]);
-                        pages[itrp].updateFrontTexture(mBitmap);
+                        if(pages[itrp].waiting4TextureUpdate == true)
+                        {
+                            loadPageWithCommands(itrp, cRIds[itrp]);
+                            pages[itrp].updateFrontTexture(mBitmap);
 
                         /*
                         //run on ui thread
@@ -106,6 +109,19 @@ public abstract class DemoRender extends PageRender{
                             }
                         });*/
 
+                        }
+                    }
+
+                }else if(MainActivity.getSharedInstance().demoIndex == 2)
+                {
+                    for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
+                    {
+                        if(pages[itrp].waiting4TextureUpdate == true)
+                        {
+                            loadPageWithFacebook(MainActivity.getSharedInstance().mDemoView.mDemo.facebookState);
+                            pages[itrp].updateFrontTexture(mBitmap);
+
+                        }
                     }
                 }
 
@@ -295,6 +311,8 @@ public abstract class DemoRender extends PageRender{
     }
 
     public abstract void loadPageWithCommands(int number, String[] commandIds);
+
+    public abstract void loadPageWithFacebook(int fbstate);
 
     public boolean canFlipForward()
     {

@@ -121,7 +121,12 @@ public abstract class PageFlipModifyAbstract {
     //flip type, 1 - after finger up, 2 - auto flip
     public int flipType = 0;
 
-
+    //for demo notifiaction
+    //this is not calculating the finger peel for finger gesture
+    // finger peel will be handled in gesture service
+    //this is the value of the distance between peel cursor to origin
+    public float peelDistance = 0;
+    public int facebookState = 0;
 
     /**
      * Constructor

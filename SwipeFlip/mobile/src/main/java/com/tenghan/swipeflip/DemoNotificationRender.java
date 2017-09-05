@@ -39,7 +39,7 @@ public class DemoNotificationRender extends DemoRender{
         //set the second page
         if(!pages[1].isFrontTextureSet())
         {
-            loadPageWithFacebook();
+            loadPageWithFacebook(1);
             pages[1].setFrontTexture(mBitmap);
         }
 
@@ -147,7 +147,7 @@ public class DemoNotificationRender extends DemoRender{
 
 
     //for notification demo
-    public void loadPageWithFacebook()
+    public void loadPageWithFacebook(int fbstate)
     {
         final int width = mCanvas.getWidth();
         final int height = mCanvas.getHeight();
@@ -156,23 +156,60 @@ public class DemoNotificationRender extends DemoRender{
         Paint p = new Paint();
         p.setFilterBitmap(true);
 
-        //color panel
+        //TEXT panel
         Paint panelPaint = new Paint();
         panelPaint.setAntiAlias(true);
-        panelPaint.setStrokeWidth(0);
-        panelPaint.setColor(Color.RED);
-        panelPaint.setStyle(Paint.Style.FILL);
+        panelPaint.setStrokeWidth(1);
+        panelPaint.setColor(Color.WHITE);
+        panelPaint.setStyle(Paint.Style.STROKE);
+
+        if(fbstate == 1)
+        {
+            //notify
+            // 1. load/draw background bitmap
+            Bitmap background = LoadBitmapTask.get(mContext).getFacebook(1);  //get the bitmap in queue
+            Rect rect = new Rect(0, 0, width, height);
+            mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
+            background.recycle();
+            background = null;
+
+            Bitmap global = LoadBitmapTask.get(mContext).getFacebook(3);
+            mCanvas.drawBitmap(global, width - 56, 0, p);
+        }else if (fbstate == 2)
+        {
+            //previewing, real-time update
+            Bitmap background = LoadBitmapTask.get(mContext).getFacebook(1);  //get the bitmap in queue
+            Rect rect = new Rect(0, 0, width, height);
+            mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
+            background.recycle();
+            background = null;
+
+            //draw global icon
+            Bitmap global = LoadBitmapTask.get(mContext).getFacebook(3);
+            mCanvas.drawBitmap(global, width - 56, 0, p);
+
+            //update the zoomable text
+            String text = "New message from Jason";
+            int fontSize = calcFontSize((int)MainActivity.getSharedInstance().mDemoView.mDemo.peelDistance);
+            panelPaint.setTextSize(fontSize / 5);
+            float textWidth = panelPaint.measureText(text);
+
+            //mCanvas.save();
+            //mCanvas.rotate(45f, width - textWidth / 2, 30);
+            mCanvas.drawText(text, width - textWidth, 30, panelPaint);
+            //mCanvas.restore();
+
+        }else if(fbstate == 3)
+        {
+            //whole page
+            Bitmap background = LoadBitmapTask.get(mContext).getFacebook(2);  //get the bitmap in queue
+            Rect rect = new Rect(0, 0, width, height);
+            mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
+            background.recycle();
+            background = null;
+        }
 
 
-        // 1. load/draw background bitmap
-        Bitmap background = LoadBitmapTask.get(mContext).getFacebook(1);  //get the bitmap in queue
-        Rect rect = new Rect(0, 0, width, height);
-        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
-        background.recycle();
-        background = null;
-
-        Bitmap global = LoadBitmapTask.get(mContext).getFacebook(3);
-        mCanvas.drawBitmap(global, width - 56, 0, p);
 
     }
 

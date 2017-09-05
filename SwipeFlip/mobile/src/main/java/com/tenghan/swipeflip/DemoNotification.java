@@ -23,14 +23,18 @@ public class DemoNotification extends PageFlipModifyAbstract {
     private final static int pageSize = 2;
 
     private final static int FRONT_PAGE = 0;
+    private final static int SECOND_PAGE = 1;
 
     private PointF mAutoStartP;
     private PointF mAutoEndP;
+    private float autoEndDistance;
+    private float restoreDistance;
 
     //task schedule
     Handler handler;
 
     private boolean isForwardingAutoFlip = true;
+
 
     public DemoNotification(Context context)
     {
@@ -65,6 +69,9 @@ public class DemoNotification extends PageFlipModifyAbstract {
                 computeScrollPointsForAutoFlip(true, start, end);
                 mAutoStartP.set(start.x, start.y);
                 mAutoEndP.set(end.x, end.y);
+
+                autoEndDistance = calPeelDistance(mAutoEndP, page.originP);
+                restoreDistance = autoEndDistance * 2;
 
                 if (mFlipState == PageFlipState.FORWARD_FLIP ||
                         mFlipState == PageFlipState.BACKWARD_FLIP ||
@@ -525,9 +532,6 @@ public class DemoNotification extends PageFlipModifyAbstract {
             }
         }
 
-
-
-
         return true;
     }
 
@@ -535,10 +539,117 @@ public class DemoNotification extends PageFlipModifyAbstract {
     {
         mPages[FRONT_PAGE].computeKeyVertexesWhenSlope();
         mPages[FRONT_PAGE].computeVertexesWhenSlope();
+
+
+        PointF corner = mPages[FIRST_PAGE].mFakeTouchP;
+        GLPoint originer = mPages[FIRST_PAGE].originP;
+
+        PointF xfoldpc = mPages[FIRST_PAGE].mXFoldPcR;
+        PointF yfoldpc = mPages[FIRST_PAGE].mYFoldPcR;
+
+        //calculate a peel distance
+        PointF cursor = calIntersection(originer.x, originer.y, corner.x, corner.y,
+                xfoldpc.x, xfoldpc.y, yfoldpc.x, yfoldpc.y);
+
+        //distance from cursor to origin
+
+        peelDistance = calPeelDistance(cursor, originer);
+
+
+        // 0 - autoend, autoend - restoreratio, restoreratio - rest
+        if(peelDistance <= autoEndDistance)
+        {
+            //do nothing
+            facebookState = 1;
+        }else if(peelDistance > autoEndDistance && peelDistance <= restoreDistance)
+        {
+            //show preview
+            //every frame
+
+            mPages[SECOND_PAGE].waiting4TextureUpdate = true;
+
+            facebookState = 2;
+        }else if(peelDistance > restoreDistance)
+        {
+            //show full page
+            //once
+            if(facebookState == 2) {
+                mPages[SECOND_PAGE].waiting4TextureUpdate = true;
+            }
+
+            facebookState = 3;
+
+        }
+
     }
 
     private float calDistance(float disx, float disy)
     {
         return (float)Math.sqrt(disx * disx + disy * disy);
+    }
+
+    private float fromOpenGLX(float x) {
+        return x + getSurfaceWidth() / 2;
+    }
+
+    private float fromOpenGLY(float y) {
+        return getSurfaceHeight() / 2 - y;
+    }
+
+
+    //calcuate the intersection point of line 1-2 and 3-4
+    private PointF calIntersection(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+    {
+        PointF cross = new PointF();
+
+        //x1 = fromOpenGLX(x1);
+        //y1 = fromOpenGLY(y1);
+        //x2 = fromOpenGLX(x2);
+        //y2 = fromOpenGLY(y2);
+        //x3 = fromOpenGLX(x3);
+        //y3 = fromOpenGLY(y3);
+        //x4 = fromOpenGLX(x4);
+        //y4 = fromOpenGLY(y4);
+
+        if(x1 == x2 || x3 == x4)
+        {
+            return cross;
+        }
+
+        //y = ax + b
+        float a1 = (y2-y1) / (x2 - x1);
+        float b1 = y1 - a1 * x1;
+        float a2 = (y4 - y3) / (x4 - x3);
+        float b2 = y3 - a2*x3;
+
+        //parallel
+        if(a1 == a2)
+        {
+            return cross;
+        }
+
+        float x0 = -(b1-b2) / (a1 - a2);
+
+        if(Math.min(x1, x2) < x0 && x0 < Math.max(x1, x2) &&
+                Math.min(x3, x4) < x0  && x0 < Math.max(x3, x4))
+        {
+            cross.set(x0, a1*x0 + b1);
+
+            Log.d(TAG, "x " + cross.x + " , y " + cross.y);
+
+            return cross;
+        }else
+        {
+            return cross;
+        }
+
+    }
+
+    private float calPeelDistance(PointF startp, GLPoint endp)
+    {
+        float distance = (float)Math.sqrt( (startp.x - endp.x) * (startp.x - endp.x)
+                + (startp.y - endp.y) * (startp.y - endp.y));
+
+        return distance;
     }
 }
