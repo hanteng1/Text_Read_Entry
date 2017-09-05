@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         mDemoView = (DemoView)findViewById(R.id.demo_view);
         mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
         mDemoUIView.setDimension(320, 320);
+        mDemoUIView.demoIndex = demoIndex;
 
         mGestureDetector = new GestureDetector(this, this);
 
@@ -254,6 +255,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 }else
                 {
                     //Log.d(TAG, "on finger up");
+
+                    //could be normal finger up
+                    //could be double tap up
                     mDemoView.onFingerUp(event.getX()- offsetx, event.getY() - offsety);
                 }
 
@@ -287,6 +291,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
                 //indicate the mdemo that it's doing double tap task
                 mDemoView.mDemo.isDoubleTappingTask = true;
+
+                mDemoUIView.onDoubleTap(e.getX() - offsetx, e.getY() - offsety);
+
 
                 isDoubleTapping = false;
             }else
@@ -368,7 +375,15 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             mPageFlipView.onFingerMove(e2.getX() - offsetx, e2.getY() - offsety);
         }else if(activityIndex == 2)
         {
-            mDemoView.onFingerMove(e2.getX() - offsetx, e2.getY() - offsety);
+            if(mDemoView.mDemo.isDoubleTappingTask == true)
+            {
+                mDemoUIView.onTapMove(e2.getX() - offsetx, e2.getY() - offsety);
+            }else
+            {
+                mDemoView.onFingerMove(e2.getX() - offsetx, e2.getY() - offsety);
+            }
+
+
         }else if(activityIndex == 3)
         {
             mStudyView.onFingerMove(e2.getX() - offsetx, e2.getY() - offsety);
