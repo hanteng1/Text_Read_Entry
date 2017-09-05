@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     /**
      * 1 - peel2command
      * 2 - notification
+     * 3 - copy and paste
      */
     public int demoIndex = 0;
 
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
          */
 
         activityIndex = 2;
-        demoIndex = 2;
+        demoIndex = 3;
         mDemoView = (DemoView)findViewById(R.id.demo_view);
         mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
         mDemoUIView.setDimension(320, 320);

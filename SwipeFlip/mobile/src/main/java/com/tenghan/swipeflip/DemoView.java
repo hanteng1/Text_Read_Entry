@@ -25,11 +25,20 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
     int mPageNo;
     int mDuration;
     Handler mHandler;
+
+
     public PageFlipModifyAbstract mDemo;
 
 
+
+    //this needs to be optimized
+
 //    public DemoPeel2CommandRender mPageRender;
-    public DemoNotificationRender mPageRender;
+
+//    public DemoNotificationRender mPageRender;
+
+    public DemoCopyPasteRender mPageRender;
+
 
     ReentrantLock mDrawLock;
 
@@ -58,16 +67,26 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
 
 
         //for notification demo
-        mDemo = new DemoNotification(context);
+//        mDemo = new DemoNotification(context);
+//        setEGLContextClientVersion(2);
+//        // create render
+//        mPageNo = mDemo.PAGE_SIZE;  //need to change, should equal to Page_Size in mPageFlip
+//        mDrawLock = new ReentrantLock();
+//        // init others
+//        mPageNo = 1;
+//        mPageRender = new DemoNotificationRender(context, mDemo, mHandler, mPageNo);
+
+
+
+        //for copyandpaste demo
+        mDemo = new DemoCopyPaste(context);
         setEGLContextClientVersion(2);
         // create render
         mPageNo = mDemo.PAGE_SIZE;  //need to change, should equal to Page_Size in mPageFlip
         mDrawLock = new ReentrantLock();
         // init others
         mPageNo = 1;
-        mPageRender = new DemoNotificationRender(context, mDemo, mHandler, mPageNo);
-
-
+        mPageRender = new DemoCopyPasteRender(context, mDemo, mHandler, mPageNo);
 
 
 
@@ -201,16 +220,25 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
 //            }
 
 
-            if(!(mPageRender instanceof DemoNotificationRender)){
+
+//
+//            if(!(mPageRender instanceof DemoNotificationRender)){
+//                mPageRender.release();
+//                mPageRender = new DemoNotificationRender(getContext(),
+//                        mDemo,
+//                        mHandler,
+//                        pageNo);
+//            }
+//
+
+
+            if(!(mPageRender instanceof DemoCopyPasteRender)){
                 mPageRender.release();
-                mPageRender = new DemoNotificationRender(getContext(),
+                mPageRender = new DemoCopyPasteRender(getContext(),
                         mDemo,
                         mHandler,
                         pageNo);
             }
-
-
-
 
 
 
