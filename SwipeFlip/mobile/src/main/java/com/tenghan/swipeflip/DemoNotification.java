@@ -83,7 +83,7 @@ public class DemoNotification extends PageFlipModifyAbstract {
                     Log.d(TAG, "scroll starts");
                     mScroller.startScroll(start.x, start.y,
                             end.x - start.x, end.y - start.y,
-                            4000);
+                            1000);
 
                     try {
                         MainActivity.getSharedInstance().mDemoView.mDrawLock.lock();
@@ -102,7 +102,7 @@ public class DemoNotification extends PageFlipModifyAbstract {
 
                 }
             }
-        }, 5000);
+        }, 3000);
 
     }
 
@@ -582,8 +582,10 @@ public class DemoNotification extends PageFlipModifyAbstract {
         {
             //show preview
             //every frame
-
-            mPages[SECOND_PAGE].waiting4TextureUpdate = true;
+            if( facebookState == 1)
+            {
+                mPages[SECOND_PAGE].waiting4TextureUpdate = true;
+            }
 
             facebookState = 2;
         }else if(peelDistance > restoreDistance)
