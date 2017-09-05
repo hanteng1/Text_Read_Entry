@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.Tag;
 import android.os.Build;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -72,6 +73,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
      * 3 - copy and paste
      */
     public int demoIndex = 0;
+
+    //to assist touch gesture detection
+    public boolean isReseting = false;
+    public boolean isDoubleTapping = false;
+    public Handler tapHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,9 +237,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
 
-            if(isreseting)
+            if(isReseting)
             {
-                isreseting = false;
+                isReseting = false;
                 return false;
             }
 
@@ -242,7 +248,16 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 mPageFlipView.onFingerUp(event.getX() - offsetx, event.getY() - offsety);
             }else if(activityIndex == 2)
             {
-                mDemoView.onFingerUp(event.getX()- offsetx, event.getY() - offsety);
+                if(isDoubleTapping)
+                {
+
+                }else
+                {
+                    //Log.d(TAG, "on finger up");
+                    mDemoView.onFingerUp(event.getX()- offsetx, event.getY() - offsety);
+                }
+
+
             }else if(activityIndex == 3)
             {
                 mStudyView.onFingerUp(event.getX() - offsetx, event.getY() - offsety);
@@ -263,7 +278,39 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             mPageFlipView.onFingerDown(e.getX() - offsetx, e.getY() - offsety);
         }else if(activityIndex == 2)
         {
-            mDemoView.onFingerDown(e.getX() - offsetx, e.getY() - offsety);
+
+
+            if(isDoubleTapping)
+            {
+                //yes.. it's a double tap
+                Log.d(TAG, "double tap");
+
+                //indicate the mdemo that it's doing double tap task
+                mDemoView.mDemo.isDoubleTappingTask = true;
+
+                isDoubleTapping = false;
+            }else
+            {
+                //single tap, just no finger up event in 300 ms
+                mDemoView.onFingerDown(e.getX() - offsetx, e.getY() - offsety);
+
+                isDoubleTapping = true;
+            }
+            //activate a count down
+
+            if(isDoubleTapping == true)
+            {
+                tapHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        isDoubleTapping = false;
+                    }
+                }, 300);
+            }
+
+
+
+
         }else if(activityIndex == 3)
         {
             mStudyView.onFingerDown(e.getX() - offsetx, e.getY() - offsety);
@@ -297,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
 
-    public boolean isreseting = false;
+
 
     @Override
     public void onLongPress(MotionEvent e) {
@@ -308,9 +355,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         if(activityIndex == 3)
         {
             storage.save();
-            isreseting = true;
+            isReseting = true;
         }
-
 
     }
 
@@ -338,5 +384,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public boolean onSingleTapUp(MotionEvent e) {
         return false;
     }
+
+
 
 }

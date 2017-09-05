@@ -151,6 +151,15 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
 
     public void onFingerUp(float x, float y) // will auto check the animation first
     {
+        if(mDemo.isDoubleTappingTask == true)
+        {
+            Log.d(TAG, "double tapping task done");
+
+            mDemo.isDoubleTappingTask = false;
+
+            return;
+        }
+
         if (!mDemo.isAnimating()) {
 
             mDemo.onFingerUp(x, y, mDuration);  //test and get ready for animating

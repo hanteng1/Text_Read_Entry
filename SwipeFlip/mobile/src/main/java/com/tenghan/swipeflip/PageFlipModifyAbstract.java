@@ -128,6 +128,10 @@ public abstract class PageFlipModifyAbstract {
     public float peelDistance = 0;
     public int facebookState = 0;
 
+
+    //for demo copy and paste
+    public boolean isDoubleTappingTask;
+
     /**
      * Constructor
      */
