@@ -91,7 +91,7 @@ public abstract class DemoRender extends PageRender{
                 //what about updating the texture here
                 if(MainActivity.getSharedInstance().demoIndex == 1)
                 {
-
+                    //peel to command
                     for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
                     {
                         if(pages[itrp].waiting4TextureUpdate == true)
@@ -114,11 +114,24 @@ public abstract class DemoRender extends PageRender{
 
                 }else if(MainActivity.getSharedInstance().demoIndex == 2)
                 {
+                    //notification
                     for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
                     {
                         if(pages[itrp].waiting4TextureUpdate == true)
                         {
                             loadPageWithFacebook(MainActivity.getSharedInstance().mDemoView.mDemo.facebookState);
+                            pages[itrp].updateFrontTexture(mBitmap);
+
+                        }
+                    }
+                }else if(MainActivity.getSharedInstance().demoIndex == 3)
+                {
+                    //copy and paste
+                    for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
+                    {
+                        if(pages[itrp].waiting4TextureUpdate == true)
+                        {
+                            loadPageWithCopyPaste(itrp);
                             pages[itrp].updateFrontTexture(mBitmap);
 
                         }
@@ -329,6 +342,8 @@ public abstract class DemoRender extends PageRender{
     public abstract void loadPageWithCommands(int number, String[] commandIds);
 
     public abstract void loadPageWithFacebook(int fbstate);
+
+    public abstract void loadPageWithCopyPaste(int itr);
 
     public boolean canFlipForward()
     {

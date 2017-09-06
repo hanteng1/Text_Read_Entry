@@ -206,5 +206,10 @@ public class DemoNotificationRender extends DemoRender{
 
     }
 
+    public void loadPageWithCopyPaste(int itr)
+    {
+
+    }
+
 
 }

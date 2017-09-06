@@ -31,7 +31,7 @@ public class DemoUIView extends View {
 
     private Path touchPath = new Path();
     private Paint touchPaint = new Paint();
-    private PointF boundingLeftTop = new PointF();
+    public PointF boundingLeftTop = new PointF();
     private PointF boundingRightBottom = new PointF();
 
 
@@ -55,7 +55,7 @@ public class DemoUIView extends View {
 
     public boolean isdrawing = true;
 
-    private Bitmap resultBitmap;
+    public Bitmap resultBitmap;
 
 
     public DemoUIView(Context context, AttributeSet attrs) {
@@ -121,9 +121,9 @@ public class DemoUIView extends View {
             }else
             {
 
-                Log.d(TAG, "draw bitmap");
+//                Log.d(TAG, "draw bitmap");
 
-                canvas.drawBitmap(resultBitmap, boundingLeftTop.x, boundingLeftTop.y, touchPaint);
+//                canvas.drawBitmap(resultBitmap, boundingLeftTop.x, boundingLeftTop.y, touchPaint);
             }
 
 
@@ -236,11 +236,14 @@ public class DemoUIView extends View {
         //save it for later work
         //https://stackoverflow.com/questions/8993292/cutting-a-multipoint-ploygon-out-of-bitmap-and-placing-it-on-transparency
 
+
+        //push it to the page render and reload the texture
+        MainActivity.getSharedInstance().mDemoView.mPageRender.setCropImage(resultBitmap, boundingLeftTop);
+        MainActivity.getSharedInstance().mDemoView.mDemo.getPages()[1].waiting4TextureUpdate = true;
+
         invalidate();
 
     }
-
-
 
 
 

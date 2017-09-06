@@ -305,4 +305,9 @@ public class DemoPeel2CommandRender extends DemoRender{
 
     }
 
+    public void loadPageWithCopyPaste(int itr)
+    {
+
+    }
+
 }

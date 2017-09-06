@@ -291,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
                 //indicate the mdemo that it's doing double tap task
                 mDemoView.mDemo.isDoubleTappingTask = true;
-
+                MainActivity.getSharedInstance().mDemoUIView.isdrawing = true;
                 mDemoUIView.onDoubleTap(e.getX() - offsetx, e.getY() - offsety);
 
 
