@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 
 import com.eschao.android.widget.pageflip.PageFlipException;
 
@@ -46,6 +47,8 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
     {
         super(context, attrs);
         newHandler();
+
+        //this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         //change this value based on demos as well
         mDuration = 2000;  //an interesting number to try, 1000 is fine

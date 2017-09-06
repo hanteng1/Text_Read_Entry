@@ -155,7 +155,6 @@ public class DemoPeel2CommandRender extends DemoRender{
         panelPaint.setColor(Color.RED);
         panelPaint.setStyle(Paint.Style.FILL);
 
-
         // 1. load/draw background bitmap
         Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
         Rect rect = new Rect(0, 0, width, height);

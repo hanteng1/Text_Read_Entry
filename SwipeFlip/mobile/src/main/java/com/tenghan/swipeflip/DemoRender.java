@@ -338,6 +338,21 @@ public abstract class DemoRender extends PageRender{
         background = null;
     }
 
+    public void loadPhotoPage()
+    {
+        final int width = mCanvas.getWidth();
+        final int height = mCanvas.getHeight();
+        Paint p = new Paint();
+        p.setFilterBitmap(true);
+
+        // 1. load/draw background bitmap
+        Bitmap background = LoadBitmapTask.get(mContext).getPhoto();  //get the bitmap in queue
+        Rect rect = new Rect(0, 0, width, height);
+        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
+        background.recycle();
+        background = null;
+    }
+
 
     public abstract void loadPageWithCommands(int number, String[] commandIds);
 

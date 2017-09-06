@@ -90,10 +90,29 @@ public class GestureService {
                     //reload texture
 
                     //the page behind of current lock page
-                    if(MainActivity.getSharedInstance().activityIndex == 3)
+                    if(MainActivity.getSharedInstance().activityIndex == 2)
                     {
-                        int comamndPage = MainActivity.getSharedInstance().mStudyView.mStudy.currentPageLock + 1;
-                        //MainActivity.getSharedInstance().mStudyView.mPageRender.ReloadTexture(comamndPage);
+
+                        if(MainActivity.getSharedInstance().demoIndex == 1)
+                        {
+                            //int comamndPage = MainActivity.getSharedInstance().mStudyView.mStudy.currentPageLock + 1;
+                            //MainActivity.getSharedInstance().mStudyView.mPageRender.ReloadTexture(comamndPage);
+                        }else if(MainActivity.getSharedInstance().demoIndex == 2)
+                        {
+
+                        }else if(MainActivity.getSharedInstance().demoIndex == 3)
+                        {
+                            MainActivity.getSharedInstance().mDemoView.mDemo.getPages()[1].waiting4TextureUpdate = true;
+
+
+                            //if the command is cut
+                            if(activiatedCommandIndex == 0)
+                            {
+                                //update the first page as well
+                                MainActivity.getSharedInstance().mDemoView.mDemo.getPages()[0].waiting4TextureUpdate = true;
+                            }
+                        }
+
                     }
 
 

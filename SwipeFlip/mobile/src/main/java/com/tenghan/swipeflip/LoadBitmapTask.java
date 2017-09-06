@@ -46,6 +46,9 @@ public final class LoadBitmapTask implements Runnable {
     int mFacebookMsg;
     int mFacebookCont;
 
+    //for copy demo
+    int mPhoto;
+
 
     public static LoadBitmapTask get(Context context) {
         if (__object == null) {
@@ -76,6 +79,9 @@ public final class LoadBitmapTask implements Runnable {
         mFacebookGlobal = R.drawable.fb_global;
         mFacebookMsg = R.drawable.fb_msg;
         mFacebookCont = R.drawable.fb_cont;
+
+        //for copy demo
+        mPhoto = R.drawable.copy_origin;
 
     }
 
@@ -115,6 +121,14 @@ public final class LoadBitmapTask implements Runnable {
             b = BitmapFactory.decodeResource(mResources, mFacebookGlobal);
         }
 
+        return b;
+    }
+
+    //for copy paste
+    public Bitmap getPhoto()
+    {
+        Bitmap b = null;
+        b = BitmapFactory.decodeResource(mResources, mPhoto);
         return b;
     }
 
