@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by hanteng on 2017-08-21.
@@ -62,9 +63,10 @@ public class DemoUIView extends View {
         mContext = context;
 
         inputPaint.setAntiAlias(true);
+        inputPaint.setFilterBitmap(true);
         inputPaint.setStrokeWidth(1);
         inputPaint.setColor(Color.RED);
-        inputPaint.setStyle(Paint.Style.STROKE);
+        //inputPaint.setStyle(Paint.Style.STROKE);
         inputPaint.setStrokeJoin(Paint.Join.ROUND);
 
         //set touch paint, transparent
@@ -115,12 +117,13 @@ public class DemoUIView extends View {
             if(isdrawing)
             {
                 canvas.drawPath(touchPath, touchPaint);
+
             }else
             {
 
                 Log.d(TAG, "draw bitmap");
 
-                canvas.drawBitmap(resultBitmap, 0, 0, touchPaint);
+                canvas.drawBitmap(resultBitmap, boundingLeftTop.x, boundingLeftTop.y, touchPaint);
             }
 
 
@@ -168,36 +171,70 @@ public class DemoUIView extends View {
     public void onTapUp(float x, float y)
     {
         //get the bitmap from canavas
-        Bitmap backgroundBitmap = LoadBitmapTask.get(mContext).getBitmap();
-        Rect rect = new Rect(0, 0, screenWidth, screenHeight);
-
         //draw the same
         Canvas mCanvas = new Canvas();
         mCanvas.setBitmap(resultBitmap);
 
-        //draw thee background
+        //copy from the loadtexture
 
+        //draw thee background
+        Bitmap background = LoadBitmapTask.get(mContext).getBitmap();
+        Rect rect = new Rect(0, 0, screenWidth, screenHeight);
+        mCanvas.drawBitmap(background, null, rect, inputPaint);
+        background.recycle();
+        background = null;
 
         //draw the text
+        int fontSize = calcFontSize(10);
+        inputPaint.setColor(Color.GRAY);
+        inputPaint.setStrokeWidth(1);
+        inputPaint.setAntiAlias(true);
+        //p.setShadowLayer(5.0f, 8.0f, 8.0f, Color.BLACK);
+        inputPaint.setTextSize(fontSize);
+        //String text = Alphabet[number];
 
+        String text = "Mr Trump also warned Pakistan that the US would no longer tolerate the country offering \"safe havens\" to extremists, saying the country had \"much to lose\" if it did not side with the Americans.\n" +
+                "\"We have been paying Pakistan billions and billions of dollars - at the same time they are housing the very terrorists that we are fighting,\" he said.\n" +
+                "He also said the US would seek a stronger partnership with India.\n" +
+                "Meanwhile, Mr Trump made it clear he expects his existing allies to support him in his new strategy, telling them he wanted them to raise their countries' contributions \"in line with our own\".";
 
+        ArrayList<String> textList = new ArrayList<String>(Arrays.asList(text.split("\\s+")));
 
+        PointF textCursor = new PointF();
+        textCursor.set(0, 0);
+
+        for(int itrt = 0; itrt < textList.size(); itrt++)
+        {
+            if(textCursor.x + inputPaint.measureText(textList.get(itrt)) >  320)
+            {
+                //change to the next line
+                textCursor.x = 0;
+                textCursor.y += 20;
+            }
+
+            mCanvas.drawText(textList.get(itrt), textCursor.x, textCursor.y, inputPaint);
+
+            textCursor.x += (inputPaint.measureText(textList.get(itrt)) + 10);
+        }
 
         mCanvas.drawPath(touchPath, touchPaint);
 
 
+        //bounding box
+        touchPaint.setStrokeWidth(1);
+        touchPaint.setColor(Color.RED);
 
-
-
-
+        mCanvas.drawRect(boundingLeftTop.x, boundingLeftTop.y, boundingRightBottom.x, boundingRightBottom.y, touchPaint);
 
         //find the countour, use bounding box for now
+        Bitmap croppoedBitmap = Bitmap.createBitmap(resultBitmap, (int)boundingLeftTop.x, (int)boundingLeftTop.y,
+                (int)(boundingRightBottom.x - boundingLeftTop.x), (int)(boundingRightBottom.y - boundingLeftTop.y));
 
+        resultBitmap = croppoedBitmap;
 
-
-        //crop the bitmap
-
-
+        //crop the bitmap, using the drawing path if possible
+        //save it for later work
+        //https://stackoverflow.com/questions/8993292/cutting-a-multipoint-ploygon-out-of-bitmap-and-placing-it-on-transparency
 
         invalidate();
 
