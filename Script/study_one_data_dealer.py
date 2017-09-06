@@ -20,7 +20,11 @@ def clean_raw_data():
 				print(os.path.join(subdir, file))
 				single_file_data = open(os.path.join(subdir, file))
 				user_index = subdir
-				user_index = user_index[-1:]
+
+				if user_index[-2] == '_':
+					user_index = user_index[-1:]
+				elif user_index[-3] == '_':
+					user_index = user_index[-2:]
 				print(user_index)
 				csv_f = csv.reader(single_file_data)
 
@@ -44,16 +48,15 @@ def clean_raw_data():
 							row.insert(0, user_index)
 							raw_cleaned_data.append(row)
 
-				old_row = []
+	old_row = []
+	for row in raw_cleaned_data:
+		if len(old_row) > 0:
+			if row[1] == old_row[1]:
+				#repeated
+				cleaned_data = cleaned_data[:-1]
 
-				for row in raw_cleaned_data:
-					if len(old_row) > 0:
-						if row[1] == old_row[1]:
-							#repeated
-							cleaned_data = cleaned_data[:-1]
-
-					old_row = list(row)
-					cleaned_data.append(row)
+		old_row = list(row)
+		cleaned_data.append(row)
 
 
 	with open('/Users/hanteng/Dropbox/Ring-TextEntry-Flip/flippage_study/study_one_data/cleaned_data.csv', 'w') as csvfile:
