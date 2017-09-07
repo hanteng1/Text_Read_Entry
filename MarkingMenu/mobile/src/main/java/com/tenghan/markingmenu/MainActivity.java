@@ -134,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public void onLongPress(MotionEvent e) {
 
-        //trigger
         mDemoUIView.onLongPressed(e.getX() - offsetX, e.getY() - offsetY);
         //Log.d(TAG, "long press");
     }

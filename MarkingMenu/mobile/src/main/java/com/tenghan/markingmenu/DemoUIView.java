@@ -34,7 +34,10 @@ public class DemoUIView extends View {
     private int touchLength = 10;
     private ArrayList<PointF> touchPoints;
 
-    private String[][] menuItems = {{"copy", "paste", "color", "size"}, {"font", "size", "bright", "contrast"}};
+    private String[][] menuItems = {{"copy", "paste", "color"},
+            {"font", "size", "bright"},
+            {"contrast", "volume", "darkness"},
+            {"visual", "point", "correct"}};
     private float menuDistance = 80.0f;
     private PointF menuCenter = new PointF();
 
@@ -44,16 +47,21 @@ public class DemoUIView extends View {
     //0 - first layer, 1- second layer, 2 - third layer (value selection)
     public int totalMenuLayers = 3;
     public int currentMenuLayer = -1;
+    public int currentSecondMenu = -1;
+    public boolean waitingforsecondlayer = false;
+
+
     //for the first layer - second layer
 
 
     //for the second layer - third layer
     public boolean isTriggered = false;
     public boolean isSubMenuing = false;
+
     private boolean isSubMenuVertical = false;
     private boolean isSubMenuLeftTop = false;
-    private float subMenuWidth = 40;
-
+    private float subMenuWidth = 70;
+    private int currentSubMenu = -1;
     private PointF subMenuTouchAchor = new PointF();
 
     private ArrayList<Integer> colorCode;
@@ -90,8 +98,8 @@ public class DemoUIView extends View {
         strokePaint.setStyle(Paint.Style.STROKE);
         strokePaint.setStrokeJoin(Paint.Join.ROUND);
 
-        menuCenter.x = 100.0f;
-        menuCenter.y = 100.0f;
+        menuCenter.x = 160.0f;
+        menuCenter.y = 160.0f;
 
         this.setBackgroundColor(Color.parseColor("#559B9B9B"));
 
@@ -183,39 +191,94 @@ public class DemoUIView extends View {
 
         if(!isSubMenuing)
         {
-            /**
-             *          1
-             *          |
-             *          |
-             *    0 --------- 2
-             *          |
-             *          |
-             *          3
-             */
-            //for the commands tags
-            for(int itrc = 0; itrc < menuItems[currentMenuLayer].length; itrc++)
+            //first layer
+            if(currentMenuLayer == 0)
             {
-                int posX = 1;
-                int posY = 1;
-                if(itrc == 0 || itrc == 2)
+                /**
+                 *          1
+                 *          |
+                 *          |
+                 *    0 --------- 2
+                 */
+                //for the commands tags
+                for(int itrc = 0; itrc < menuItems[currentMenuLayer].length; itrc++)
                 {
-                    posY = 0;
-                    posX = 1;
+                    int posX = 1;
+                    int posY = 1;
+                    if(itrc == 0 || itrc == 2)
+                    {
+                        posY = 0;
+                        posX = 1;
+                        if(itrc == 0)
+                        {
+                            posX = -1;
+                        }
+                    }else if(itrc == 1 || itrc == 3)
+                    {
+                        posX = 0;
+                        posY = 1;
+                        if(itrc == 1)
+                        {
+                            posY = -1;
+                        }
+                    }
+                    String text = menuItems[currentMenuLayer][itrc];
+                    float textLength = 0;
                     if(itrc == 0)
                     {
-                        posX = -1;
-                    }
-                }else if(itrc == 1 || itrc == 3)
-                {
-                    posX = 0;
-                    posY = 1;
-                    if(itrc == 3)
+                        textLength = inputPaint.measureText(text);
+                    }else if(itrc == 1 || itrc == 3)
                     {
-                        posY = -1;
+                        textLength = inputPaint.measureText(text) / 2;
                     }
+
+                    canvas.drawText(text, menuCenter.x + posX * menuDistance - textLength, menuCenter.y + posY * menuDistance, inputPaint);
                 }
-                canvas.drawText(menuItems[currentMenuLayer][itrc], menuCenter.x + posX * menuDistance, menuCenter.y + posY * menuDistance, inputPaint);
+            }else if(currentMenuLayer == 1)
+            {
+                /**
+                 *
+                 *    0 --------- 1
+                 *          |
+                 *          |
+                 *          2
+                 */
+                for(int itrc = 0; itrc < menuItems[currentMenuLayer + currentSecondMenu].length; itrc++)
+                {
+                    int posX = 1;
+                    int posY = 1;
+                    if(itrc == 0 || itrc == 1)
+                    {
+                        posY = 0;
+                        posX = 1;
+                        if(itrc == 0)
+                        {
+                            posX = -1;
+                        }
+                    }else if(itrc == 2 || itrc == 3)
+                    {
+                        posX = 0;
+                        posY = 1;
+                        if(itrc == 3)
+                        {
+                            posY = -1;
+                        }
+                    }
+                    String text = menuItems[currentMenuLayer + currentSecondMenu][itrc];
+                    float textLength = 0;
+                    if(itrc == 0)
+                    {
+                        textLength = inputPaint.measureText(text);
+                    }else if(itrc == 1 || itrc == 3)
+                    {
+                        textLength = inputPaint.measureText(text) / 2;
+                    }
+
+                    canvas.drawText(text, menuCenter.x + posX * menuDistance - textLength, menuCenter.y + posY * menuDistance, inputPaint);
+                }
+
             }
+
 
 
             //draw touch path
@@ -250,6 +313,11 @@ public class DemoUIView extends View {
         //touchPath.moveTo(x, y);
         touchPoints.clear();
         touchPoints.add(new PointF(x, y));
+
+        //check the menu status
+        //if()
+
+
     }
 
     public void onFingerMove(float x, float y)
@@ -259,41 +327,96 @@ public class DemoUIView extends View {
         {
             touchPoints.add(new PointF(x, y));
 
+            //here submenu is for value selection
             if(!isSubMenuing)
             {
-                //gesture detection
-                int gestureResult = detectGesture(touchPoints);
-                switch (gestureResult)
+
+                if(currentMenuLayer == 0)
                 {
-                    case -1:
-                        break;
-                    case 0:
-                        isSubMenuVertical = true;
-                        isSubMenuLeftTop = false;
-                        isSubMenuing = true;
-                        subMenuTouchAchor.set(x, y);
-                        break;
-                    case 1:
-                        isSubMenuVertical = false;
-                        isSubMenuLeftTop = false;
-                        isSubMenuing = true;
-                        subMenuTouchAchor.set(x, y);
-                        break;
-                    case 2:
-                        isSubMenuVertical = true;
-                        isSubMenuLeftTop = true;
-                        isSubMenuing = true;
-                        subMenuTouchAchor.set(x, y);
-                        break;
-                    case 3:
-                        isSubMenuVertical = false;
-                        isSubMenuLeftTop = true;
-                        isSubMenuing = true;
-                        subMenuTouchAchor.set(x, y);
-                        break;
-                    default:
-                        break;
+
+                    /**
+                     *          1
+                     *          |
+                     *          |
+                     *    0 --------- 2
+                     */
+
+                    //gesture detection
+                    int gestureResult = detectGesture(touchPoints);
+                    switch (gestureResult)
+                    {
+                        case -1:
+                            break;
+                        case 0:
+                            //currentMenuLayer = 1;
+                            currentSecondMenu = 0;
+                            waitingforsecondlayer = true;
+                            break;
+                        case 1:
+                            currentSecondMenu = 1;
+                            //currentMenuLayer = 1;
+                            waitingforsecondlayer = true;
+                            break;
+                        case 2:
+                            currentSecondMenu = 2;
+                            //currentMenuLayer = 1;
+                            waitingforsecondlayer = true;
+                            break;
+                        case 3:
+                            break;
+                        default:
+                            break;
+                    }
+
+                }else if(currentMenuLayer == 1 && waitingforsecondlayer == false)
+                {
+                    //has to take effects on the second selection
+
+                    /**
+                     *
+                     *    0 --------- 1
+                     *          |
+                     *          |
+                     *          2
+                     */
+                    //gesture detection
+                    int gestureResult = detectGesture(touchPoints);
+                    switch (gestureResult)
+                    {
+                        case -1:
+                            break;
+                        case 0:
+                            isSubMenuVertical = true;
+                            isSubMenuLeftTop = false;
+                            isSubMenuing = true;
+                            currentSubMenu = 0;
+                            subMenuTouchAchor.set(x, y);
+                            break;
+                        case 1:
+//                            isSubMenuVertical = false;
+//                            isSubMenuLeftTop = false;
+//                            isSubMenuing = true;
+//                            subMenuTouchAchor.set(x, y);
+                            break;
+                        case 2:
+                            isSubMenuVertical = true;
+                            isSubMenuLeftTop = true;
+                            isSubMenuing = true;
+                            currentSubMenu = 1;
+                            subMenuTouchAchor.set(x, y);
+                            break;
+                        case 3:
+                            isSubMenuVertical = false;
+                            isSubMenuLeftTop = true;
+                            isSubMenuing = true;
+                            currentSubMenu = 2;
+                            subMenuTouchAchor.set(x, y);
+                            break;
+                        default:
+                            break;
+                    }
                 }
+
             }else
             {
                 //submenu is activated
@@ -334,17 +457,41 @@ public class DemoUIView extends View {
 
     public void onFingerUp(float x, float y)
     {
-        isTriggered = false;
-        isSubMenuing = false;
+        if(waitingforsecondlayer)
+        {
+            //after the first layer
+
+            currentMenuLayer = 1;
+            waitingforsecondlayer = false;
+
+            touchPoints.clear();
+        }else
+        {
+            //after the sub menuing
+            //reset
+            isTriggered = false;
+            isSubMenuing = false;
+
+            currentMenuLayer = -1;
+            currentSecondMenu = -1;
+            currentSubMenu = -1;
+
+        }
+
+
         invalidate();
     }
 
     public void onLongPressed(float x, float y)
     {
-        menuCenter.set(x, y);
-        isTriggered = true;
-        currentMenuLayer = 0;
-        invalidate();
+        if(currentMenuLayer == -1)
+        {
+            //menuCenter.set(x, y);
+            isTriggered = true;
+            currentMenuLayer = 0;
+            invalidate();
+        }
+
     }
 
     //gesture detection
@@ -366,7 +513,7 @@ public class DemoUIView extends View {
         if(points.size() > 2)
         {
             float origX = points.get(0).x;
-            float origY = points.get(1).y;
+            float origY = points.get(0).y;
             float destX = points.get(points.size() - 1).x;
             float destY = points.get(points.size() - 1).y;
 
