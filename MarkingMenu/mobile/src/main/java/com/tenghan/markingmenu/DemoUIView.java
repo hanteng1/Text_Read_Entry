@@ -85,6 +85,9 @@ public class DemoUIView extends View {
     private float barWidth = 40;
 
 
+    private float offsetX = 3;
+    private float offsetY = 3;
+
 
     public DemoUIView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -298,7 +301,7 @@ public class DemoUIView extends View {
                     if(itrc == 0)
                     {
                         textLength = inputPaint.measureText(text);
-                    }else if(itrc == 1 || itrc == 3)
+                    }else if(itrc == 2)
                     {
                         textLength = inputPaint.measureText(text) / 2;
                     }
@@ -332,21 +335,20 @@ public class DemoUIView extends View {
             //based on which command is triggered
             if(currentSubMenu == 0)
             {
-                drawColorPanel(canvas, isSubMenuVertical, isSubMenuLeftTop);
+                //drawColorPanel(canvas, isSubMenuVertical, isSubMenuLeftTop);
+                drawListPanel(canvas, isSubMenuVertical, isSubMenuLeftTop);
+
             }else if(currentSubMenu == 1)
             {
                 //scroll bar
-
                 drawBarPanel(canvas, isSubMenuVertical, isSubMenuLeftTop);
 
             }else if(currentSubMenu == 2)
             {
                 //scroll list
-
                 drawListPanel(canvas, isSubMenuVertical, isSubMenuLeftTop);
 
             }
-
 
         }
 
@@ -469,32 +471,36 @@ public class DemoUIView extends View {
 
                 if(currentSubMenu == 0)
                 {
-                    //for color
-                    if(isSubMenuVertical == true)
-                    {
-                        //vertical, use y
-                        float diffY = y - subMenuTouchAchor.y;
-                        int diffColorAnchor = (int) (diffY * (totalColor - presentedColor)) / screenHeight;
-                        colorAnchor = totalColor / 2 + diffColorAnchor;
+//                    //for color
+//                    if(isSubMenuVertical == true)
+//                    {
+//                        //vertical, use y
+//                        float diffY = y - subMenuTouchAchor.y;
+//                        int diffColorAnchor = (int) (diffY * (totalColor - presentedColor)) / screenHeight;
+//                        colorAnchor = totalColor / 2 + diffColorAnchor;
+//
+//                        Log.d(TAG, "diffY " + diffY);
+//                    }else
+//                    {
+//                        //horizontal, use x
+//                        float diffX = x - subMenuTouchAchor.x;
+//                        int diffColorAnchor = (int) (diffX * (totalColor - presentedColor)) / screenWidth;
+//                        colorAnchor = totalColor / 2 + diffColorAnchor;
+//
+//                        Log.d(TAG, "diffX " + diffX);
+//                    }
+//
+//                    if( (colorAnchor + presentedColor)  > totalColor)
+//                    {
+//                        colorAnchor = totalColor - presentedColor;
+//                    }else if(colorAnchor < 0)
+//                    {
+//                        colorAnchor = 0;
+//                    }
 
-                        Log.d(TAG, "diffY " + diffY);
-                    }else
-                    {
-                        //horizontal, use x
-                        float diffX = x - subMenuTouchAchor.x;
-                        int diffColorAnchor = (int) (diffX * (totalColor - presentedColor)) / screenWidth;
-                        colorAnchor = totalColor / 2 + diffColorAnchor;
 
-                        Log.d(TAG, "diffX " + diffX);
-                    }
+                    listCursor.set(x, y);
 
-                    if( (colorAnchor + presentedColor)  > totalColor)
-                    {
-                        colorAnchor = totalColor - presentedColor;
-                    }else if(colorAnchor < 0)
-                    {
-                        colorAnchor = 0;
-                    }
                 }else if(currentSubMenu == 1)
                 {
 
@@ -792,7 +798,7 @@ public class DemoUIView extends View {
         float anchorY;
 
         subMenuPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        subMenuPaint.setColor(Color.GRAY);
+        subMenuPaint.setColor(Color.argb(200, 200, 200, 200));
 
         if(isVertical)
         {
@@ -808,7 +814,7 @@ public class DemoUIView extends View {
                 //draw list cursor
                 if(isDrawingCursor)
                 {
-                    canvas.drawLine(anchorX, anchorY + listCursor.y, anchorX + mWidth * 2, anchorY + listCursor.y, subMenuSliderPaint);
+                    canvas.drawLine(anchorX, anchorY + listCursor.y, anchorX + mWidth, anchorY + listCursor.y, subMenuSliderPaint);
                 }
             }else
             {
