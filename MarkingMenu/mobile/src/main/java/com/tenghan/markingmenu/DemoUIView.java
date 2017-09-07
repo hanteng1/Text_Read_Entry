@@ -34,13 +34,20 @@ public class DemoUIView extends View {
     private int touchLength = 10;
     private ArrayList<PointF> touchPoints;
 
-    private String[] menuItems = {"copy", "paste", "color", "size"};
+    private String[][] menuItems = {{"copy", "paste", "color", "size"}, {"font", "size", "bright", "contrast"}};
     private float menuDistance = 80.0f;
     private PointF menuCenter = new PointF();
 
     private Runnable strokeDeleting;
     private Handler mHandler;
 
+    //0 - first layer, 1- second layer, 2 - third layer (value selection)
+    public int totalMenuLayers = 3;
+    public int currentMenuLayer = -1;
+    //for the first layer - second layer
+
+
+    //for the second layer - third layer
     public boolean isTriggered = false;
     public boolean isSubMenuing = false;
     private boolean isSubMenuVertical = false;
@@ -83,8 +90,8 @@ public class DemoUIView extends View {
         strokePaint.setStyle(Paint.Style.STROKE);
         strokePaint.setStrokeJoin(Paint.Join.ROUND);
 
-        menuCenter.x = 200.0f;
-        menuCenter.y = 200.0f;
+        menuCenter.x = 100.0f;
+        menuCenter.y = 100.0f;
 
         this.setBackgroundColor(Color.parseColor("#559B9B9B"));
 
@@ -186,7 +193,7 @@ public class DemoUIView extends View {
              *          3
              */
             //for the commands tags
-            for(int itrc = 0; itrc < menuItems.length; itrc++)
+            for(int itrc = 0; itrc < menuItems[currentMenuLayer].length; itrc++)
             {
                 int posX = 1;
                 int posY = 1;
@@ -207,7 +214,7 @@ public class DemoUIView extends View {
                         posY = -1;
                     }
                 }
-                canvas.drawText(menuItems[itrc], menuCenter.x + posX * menuDistance, menuCenter.y + posY * menuDistance, inputPaint);
+                canvas.drawText(menuItems[currentMenuLayer][itrc], menuCenter.x + posX * menuDistance, menuCenter.y + posY * menuDistance, inputPaint);
             }
 
 
@@ -336,9 +343,9 @@ public class DemoUIView extends View {
     {
         menuCenter.set(x, y);
         isTriggered = true;
+        currentMenuLayer = 0;
         invalidate();
     }
-
 
     //gesture detection
     private int detectGesture(ArrayList<PointF> points)

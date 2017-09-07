@@ -28,22 +28,16 @@ public class ContentView extends View {
     private float lineSpace = 20.f;
     private float textSpace = 5.0f;
 
-    public String text = "The judge questioning them is deciding what charges to press over the vehicle attacks that left 15 people dead and more than 100 injured. " +
-            "Eight other members of the alleged cell are dead - some killed in an explosion, others shot by police. " +
-            "The last suspect was killed in a vineyard west of Barcelona on Monday. " +
-            "A 22-year-old Moroccan, Younes Abouyaaqoub, is thought to have been the driver of the van that rammed into crowds in Barcelona on Thursday. " +
-            "He was wearing a fake explosives belt and shouted \"Allahu Akbar\" (\"God is Greatest\") before he was shot dead by police, said reports.";
-
-    ArrayList<String> textList = new ArrayList<String>(Arrays.asList(text.split("\\s+")));
+    //bounding box width
+    private int boundX = 3;
+    private int boundY = 3;
 
     public ContentView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         inputPaint.setAntiAlias(true);
-        inputPaint.setStrokeWidth(0);
-        inputPaint.setColor(Color.BLACK);
-        inputPaint.setTextSize(22);
-        inputPaint.setStyle(Paint.Style.STROKE);
+        inputPaint.setColor(Color.GREEN);
+        inputPaint.setStyle(Paint.Style.FILL);
         inputPaint.setStrokeJoin(Paint.Join.ROUND);
 
         textCursor.x = 0;
@@ -66,22 +60,8 @@ public class ContentView extends View {
     protected void onDraw(Canvas canvas)
     {
 
-        canvas.drawCircle(50, 50, 100, inputPaint);
-
-        for(int itrt = 0; itrt < textList.size(); itrt++)
-        {
-            if(textCursor.x + inputPaint.measureText(textList.get(itrt)) >  screenWidth)
-            {
-                //change to the next line
-                textCursor.x = 0;
-                textCursor.y += lineSpace;
-            }
-
-            canvas.drawText(textList.get(itrt), textCursor.x, textCursor.y, inputPaint);
-            //Log.d(TAG, "X " + textCursor.x + "  y " + textCursor.y);
-
-            textCursor.x += (inputPaint.measureText(textList.get(itrt)) + textSpace);
-        }
+        //draw a rectangle color
+        //canvas.drawRect(boundX, boundY, screenWidth / 2, screenHeight - boundY, inputPaint);
 
     }
 }

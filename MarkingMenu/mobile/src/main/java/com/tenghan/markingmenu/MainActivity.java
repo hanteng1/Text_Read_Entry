@@ -31,6 +31,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public ContentView mContentView;
     public GestureDetector mGestureDetetor;  //handle touch screen events
 
+    public int offsetX = 110;
+    public int offsetY = 320;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,9 +43,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         instance = this;
 
         FrameLayout frameLayout = (FrameLayout)findViewById(R.id.frame_layout);
-        ViewGroup.LayoutParams layoutParams = (ViewGroup.LayoutParams) frameLayout.getLayoutParams();
+        //ViewGroup.LayoutParams layoutParams = (ViewGroup.LayoutParams) frameLayout.getLayoutParams();
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) frameLayout.getLayoutParams();
+
         layoutParams.width = 320;
         layoutParams.height = 320;
+        layoutParams.leftMargin = offsetX;
+        layoutParams.topMargin = offsetY;
         frameLayout.setLayoutParams(layoutParams);
 
         mContentView = (ContentView)findViewById(R.id.content_view);
@@ -50,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         mDemoUIView.setDimension(320, 320);
 
         mGestureDetetor = new GestureDetector(this, this);
-
 
         if(Build.VERSION.SDK_INT < 16)
         {
@@ -101,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         }else if(event.getAction() == MotionEvent.ACTION_MOVE)
         {
             //Log.d(TAG, "move");
-            mDemoUIView.onFingerMove(event.getX(), event.getY());
+            mDemoUIView.onFingerMove(event.getX() - offsetX, event.getY() - offsetY);
         }
 
         return mGestureDetetor.onTouchEvent(event);
@@ -128,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public void onLongPress(MotionEvent e) {
 
         //trigger
-        mDemoUIView.onLongPressed(e.getX(), e.getY());
+        mDemoUIView.onLongPressed(e.getX() - offsetX, e.getY() - offsetY);
         //Log.d(TAG, "long press");
     }
 
