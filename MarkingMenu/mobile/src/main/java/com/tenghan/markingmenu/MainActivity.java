@@ -1,5 +1,12 @@
 package com.tenghan.markingmenu;
 
+
+/**
+ * marking menu is compound
+ * first layer discrete
+ * second layer continuous
+ */
+
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

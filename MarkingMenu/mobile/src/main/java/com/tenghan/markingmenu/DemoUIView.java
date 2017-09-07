@@ -60,15 +60,30 @@ public class DemoUIView extends View {
 
     private boolean isSubMenuVertical = false;
     private boolean isSubMenuLeftTop = false;
-    private float subMenuWidth = 70;
+    private float subMenuWidth = 60;
     private int currentSubMenu = -1;
     private PointF subMenuTouchAchor = new PointF();
 
+
+    //color submenu
     private ArrayList<Integer> colorCode;
     private Random rand;
     private int totalColor = 100;
     private int presentedColor = 10;
     private int colorAnchor = 45;
+
+
+    //letter submenu, scroll list
+    private ArrayList<String> scrollList;
+    private int totallists = 7;
+
+    private String[] alphabet = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+
+
+    //continuous bar
+
+
+
 
 
     public DemoUIView(Context context, AttributeSet attrs) {
@@ -107,6 +122,11 @@ public class DemoUIView extends View {
         colorCode = new ArrayList<Integer>();
         rand = new Random();
         generateColor(totalColor);
+
+
+        //scroll list
+        scrollList = new ArrayList<String>();
+        generateScrollList(totallists);
 
         touchPoints = new ArrayList<PointF>();
 
@@ -150,6 +170,15 @@ public class DemoUIView extends View {
 
             color = Color.argb(a, r, g, b);
             colorCode.add(color);
+        }
+    }
+
+
+    private void generateScrollList(int num)
+    {
+        for(int itrl =0; itrl < num; itrl++)
+        {
+            scrollList.add(alphabet[itrl]);
         }
     }
 
@@ -301,8 +330,24 @@ public class DemoUIView extends View {
         }else
         {
             //based on which command is triggered
+            if(currentSubMenu == 0)
+            {
+                drawColorPanel(canvas, isSubMenuVertical, isSubMenuLeftTop);
+            }else if(currentSubMenu == 1)
+            {
+                //scroll bar
 
-            drawColorPanel(canvas, isSubMenuVertical, isSubMenuLeftTop);
+                drawListPanel(canvas, isSubMenuVertical, isSubMenuLeftTop);
+
+            }else if(currentSubMenu == 2)
+            {
+                //scroll list
+
+                drawListPanel(canvas, isSubMenuVertical, isSubMenuLeftTop);
+
+            }
+
+
         }
 
     }
@@ -422,31 +467,47 @@ public class DemoUIView extends View {
                 //submenu is activated
                 //operate on the submenu
 
-                if(isSubMenuVertical == true)
+                if(currentSubMenu == 0)
                 {
-                    //vertical, use y
-                    float diffY = y - subMenuTouchAchor.y;
-                    int diffColorAnchor = (int) (diffY * (totalColor - presentedColor)) / screenHeight;
-                    colorAnchor = totalColor / 2 + diffColorAnchor;
+                    //for color
+                    if(isSubMenuVertical == true)
+                    {
+                        //vertical, use y
+                        float diffY = y - subMenuTouchAchor.y;
+                        int diffColorAnchor = (int) (diffY * (totalColor - presentedColor)) / screenHeight;
+                        colorAnchor = totalColor / 2 + diffColorAnchor;
 
-                    Log.d(TAG, "diffY " + diffY);
-                }else
+                        Log.d(TAG, "diffY " + diffY);
+                    }else
+                    {
+                        //horizontal, use x
+                        float diffX = x - subMenuTouchAchor.x;
+                        int diffColorAnchor = (int) (diffX * (totalColor - presentedColor)) / screenWidth;
+                        colorAnchor = totalColor / 2 + diffColorAnchor;
+
+                        Log.d(TAG, "diffX " + diffX);
+                    }
+
+                    if( (colorAnchor + presentedColor)  > totalColor)
+                    {
+                        colorAnchor = totalColor - presentedColor;
+                    }else if(colorAnchor < 0)
+                    {
+                        colorAnchor = 0;
+                    }
+                }else if(currentSubMenu == 1)
                 {
-                    //horizontal, use x
-                    float diffX = x - subMenuTouchAchor.x;
-                    int diffColorAnchor = (int) (diffX * (totalColor - presentedColor)) / screenWidth;
-                    colorAnchor = totalColor / 2 + diffColorAnchor;
 
-                    Log.d(TAG, "diffX " + diffX);
+                    //control a scroll bar
+
+
+
+                }else if(currentSubMenu == 2)
+                {
+                    //control scroll list
+
                 }
 
-                if( (colorAnchor + presentedColor)  > totalColor)
-                {
-                    colorAnchor = totalColor - presentedColor;
-                }else if(colorAnchor < 0)
-                {
-                    colorAnchor = 0;
-                }
 
             }
 
@@ -641,14 +702,66 @@ public class DemoUIView extends View {
         }
     }
 
-    private void drawFontSizePanel (Canvas canvas, float x, float y)
+    private void drawListPanel(Canvas canvas, boolean isVertical, boolean isLeftTop)
     {
+        float mWidth;
+        float mHeight;
+        float anchorX;
+        float anchorY;
+
+        subMenuPaint.setStyle(Paint.Style.STROKE);
+        subMenuPaint.setTextSize(60);
+        subMenuPaint.setColor(Color.GRAY);
+
+        if(isVertical)
+        {
+            mWidth = subMenuWidth;
+            mHeight = screenHeight;
+            anchorY = 0;
+
+            if(isLeftTop)
+            {
+                //on left
+                anchorX = 0;
+            }else
+            {
+                //on right
+                anchorX = screenWidth - subMenuWidth;
+            }
+
+            //draw the list segments
+            float segment = mHeight / scrollList.size();
+            for(int itrc = 0; itrc < scrollList.size(); itrc++)
+            {
+                canvas.drawText(scrollList.get(itrc), anchorX, anchorY + segment * (itrc + 1), subMenuPaint);
+            }
+
+        }else
+        {
+            //on top or bottom
+            mWidth = screenWidth;
+            mHeight = subMenuWidth;
+            anchorX = 0;
+
+            if(isLeftTop)
+            {
+                //on top
+                anchorY = subMenuWidth;
+            }else
+            {
+                //on bottom
+                anchorY = screenHeight;
+            }
+
+            float segment = mWidth / scrollList.size();
+            for(int itrc = 0; itrc < scrollList.size(); itrc++)
+            {
+                canvas.drawText(scrollList.get(itrc), anchorX + segment * itrc, anchorY, subMenuPaint);
+            }
+
+        }
 
     }
 
-    private void drawPageFlipPanel(Canvas canvas, float x, float y)
-    {
-
-    }
 
 }
