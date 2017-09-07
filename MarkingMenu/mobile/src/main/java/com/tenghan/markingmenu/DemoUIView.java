@@ -82,8 +82,7 @@ public class DemoUIView extends View {
 
 
     //continuous bar
-
-
+    private float barWidth = 40;
 
 
 
@@ -338,7 +337,7 @@ public class DemoUIView extends View {
             {
                 //scroll bar
 
-                drawListPanel(canvas, isSubMenuVertical, isSubMenuLeftTop);
+                drawBarPanel(canvas, isSubMenuVertical, isSubMenuLeftTop);
 
             }else if(currentSubMenu == 2)
             {
@@ -714,8 +713,6 @@ public class DemoUIView extends View {
         subMenuPaint.setTextSize(60);
         subMenuPaint.setColor(Color.GRAY);
 
-
-
         if(isVertical)
         {
             mWidth = subMenuWidth;
@@ -782,6 +779,81 @@ public class DemoUIView extends View {
             {
                 canvas.drawText(scrollList.get(itrc), anchorX + segment * itrc, anchorY, subMenuPaint);
             }
+
+        }
+
+    }
+
+    private void drawBarPanel(Canvas canvas, boolean isVertical, boolean isLeftTop)
+    {
+        float mWidth;
+        float mHeight;
+        float anchorX;
+        float anchorY;
+
+        subMenuPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        subMenuPaint.setColor(Color.GRAY);
+
+        if(isVertical)
+        {
+            mWidth = barWidth;
+            mHeight = screenHeight;
+            anchorY = 0;
+
+            if(isLeftTop)
+            {
+                //on left
+                anchorX = 0;
+
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX, anchorY + listCursor.y, anchorX + mWidth * 2, anchorY + listCursor.y, subMenuSliderPaint);
+                }
+            }else
+            {
+                //on right
+                anchorX = screenWidth - subMenuWidth;
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX - mWidth, anchorY + listCursor.y, anchorX + mWidth, anchorY + listCursor.y, subMenuSliderPaint);
+                }
+            }
+
+            //draw the bar
+            canvas.drawRect(anchorX, anchorY, anchorX + mWidth, anchorY + mHeight, subMenuPaint);
+
+        }else
+        {
+            //on top or bottom
+            mWidth = screenWidth;
+            mHeight = barWidth;
+            anchorX = 0;
+
+            if(isLeftTop)
+            {
+                //on top
+                anchorY = 0;
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX + listCursor.x, anchorY, anchorX + listCursor.x, anchorY + mHeight, subMenuSliderPaint);
+                }
+            }else
+            {
+                //on bottom
+                anchorY = screenHeight - mHeight;
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX + listCursor.x, anchorY, anchorX + listCursor.x, anchorY + mHeight, subMenuSliderPaint);
+                }
+            }
+
+            //draw the bar
+            canvas.drawRect(anchorX, anchorY, anchorX + mWidth, anchorY + mHeight, subMenuPaint);
+
 
         }
 
