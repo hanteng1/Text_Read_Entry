@@ -76,7 +76,8 @@ public class DemoUIView extends View {
     //letter submenu, scroll list
     private ArrayList<String> scrollList;
     private int totallists = 7;
-
+    private PointF listCursor = new PointF();
+    boolean isDrawingCursor = true;
     private String[] alphabet = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
 
 
@@ -499,13 +500,13 @@ public class DemoUIView extends View {
                 {
 
                     //control a scroll bar
-
+                    listCursor.set(x, y);
 
 
                 }else if(currentSubMenu == 2)
                 {
                     //control scroll list
-
+                    listCursor.set(x, y);
                 }
 
 
@@ -713,6 +714,8 @@ public class DemoUIView extends View {
         subMenuPaint.setTextSize(60);
         subMenuPaint.setColor(Color.GRAY);
 
+
+
         if(isVertical)
         {
             mWidth = subMenuWidth;
@@ -723,10 +726,21 @@ public class DemoUIView extends View {
             {
                 //on left
                 anchorX = 0;
+
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX, anchorY + listCursor.y, anchorX + mWidth * 2, anchorY + listCursor.y, subMenuSliderPaint);
+                }
             }else
             {
                 //on right
                 anchorX = screenWidth - subMenuWidth;
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX - mWidth, anchorY + listCursor.y, anchorX + mWidth, anchorY + listCursor.y, subMenuSliderPaint);
+                }
             }
 
             //draw the list segments
@@ -746,11 +760,21 @@ public class DemoUIView extends View {
             if(isLeftTop)
             {
                 //on top
-                anchorY = subMenuWidth;
+                anchorY = mHeight;
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX + listCursor.x, anchorY - mHeight, anchorX + listCursor.x, anchorY + mHeight, subMenuSliderPaint);
+                }
             }else
             {
                 //on bottom
                 anchorY = screenHeight;
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX + listCursor.x, anchorY - mHeight, anchorX + listCursor.x, anchorY + mHeight, subMenuSliderPaint);
+                }
             }
 
             float segment = mWidth / scrollList.size();
