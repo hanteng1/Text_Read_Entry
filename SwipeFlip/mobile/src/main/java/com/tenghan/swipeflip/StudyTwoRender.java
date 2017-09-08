@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -81,7 +82,6 @@ public class StudyTwoRender extends StudyRender{
         task_alphabet.add("C");
         task_alphabet.add("D");
         task_alphabet.add("E");
-        task_alphabet.add("F");
 
         task_number = new ArrayList<Integer>();
         task_number.add(1);
@@ -220,11 +220,145 @@ public class StudyTwoRender extends StudyRender{
         background.recycle();
         background = null;
 
-        //target
+        PointF origin = new PointF();
+        if(mCorner == 0)
+        {
+            origin.set(0, 0);
+        }else if(mCorner == 1)
+        {
+            origin.set(width, 0);
+        }else if(mCorner == 2)
+        {
+            origin.set(width, height);
+        }else if(mCorner == 3)
+        {
+            origin.set(0, height);
+        }
+
+        //target and actual
+        if(mTask == 1 && mAngleActual == mAngleTarget)
+        {
+            float segDis = maxDistance / mDistanceNum;
+            float segAngle = maxAngle / mAngleNum;
+            for(int itr = 0; itr < mDistanceNum; itr++)
+            {
+                float targetLength = segDis * (itr + 0.5f) + reservedDistance;
+                float targetAngle = segAngle * ( mAngleTarget + 0.5f) + maxAngle * mCorner;
+                float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
+                float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
+
+                p.setTextSize(calcFontSize(20));
+                p.setColor(Color.BLUE);
+                String taskText = task_alphabet.get(itr);
+                float textWidth = p.measureText(taskText);
+                mCanvas.drawText(taskText, targetX - textWidth, targetY, p);
+            }
+
+            if(mDistanceActual != -1)
+            {
+                float actualLength = segDis * (mDistanceActual + 0.5f) + reservedDistance;
+                float actualAngle = segAngle * ( mAngleActual + 0.5f) + maxAngle * mCorner;
+                float targetX = origin.x + actualLength * (float)Math.cos(actualAngle);
+                float targetY = origin.y + actualLength * (float)Math.sin(actualAngle);
+
+                p.setTextSize(calcFontSize(20));
+                p.setColor(Color.GREEN);
+                String taskText = task_alphabet.get(mDistanceActual);
+                float textWidth = p.measureText(taskText);
+                mCanvas.drawText(taskText, targetX - textWidth, targetY, p);
+            }
+
+        }else if(mTask == 2 && mAngleActual == mAngleTarget)
+        {
+            float segDis = maxDistance / mDistanceNum;
+            float segAngle = maxAngle / mAngleNum;
+            for(int itr = 0; itr < mDistanceNum; itr++)
+            {
+                float targetLength = segDis * (itr + 0.5f) + reservedDistance;
+                float targetAngle = segAngle * ( mAngleTarget + 0.5f) + maxAngle * mCorner;
+                float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
+                float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
+
+                p.setTextSize(calcFontSize(20));
+                p.setColor(Color.BLUE);
+                String taskText = "" + task_number.get(itr);
+                float textWidth = p.measureText(taskText);
+                mCanvas.drawText(taskText, targetX - textWidth, targetY, p);
+            }
+
+            if(mDistanceActual != -1)
+            {
+                float actualLength = segDis * (mDistanceActual + 0.5f) + reservedDistance;
+                float actualAngle = segAngle * ( mAngleActual + 0.5f) + maxAngle * mCorner;
+                float targetX = origin.x + actualLength * (float)Math.cos(actualAngle);
+                float targetY = origin.y + actualLength * (float)Math.sin(actualAngle);
+
+                p.setTextSize(calcFontSize(20));
+                p.setColor(Color.GREEN);
+                String taskText = "" + task_number.get(mDistanceActual);
+                float textWidth = p.measureText(taskText);
+                mCanvas.drawText(taskText, targetX - textWidth, targetY, p);
+            }
+
+        }else if(mTask == 3 && mAngleActual == mAngleTarget)
+        {
+            float segDis = maxDistance / mDistanceNum;
+            float segAngle = maxAngle / mAngleNum;
+            for(int itr = 0; itr < mDistanceNum; itr++)
+            {
+                float targetLength = segDis * (itr + 0.5f) + reservedDistance;
+                float targetAngle = segAngle * ( mAngleTarget + 0.5f) + maxAngle * mCorner;
+                float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
+                float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
+
+                Bitmap shapebit = BitmapFactory.decodeResource(mContext.getResources(), task_shape.get(itr));
+                RectF dest;
+                if(itr == 4)
+                {
+                    dest = new RectF(targetX - 15, targetY - 10, targetX + 15, targetY + 10);
+                }else
+                {
+                    dest = new RectF(targetX - 10, targetY - 10, targetX + 10, targetY + 10);
+                }
+
+                mCanvas.drawBitmap(shapebit, null, dest, p);
+            }
+
+            if(mDistanceActual != 0)
+            {
+                float actualLength = segDis * (mDistanceActual + 0.5f) + reservedDistance;
+                float actualAngle = segAngle * ( mAngleTarget + 0.5f) + maxAngle * mCorner;
+                float targetX = origin.x + actualLength * (float)Math.cos(actualAngle);
+                float targetY = origin.y + actualLength * (float)Math.sin(actualAngle);
+
+                Bitmap shapebit = BitmapFactory.decodeResource(mContext.getResources(), task_shape.get(mDistanceActual));
+                RectF dest;
+                if(mDistanceActual == 4)
+                {
+                    dest = new RectF(targetX - 15, targetY - 10, targetX + 15, targetY + 10);
+                }else
+                {
+                    dest = new RectF(targetX - 10, targetY - 10, targetX + 10, targetY + 10);
+                }
+
+                Paint tintPaint = new Paint();
+                tintPaint.setColorFilter(new LightingColorFilter(Color.GREEN, 0));
+                mCanvas.drawBitmap(shapebit, null, dest, tintPaint);
+            }
 
 
+        }else if(mTask == 4)
+        {
 
-        //and actual
+        }else if(mTask == 5)
+        {
+
+        }else if(mTask == 6)
+        {
+
+        }
+
+
     }
 
     //show the task on first page
@@ -285,9 +419,28 @@ public class StudyTwoRender extends StudyRender{
             Bitmap shapebit = BitmapFactory.decodeResource(mContext.getResources(), task_shape.get(mDistanceTargert));
             y = height /2;
             x = width / 2;
-            RectF dest = new RectF(x - 30, y - 30, x + 30, y + 30);
+            RectF dest;
+            if(mDistanceTargert == 4)
+            {
+                dest = new RectF(x - 45, y - 30, x + 45, y + 30);
+            }else
+            {
+                dest = new RectF(x - 30, y - 30, x + 30, y + 30);
+            }
+
             mCanvas.drawBitmap(shapebit, null, dest, p);
+        }else if(mTask == 4)
+        {
+
+        }else if(mTask == 5)
+        {
+
+        }else if(mTask == 6)
+        {
+
         }
+
+
 
     }
 
@@ -356,44 +509,22 @@ public class StudyTwoRender extends StudyRender{
         float segAngle = maxAngle / mAngleNum;
         int angSegs = (int) (ang / segAngle);
 
-        //float targetLength = segDis * (disSegs + 0.5f);
-        //float targetAngle = segAngle * ( angSegs + 0.5f) + maxAngle * mCorner;
-        //float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
-        //float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
-
-        if(dis >= reservedDistance &&
-                disSegs != mDistanceActual || angSegs != mAngleActual)
+        if(mTask < 4)
         {
-            mDistanceActual = disSegs;
-            //Log.d(TAG, "dis actual "  + mDistanceActual);
-            mAngleActual = angSegs;
-            ReloadSecondPageTexture();
-
-
-            //update the recrod
-            MainActivity.getSharedInstance().mStudyView.mStudy.numVistedCells++;
-            int overshot = mDistanceActual - mDistanceTargert;
-            if(overshot > MainActivity.getSharedInstance().mStudyView.mStudy.numOvershoot)
+            //discrete
+            if(dis >= reservedDistance &&
+                    disSegs != mDistanceActual || angSegs != mAngleActual)
             {
-                MainActivity.getSharedInstance().mStudyView.mStudy.numOvershoot = overshot;
+                mDistanceActual = disSegs;
+                mAngleActual = angSegs;
+                ReloadSecondPageTexture();
             }
+        }else
+        {
 
-            //record the data
-            long timestamp = System.currentTimeMillis();
-            MainActivity.getSharedInstance().mStudyView.mStudy.trialState = 2;
-//            DataStorage.AddSample(MainActivity.getSharedInstance().mStudyView.mStudy.currentCondition,
-//                    MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
-//                    mCorner,
-//                    mAngleNum,
-//                    mDistanceNum,
-//                    mClose,
-//                    mAngleTarget,
-//                    mDistanceTargert,
-//                    mAngleActual,
-//                    mDistanceActual,
-//                    MainActivity.getSharedInstance().mStudyView.mStudy.trialState,
-//                    timestamp);
         }
+
+
     }
 
 

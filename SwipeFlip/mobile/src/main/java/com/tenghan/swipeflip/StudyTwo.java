@@ -180,7 +180,11 @@ public class StudyTwo extends PageFlipModifyAbstract{
             MainActivity.getSharedInstance().mGestureService.handleData(new float[]{touchX, touchY});
 
             //reload the first page texture
-            MainActivity.getSharedInstance().mStudyView.mPageRender.ReloadFirstPageTexture();
+
+            if(MainActivity.getSharedInstance().mStudyView.mPageRender.mTask > 4)
+            {
+                MainActivity.getSharedInstance().mStudyView.mPageRender.ReloadFirstPageTexture();
+            }
 
             //save data, a trial starts
             long timestamp = System.currentTimeMillis();
@@ -359,6 +363,77 @@ public class StudyTwo extends PageFlipModifyAbstract{
     {
         mPages[currentPageLock].computeKeyVertexesWhenSlope();
         mPages[currentPageLock].computeVertexesWhenSlope();
+
+        //calculate the selection
+        //grab some key values of the page
+        PointF xfoldpc = mPages[FIRST_PAGE].mXFoldPcR;
+        PointF yfoldpc = mPages[FIRST_PAGE].mYFoldPcR;
+
+        GLPoint originer = mPages[FIRST_PAGE].originP;
+        PointF corner = mPages[FIRST_PAGE].mFakeTouchP;
+
+        cursor = calIntersection(originer.x, originer.y, corner.x, corner.y,
+                xfoldpc.x, xfoldpc.y, yfoldpc.x, yfoldpc.y);
+
+
+        MainActivity.getSharedInstance().mStudyView.mPageRender.selectedSegment(cursor);
+
+    }
+
+    private float fromOpenGLX(float x) {
+        return x + getSurfaceWidth() / 2;
+    }
+
+    private float fromOpenGLY(float y) {
+        return getSurfaceHeight() / 2 - y;
+    }
+
+    //calcuate the intersection point of line 1-2 and 3-4
+    private PointF calIntersection(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+    {
+        PointF cross = new PointF();
+
+        x1 = fromOpenGLX(x1);
+        y1 = fromOpenGLY(y1);
+        x2 = fromOpenGLX(x2);
+        y2 = fromOpenGLY(y2);
+        x3 = fromOpenGLX(x3);
+        y3 = fromOpenGLY(y3);
+        x4 = fromOpenGLX(x4);
+        y4 = fromOpenGLY(y4);
+
+        if(x1 == x2 || x3 == x4)
+        {
+            return cross;
+        }
+
+        //y = ax + b
+        float a1 = (y2-y1) / (x2 - x1);
+        float b1 = y1 - a1 * x1;
+        float a2 = (y4 - y3) / (x4 - x3);
+        float b2 = y3 - a2*x3;
+
+        //parallel
+        if(a1 == a2)
+        {
+            return cross;
+        }
+
+        float x0 = -(b1-b2) / (a1 - a2);
+
+        if(Math.min(x1, x2) < x0 && x0 < Math.max(x1, x2) &&
+                Math.min(x3, x4) < x0  && x0 < Math.max(x3, x4))
+        {
+            cross.set(x0, a1*x0 + b1);
+
+            Log.d(TAG, "x " + cross.x + " , y " + cross.y);
+
+            return cross;
+        }else
+        {
+            return cross;
+        }
+
     }
 
 }
