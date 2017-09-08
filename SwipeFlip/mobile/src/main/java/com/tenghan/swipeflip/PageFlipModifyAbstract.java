@@ -572,7 +572,8 @@ public abstract class PageFlipModifyAbstract {
                 if(MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4)
                 {
                     //check the result
-
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = true;
+                    MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 1;
 
                     //save the result
 
@@ -580,6 +581,8 @@ public abstract class PageFlipModifyAbstract {
                 }else
                 {
                     //check the result
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = true;
+                    MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 1;
 
                     //save the result
 

@@ -2,11 +2,13 @@ package com.tenghan.swipeflip;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Handler;
 
 import com.eschao.android.widget.pageflip.modify.PageModify;
@@ -49,6 +51,21 @@ public class StudyTwoRender extends StudyRender{
 
     private Random rand;
 
+
+    //task 1, alphabet
+    public ArrayList<String> task_alphabet;
+
+
+    //task 2, number
+    public ArrayList<Integer> task_number;
+
+
+    //task 3, shape
+    public ArrayList<Integer> task_shape;
+
+
+
+
     public StudyTwoRender(Context context, PageFlipModifyAbstract pageFlipAbstract,
                           Handler handler, int pageNo)
     {
@@ -56,6 +73,32 @@ public class StudyTwoRender extends StudyRender{
         paths = new ArrayList<Path>();
         sin45 = (float)Math.sin(Math.PI / 4);
         rand = new Random();
+
+        //task 1
+        task_alphabet = new ArrayList<String>();
+        task_alphabet.add("A");
+        task_alphabet.add("B");
+        task_alphabet.add("C");
+        task_alphabet.add("D");
+        task_alphabet.add("E");
+        task_alphabet.add("F");
+
+        task_number = new ArrayList<Integer>();
+        task_number.add(1);
+        task_number.add(2);
+        task_number.add(3);
+        task_number.add(4);
+        task_number.add(5);
+
+        task_shape = new ArrayList<Integer>();
+        task_shape.add(R.drawable.geo_1);
+        task_shape.add(R.drawable.geo_2);
+        task_shape.add(R.drawable.geo_3);
+        task_shape.add(R.drawable.geo_4);
+        task_shape.add(R.drawable.geo_5);
+
+
+
     }
 
     //initial load
@@ -119,17 +162,19 @@ public class StudyTwoRender extends StudyRender{
 
         if(mTask == 1)
         {
-            //task 1
+            //task 1 , alphabet
             mCorner = 0;
             mAngleTarget = 0;
+
+
         }else if(mTask == 2)
         {
-            //task 2
+            //task 2, number
             mCorner = 0;
             mAngleTarget = 1;
         }else if(mTask == 3)
         {
-            //task 3
+            //task 3, shape
             mCorner = 0;
             mAngleTarget = 2;
         }else if(mTask == 4)
@@ -208,12 +253,41 @@ public class StudyTwoRender extends StudyRender{
                 + " / " + MainActivity.getSharedInstance().mStudyView.mStudy.taskCount;
 
         float textWidth = p.measureText(taskText);
-        float y = height / 2;
+        float y = height / 4;
         float x = width / 2 - textWidth / 2;
         mCanvas.drawText(taskText, x, y, p);
 
         //draw target
+        if(mTask == 1)
+        {
+            //draw letter
+            p.setTextSize(calcFontSize(40));
+            p.setColor(Color.BLUE);
+            y = height/2 + 10;
+            taskText = task_alphabet.get(mDistanceTargert);
+            textWidth = p.measureText(taskText);
+            x = width / 2 - textWidth/2;
+            mCanvas.drawText(taskText, x, y, p);
+        }else if(mTask == 2)
+        {
+            //draw number
+            p.setTextSize(calcFontSize(40));
+            p.setColor(Color.BLUE);
+            y = height/2 + 10;
+            taskText = "" + task_number.get(mDistanceTargert);
+            textWidth = p.measureText(taskText);
+            x = width / 2 - textWidth/2;
+            mCanvas.drawText(taskText, x, y, p);
 
+        }else if(mTask == 3)
+        {
+            //draw shape
+            Bitmap shapebit = BitmapFactory.decodeResource(mContext.getResources(), task_shape.get(mDistanceTargert));
+            y = height /2;
+            x = width / 2;
+            RectF dest = new RectF(x - 30, y - 30, x + 30, y + 30);
+            mCanvas.drawBitmap(shapebit, null, dest, p);
+        }
 
     }
 
