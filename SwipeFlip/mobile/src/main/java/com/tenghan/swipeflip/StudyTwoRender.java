@@ -52,7 +52,6 @@ public class StudyTwoRender extends StudyRender{
 
     private Random rand;
 
-
     //task 1, alphabet
     public ArrayList<String> task_alphabet;
 
@@ -61,6 +60,15 @@ public class StudyTwoRender extends StudyRender{
 
     //task 3, shape
     public ArrayList<PointF[]> task_shape;
+
+
+
+    //for continuous values
+    public float mContinuousMax = maxDistance ; //160
+    public float mContinuousTarget = -1;
+    public float mContinuousActual = -1;
+    public float accuracyInterval = 0.05f;  // + -
+
 
 
 
@@ -74,11 +82,11 @@ public class StudyTwoRender extends StudyRender{
 
         //task 1
         task_alphabet = new ArrayList<String>();
-        task_alphabet.add("A");
-        task_alphabet.add("B");
-        task_alphabet.add("C");
-        task_alphabet.add("D");
-        task_alphabet.add("E");
+        task_alphabet.add("#");
+        task_alphabet.add("$");
+        task_alphabet.add("=");
+        task_alphabet.add("@");
+        task_alphabet.add("&");
 
         task_number = new ArrayList<Integer>();
         task_number.add(1);
@@ -163,7 +171,6 @@ public class StudyTwoRender extends StudyRender{
             mCorner = 0;
             mAngleTarget = 0;
 
-
         }else if(mTask == 2)
         {
             //task 2, number
@@ -191,10 +198,15 @@ public class StudyTwoRender extends StudyRender{
             mAngleTarget = 2;
         }
 
+        //for discrete
         mDistanceTargert = (int)(mDistanceNum * mCloseValue);
-
         mDistanceActual = -1;
         mAngleActual = -1;
+
+        //for continuous
+        mContinuousTarget = mContinuousMax * mCloseValue;
+        mContinuousActual = -1;
+
 
         mPageFlipAbstract.getPages()[FIRST_PAGE].waiting4TextureUpdate = true;
         mPageFlipAbstract.getPages()[SECOND_PAGE].waiting4TextureUpdate = true;
@@ -413,15 +425,105 @@ public class StudyTwoRender extends StudyRender{
             }
 
 
-        }else if(mTask == 4)
+        }else if(mTask == 4 && mAngleActual == mAngleTarget)
         {
+            // size
 
-        }else if(mTask == 5)
+            //target
+            if(mContinuousTarget != -1 && mContinuousTarget < mContinuousMax)
+            {
+                Path path = new Path();
+                path.moveTo(320, 0);
+                path.lineTo(320, mContinuousTarget);
+                path.lineTo(320 - mContinuousTarget, mContinuousTarget);
+                path.lineTo(320, 0);
+
+                p.setStyle(Paint.Style.STROKE);
+                p.setColor(Color.BLUE);
+                mCanvas.drawPath(path, p);
+
+            }
+
+            //actual
+            if(mContinuousActual != -1 && mContinuousActual < mContinuousMax)
+            {
+                Path path = new Path();
+                path.moveTo(320, 0);
+                path.lineTo(320 - mContinuousActual, 0);
+                path.lineTo(320 - mContinuousActual, mContinuousActual);
+                path.lineTo(320, 0);
+
+                p.setStyle(Paint.Style.STROKE);
+                p.setColor(Color.GREEN);
+                mCanvas.drawPath(path, p);
+            }
+
+        }else if(mTask == 5 && mAngleActual == mAngleTarget)
         {
+            //color
+            //target
+            if(mContinuousTarget != -1 && mContinuousTarget < mContinuousMax)
+            {
+                Path path = new Path();
+                path.moveTo(320, 0);
+                path.lineTo(320, 160);
+                path.lineTo(160, 160);
+                path.lineTo(320, 0);
 
-        }else if(mTask == 6)
+                p.setStyle(Paint.Style.FILL);
+                p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousTarget / mContinuousMax ))));
+                mCanvas.drawPath(path, p);
+
+            }
+
+            //actual
+            if(mContinuousActual != -1 && mContinuousActual < mContinuousMax)
+            {
+                Path path = new Path();
+                path.moveTo(320, 0);
+                path.lineTo(160, 0);
+                path.lineTo(160, 160);
+                path.lineTo(320, 0);
+
+                p.setStyle(Paint.Style.FILL);
+                p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousActual / mContinuousMax ))));
+                mCanvas.drawPath(path, p);
+            }
+
+
+        }else if(mTask == 6 && mAngleActual == mAngleTarget)
         {
+            //width
+            //target
+            if(mContinuousTarget != -1 && mContinuousTarget < mContinuousMax)
+            {
+                Path path = new Path();
+                path.moveTo(320, 0);
+                path.lineTo(320, 160);
+                path.lineTo(160, 160);
+                path.lineTo(320, 0);
 
+                p.setStyle(Paint.Style.STROKE);
+                p.setColor(Color.BLUE);
+                p.setStrokeWidth( 20 * (mContinuousTarget / mContinuousMax ));
+                mCanvas.drawPath(path, p);
+
+            }
+
+            //actual
+            if(mContinuousActual != -1 && mContinuousActual < mContinuousMax)
+            {
+                Path path = new Path();
+                path.moveTo(320, 0);
+                path.lineTo(160, 0);
+                path.lineTo(160, 160);
+                path.lineTo(320, 0);
+
+                p.setStyle(Paint.Style.STROKE);
+                p.setColor(Color.GREEN);
+                p.setStrokeWidth( 20 * (mContinuousActual / mContinuousMax ));
+                mCanvas.drawPath(path, p);
+            }
         }
 
 
@@ -509,13 +611,60 @@ public class StudyTwoRender extends StudyRender{
 
         }else if(mTask == 4)
         {
+            //font size
+            if(mContinuousTarget != -1 && mContinuousTarget < mContinuousMax)
+            {
+                Path path = new Path();
+                float mx = width/2;
+                float my = height/2;
+                float offx = 320 - mContinuousTarget / 2 - mx;
+                float offy = mContinuousTarget / 2 - my;
 
+                path.moveTo(320 - offx, 0 - offy);
+                path.lineTo(320 - offx, mContinuousTarget- offy);
+                path.lineTo(320 - mContinuousTarget - offx, mContinuousTarget- offy);
+                path.lineTo(320 - offx, 0- offy);
+
+                p.setStyle(Paint.Style.STROKE);
+                p.setColor(Color.GREEN);
+                mCanvas.drawPath(path, p);
+            }
         }else if(mTask == 5)
         {
 
+            Path path = new Path();
+            float mx = width/2;
+            float my = height/2;
+            float offx = 320 - 160 / 2 - mx;
+            float offy = 160 / 2 - my;
+
+            path.moveTo(320 - offx, 0 - offy);
+            path.lineTo(320 - offx, 160 - offy);
+            path.lineTo(320 - 160 - offx, 160- offy);
+            path.lineTo(320 - offx, 0- offy);
+
+            p.setStyle(Paint.Style.FILL);
+            p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousTarget / mContinuousMax ))));
+            mCanvas.drawPath(path, p);
+
         }else if(mTask == 6)
         {
+            Path path = new Path();
+            float mx = width/2;
+            float my = height/2;
+            float offx = 320 - 160 / 2 - mx;
+            float offy = 160 / 2 - my;
 
+            path.moveTo(320 - offx, 0 - offy);
+            path.lineTo(320 - offx, 160 - offy);
+            path.lineTo(320 - 160 - offx, 160- offy);
+            path.lineTo(320 - offx, 0- offy);
+
+            p.setStyle(Paint.Style.STROKE);
+            p.setColor(Color.GREEN);
+            p.setStrokeWidth( 20 * (mContinuousActual / mContinuousMax ));
+
+            mCanvas.drawPath(path, p);
         }
 
 
@@ -599,7 +748,13 @@ public class StudyTwoRender extends StudyRender{
             }
         }else
         {
-
+            if((2 * dis /3) != mContinuousActual || angSegs != mAngleActual)
+            {
+                mDistanceActual = disSegs;
+                mContinuousActual = (2*dis /3);
+                mAngleActual = angSegs;
+                ReloadSecondPageTexture();
+            }
         }
 
 
