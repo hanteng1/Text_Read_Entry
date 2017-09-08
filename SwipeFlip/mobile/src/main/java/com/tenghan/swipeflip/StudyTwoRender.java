@@ -56,14 +56,11 @@ public class StudyTwoRender extends StudyRender{
     //task 1, alphabet
     public ArrayList<String> task_alphabet;
 
-
     //task 2, number
     public ArrayList<Integer> task_number;
 
-
     //task 3, shape
-    public ArrayList<Integer> task_shape;
-
+    public ArrayList<PointF[]> task_shape;
 
 
 
@@ -90,13 +87,12 @@ public class StudyTwoRender extends StudyRender{
         task_number.add(4);
         task_number.add(5);
 
-        task_shape = new ArrayList<Integer>();
-        task_shape.add(R.drawable.geo_1);
-        task_shape.add(R.drawable.geo_2);
-        task_shape.add(R.drawable.geo_3);
-        task_shape.add(R.drawable.geo_4);
-        task_shape.add(R.drawable.geo_5);
-
+        task_shape = new ArrayList<PointF[]>();
+        task_shape.add(new PointF[]{new PointF(0, 0), new PointF(1, 0), new PointF(1, 1), new PointF(0, 1), new PointF(0, 0)});
+        task_shape.add(new PointF[]{new PointF(0, 0), new PointF(1, 0), new PointF(1, 1), new PointF(0, 1), new PointF(0, 0)});
+        task_shape.add(new PointF[]{new PointF(0, 0), new PointF(1, 0), new PointF(1, 1), new PointF(0, 1), new PointF(0, 0)});
+        task_shape.add(new PointF[]{new PointF(0, 0), new PointF(1, 0), new PointF(1, 1), new PointF(0, 1), new PointF(0, 0)});
+        task_shape.add(new PointF[]{new PointF(0, 0), new PointF(1, 0), new PointF(1, 1), new PointF(0, 1), new PointF(0, 0)});
 
 
     }
@@ -235,11 +231,49 @@ public class StudyTwoRender extends StudyRender{
             origin.set(0, height);
         }
 
+
+        float segAngle = maxAngle / mAngleNum;
+        float segDis = maxDistance / mDistanceNum;
+
+
+        //for references///////////
+        paths.clear();
+        p.setStyle(Paint.Style.STROKE);
+        //angle paths
+        for(int itra = 1; itra < mAngleNum; itra++)
+        {
+            mCanvas.drawLine(origin.x +  reservedDistance * (float)Math.cos(segAngle * itra + (Math.PI/2) * mCorner),
+                    origin.y + reservedDistance * (float)Math.sin(segAngle * itra + (Math.PI/2) * mCorner),
+                    origin.x + (maxDistance + reservedDistance) * (float)Math.cos(segAngle * itra + (Math.PI/2) * mCorner),
+                    origin.y + (maxDistance + reservedDistance) * (float)Math.sin(segAngle * itra + (Math.PI/2) * mCorner), p);
+
+        }
+
+        //distance paths
+        for(int itrd = 0; itrd < mDistanceNum + 1; itrd++)
+        {
+            //beging and end
+            if(itrd == 0 || itrd == mDistanceNum)
+            {
+                p.setColor(Color.RED);
+            }else
+            {
+                p.setColor(Color.GRAY);
+            }
+
+            RectF rectF = new RectF(origin.x - segDis * itrd - reservedDistance, origin.y - segDis * itrd - reservedDistance,
+                    origin.x + segDis * itrd + reservedDistance, origin.y + segDis * itrd + reservedDistance);
+
+            mCanvas.drawArc(rectF, mCorner * maxAngleDegree, maxAngleDegree, false, p);
+        }
+        ///////////
+
+
         //target and actual
         if(mTask == 1 && mAngleActual == mAngleTarget)
         {
-            float segDis = maxDistance / mDistanceNum;
-            float segAngle = maxAngle / mAngleNum;
+            //float segDis = maxDistance / mDistanceNum;
+            //float segAngle = maxAngle / mAngleNum;
             for(int itr = 0; itr < mDistanceNum; itr++)
             {
                 float targetLength = segDis * (itr + 0.5f) + reservedDistance;
@@ -247,6 +281,7 @@ public class StudyTwoRender extends StudyRender{
                 float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
                 float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
 
+                //p.setStyle(Paint.Style.STROKE);
                 p.setTextSize(calcFontSize(20));
                 p.setColor(Color.BLUE);
                 String taskText = task_alphabet.get(itr);
@@ -254,13 +289,14 @@ public class StudyTwoRender extends StudyRender{
                 mCanvas.drawText(taskText, targetX - textWidth, targetY, p);
             }
 
-            if(mDistanceActual != -1)
+            if(mDistanceActual != -1 && mDistanceActual < mDistanceNum)
             {
                 float actualLength = segDis * (mDistanceActual + 0.5f) + reservedDistance;
                 float actualAngle = segAngle * ( mAngleActual + 0.5f) + maxAngle * mCorner;
                 float targetX = origin.x + actualLength * (float)Math.cos(actualAngle);
                 float targetY = origin.y + actualLength * (float)Math.sin(actualAngle);
 
+                //p.setStyle(Paint.Style.STROKE);
                 p.setTextSize(calcFontSize(20));
                 p.setColor(Color.GREEN);
                 String taskText = task_alphabet.get(mDistanceActual);
@@ -270,8 +306,8 @@ public class StudyTwoRender extends StudyRender{
 
         }else if(mTask == 2 && mAngleActual == mAngleTarget)
         {
-            float segDis = maxDistance / mDistanceNum;
-            float segAngle = maxAngle / mAngleNum;
+            //float segDis = maxDistance / mDistanceNum;
+            //float segAngle = maxAngle / mAngleNum;
             for(int itr = 0; itr < mDistanceNum; itr++)
             {
                 float targetLength = segDis * (itr + 0.5f) + reservedDistance;
@@ -279,6 +315,7 @@ public class StudyTwoRender extends StudyRender{
                 float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
                 float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
 
+                //p.setStyle(Paint.Style.STROKE);
                 p.setTextSize(calcFontSize(20));
                 p.setColor(Color.BLUE);
                 String taskText = "" + task_number.get(itr);
@@ -286,13 +323,14 @@ public class StudyTwoRender extends StudyRender{
                 mCanvas.drawText(taskText, targetX - textWidth, targetY, p);
             }
 
-            if(mDistanceActual != -1)
+            if(mDistanceActual != -1 && mDistanceActual < mDistanceNum)
             {
                 float actualLength = segDis * (mDistanceActual + 0.5f) + reservedDistance;
                 float actualAngle = segAngle * ( mAngleActual + 0.5f) + maxAngle * mCorner;
                 float targetX = origin.x + actualLength * (float)Math.cos(actualAngle);
                 float targetY = origin.y + actualLength * (float)Math.sin(actualAngle);
 
+                //p.setStyle(Paint.Style.STROKE);
                 p.setTextSize(calcFontSize(20));
                 p.setColor(Color.GREEN);
                 String taskText = "" + task_number.get(mDistanceActual);
@@ -302,8 +340,8 @@ public class StudyTwoRender extends StudyRender{
 
         }else if(mTask == 3 && mAngleActual == mAngleTarget)
         {
-            float segDis = maxDistance / mDistanceNum;
-            float segAngle = maxAngle / mAngleNum;
+            //float segDis = maxDistance / mDistanceNum;
+            //float segAngle = maxAngle / mAngleNum;
             for(int itr = 0; itr < mDistanceNum; itr++)
             {
                 float targetLength = segDis * (itr + 0.5f) + reservedDistance;
@@ -311,39 +349,44 @@ public class StudyTwoRender extends StudyRender{
                 float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
                 float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
 
-                Bitmap shapebit = BitmapFactory.decodeResource(mContext.getResources(), task_shape.get(itr));
-                RectF dest;
-                if(itr == 4)
+                float scale = 20;
+                float xoffSet = targetX - scale * 0.5f;
+                float yoffSet = targetY - scale * 0.5f;
+
+                Path path = new Path();
+                path.moveTo(task_shape.get(itr)[0].x * scale + xoffSet, task_shape.get(itr)[0].y * scale + yoffSet);
+                for(int itrs = 1; itrs < task_shape.get(itr).length; itrs++)
                 {
-                    dest = new RectF(targetX - 15, targetY - 10, targetX + 15, targetY + 10);
-                }else
-                {
-                    dest = new RectF(targetX - 10, targetY - 10, targetX + 10, targetY + 10);
+                    path.lineTo(task_shape.get(itr)[itrs].x * scale + xoffSet, task_shape.get(itr)[itrs].y * scale + yoffSet);
                 }
 
-                mCanvas.drawBitmap(shapebit, null, dest, p);
+                p.setColor(Color.BLUE);
+                p.setStyle(Paint.Style.FILL);
+                mCanvas.drawPath(path, p);
+
             }
 
-            if(mDistanceActual != 0)
+            if(mDistanceActual != -1 && mDistanceActual < mDistanceNum)
             {
                 float actualLength = segDis * (mDistanceActual + 0.5f) + reservedDistance;
                 float actualAngle = segAngle * ( mAngleTarget + 0.5f) + maxAngle * mCorner;
                 float targetX = origin.x + actualLength * (float)Math.cos(actualAngle);
                 float targetY = origin.y + actualLength * (float)Math.sin(actualAngle);
 
-                Bitmap shapebit = BitmapFactory.decodeResource(mContext.getResources(), task_shape.get(mDistanceActual));
-                RectF dest;
-                if(mDistanceActual == 4)
+                float scale = 20;
+                float xoffSet = targetX - scale * 0.5f;
+                float yoffSet = targetY - scale * 0.5f;
+
+                Path path = new Path();
+                path.moveTo(task_shape.get(mDistanceActual)[0].x * scale + xoffSet, task_shape.get(mDistanceActual)[0].y * scale + yoffSet);
+                for(int itrs = 1; itrs < task_shape.get(mDistanceActual).length; itrs++)
                 {
-                    dest = new RectF(targetX - 15, targetY - 10, targetX + 15, targetY + 10);
-                }else
-                {
-                    dest = new RectF(targetX - 10, targetY - 10, targetX + 10, targetY + 10);
+                    path.lineTo(task_shape.get(mDistanceActual)[itrs].x * scale + xoffSet, task_shape.get(mDistanceActual)[itrs].y * scale + yoffSet);
                 }
 
-                Paint tintPaint = new Paint();
-                tintPaint.setColorFilter(new LightingColorFilter(Color.GREEN, 0));
-                mCanvas.drawBitmap(shapebit, null, dest, tintPaint);
+                p.setColor(Color.GREEN);
+                p.setStyle(Paint.Style.FILL);
+                mCanvas.drawPath(path, p);
             }
 
 
@@ -396,7 +439,7 @@ public class StudyTwoRender extends StudyRender{
         {
             //draw letter
             p.setTextSize(calcFontSize(40));
-            p.setColor(Color.BLUE);
+            p.setColor(Color.GREEN);
             y = height/2 + 10;
             taskText = task_alphabet.get(mDistanceTargert);
             textWidth = p.measureText(taskText);
@@ -406,7 +449,7 @@ public class StudyTwoRender extends StudyRender{
         {
             //draw number
             p.setTextSize(calcFontSize(40));
-            p.setColor(Color.BLUE);
+            p.setColor(Color.GREEN);
             y = height/2 + 10;
             taskText = "" + task_number.get(mDistanceTargert);
             textWidth = p.measureText(taskText);
@@ -416,19 +459,22 @@ public class StudyTwoRender extends StudyRender{
         }else if(mTask == 3)
         {
             //draw shape
-            Bitmap shapebit = BitmapFactory.decodeResource(mContext.getResources(), task_shape.get(mDistanceTargert));
-            y = height /2;
+            float scale = 40;
             x = width / 2;
-            RectF dest;
-            if(mDistanceTargert == 4)
+            y = height / 2;
+            float xoffSet = x - scale * 0.5f;
+            float yoffSet = y - scale * 0.5f;
+
+            Path path = new Path();
+            path.moveTo(task_shape.get(mDistanceTargert)[0].x * scale + xoffSet, task_shape.get(mDistanceTargert)[0].y * scale + yoffSet);
+            for(int itrs = 1; itrs < task_shape.get(mDistanceTargert).length; itrs++)
             {
-                dest = new RectF(x - 45, y - 30, x + 45, y + 30);
-            }else
-            {
-                dest = new RectF(x - 30, y - 30, x + 30, y + 30);
+                path.lineTo(task_shape.get(mDistanceTargert)[itrs].x * scale + xoffSet, task_shape.get(mDistanceTargert)[itrs].y * scale + yoffSet);
             }
 
-            mCanvas.drawBitmap(shapebit, null, dest, p);
+            p.setColor(Color.GREEN);
+            p.setStyle(Paint.Style.FILL);
+            mCanvas.drawPath(path, p);
         }else if(mTask == 4)
         {
 
