@@ -33,12 +33,15 @@ public class StudyTwoRender extends StudyRender{
     private float maxAngle = (float)Math.PI / 2;
     private float maxAngleDegree = 90.0f;
 
+
+    public int mTask;
     public int mCorner;
     public int mAngleTarget = -1;
     public int mDistanceTargert = -1;
     public int mAngleNum = 3;
     public int mDistanceNum = 5;
     public int mClose;
+    public float mCloseValue;
     public int mAngleActual = -1;
     public int mDistanceActual = -1;
 
@@ -58,36 +61,6 @@ public class StudyTwoRender extends StudyRender{
     //initial load
     public void LoadTextures()
     {
-        int curTask = MainActivity.getSharedInstance().mStudyView.mStudy.obtainNextTask();
-        MainActivity.getSharedInstance().mStudyView.mStudy.currentTask--;
-
-        if(curTask < 4)
-        {
-            mCorner = 0;  //left-top
-        }else
-        {
-            mCorner = 1;  //right-top
-        }
-
-        if(curTask == 1)
-        {
-            //task 1
-        }else if(curTask == 2)
-        {
-            //task 2
-        }else if(curTask == 3)
-        {
-            //task 3
-        }else if(curTask == 4)
-        {
-            //task 4
-        }else if(curTask == 5)
-        {
-            //task 5
-        }else if(curTask == 6)
-        {
-            //task 6
-        }
 
         mPageFlipAbstract.deleteUnusedTextures();
         PageModify[] pages = mPageFlipAbstract.getPages();
@@ -95,14 +68,14 @@ public class StudyTwoRender extends StudyRender{
         //set the first page
         if(!pages[FIRST_PAGE].isFrontTextureSet())
         {
-            loadPageWithTrialInfo(curTask);
+            loadPageWithoutTrialInfo();
             pages[FIRST_PAGE].setFrontTexture(mBitmap);
         }
 
         //set the second page
         if(!pages[SECOND_PAGE].isFrontTextureSet())
         {
-            loadPageWithTask(curTask);
+            loadPageWithoutTrialInfo();
             pages[SECOND_PAGE].setFrontTexture(mBitmap);
         }
 
@@ -125,24 +98,69 @@ public class StudyTwoRender extends StudyRender{
 
 
     //this is called by study trials
+    //when the previous trial is done
     public void ReloadTrial()
     {
+        int[] curTask;
+
+        if(obtainNext == true)
+        {
+            curTask = MainActivity.getSharedInstance().mStudyView.mStudy.obtainNextTask();
+        }else
+        {
+            curTask = MainActivity.getSharedInstance().mStudyView.mStudy.obtainCurrentTask();
+        }
+
+        obtainNext = false;
+
+        mTask = curTask[0];
+        mClose = curTask[1];
+        mCloseValue = curTask[2] / 100.0f;
+
+        if(mTask == 1)
+        {
+            //task 1
+            mCorner = 0;
+            mAngleTarget = 0;
+        }else if(mTask == 2)
+        {
+            //task 2
+            mCorner = 0;
+            mAngleTarget = 1;
+        }else if(mTask == 3)
+        {
+            //task 3
+            mCorner = 0;
+            mAngleTarget = 2;
+        }else if(mTask == 4)
+        {
+            //task 4
+            mCorner = 1;
+            mAngleTarget = 0;
+        }else if(mTask == 5)
+        {
+            //task 5
+            mCorner = 1;
+            mAngleTarget = 1;
+        }else if(mTask == 6)
+        {
+            //task 6
+            mCorner = 1;
+            mAngleTarget = 2;
+        }
+
+        mDistanceTargert = (int)(mDistanceNum * mCloseValue);
+
+        mDistanceActual = -1;
+        mAngleActual = -1;
+
+        mPageFlipAbstract.getPages()[FIRST_PAGE].waiting4TextureUpdate = true;
+        mPageFlipAbstract.getPages()[SECOND_PAGE].waiting4TextureUpdate = true;
 
     }
 
     //set up the second page
     public void loadPageWithCondition()
-    {
-
-    }
-
-    //show the task on first page
-    public void loadPageWithTrialInfo()
-    {
-
-    }
-
-    public void loadPageWithTask(int taskIndex)
     {
         final int width = mCanvas.getWidth();
         final int height = mCanvas.getHeight();
@@ -162,11 +180,10 @@ public class StudyTwoRender extends StudyRender{
 
 
         //and actual
-
     }
 
     //show the task on first page
-    public void loadPageWithTrialInfo(int taskIndex)
+    public void loadPageWithTrialInfo()
     {
         final int width = mCanvas.getWidth();
         final int height = mCanvas.getHeight();
@@ -199,7 +216,6 @@ public class StudyTwoRender extends StudyRender{
 
 
     }
-
 
     //remove the first page texture
     public void loadPageWithoutTrialInfo()

@@ -60,7 +60,9 @@ public abstract class PageFlipModifyAbstract {
     // width ratio of triggering restore flip
     //1.0 means it is always restoring when finger's up
     //change this value based on demos
-    private final static float WIDTH_RATIO_OF_RESTORE_FLIP = 0.5f;
+
+    //0.5 or 1.0
+    private final static float WIDTH_RATIO_OF_RESTORE_FLIP = 1.0f;
 
     // pages and index
     public final static int FIRST_PAGE = 0;
@@ -520,47 +522,72 @@ public abstract class PageFlipModifyAbstract {
 
         if(MainActivity.getSharedInstance().activityIndex == 3)
         {
-            //check the result
-            if( MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget == MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleActual
-                    && MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert == MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceActual)
+
+            if(MainActivity.getSharedInstance().studyIndex == 1)
             {
-                //correct, save, and move to the next
-                MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = true;
-                MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 1;
-            }else
+                //check the result
+                if( MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget == MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleActual
+                        && MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert == MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceActual)
+                {
+                    //correct, save, and move to the next
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = true;
+                    MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 1;
+                }else
+                {
+                    //incorrect
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = false;
+                    MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 0;
+                }
+
+                //save the result
+                long timestamp = System.currentTimeMillis();
+
+                MainActivity.getSharedInstance().mStudyView.mStudy.trialEndTime = timestamp;
+                if(MainActivity.getSharedInstance().mStudyView.mStudy.trialStartTime != 0)
+                {
+                    MainActivity.getSharedInstance().mStudyView.mStudy.trialDuration =
+                            MainActivity.getSharedInstance().mStudyView.mStudy.trialEndTime
+                                    - MainActivity.getSharedInstance().mStudyView.mStudy.trialStartTime;
+                }
+
+                DataStorage.AddSample(MainActivity.getSharedInstance().mStudyView.mStudy.currentCondition,
+                        MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner,
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleNum,
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceNum,
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.mClose,
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget,
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert,
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleActual,
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceActual, 3,
+                        timestamp,
+                        MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect,
+                        MainActivity.getSharedInstance().mStudyView.mStudy.numVistedCells,
+                        MainActivity.getSharedInstance().mStudyView.mStudy.numOvershoot,
+                        MainActivity.getSharedInstance().mStudyView.mStudy.trialDuration
+                );
+
+            }else if(MainActivity.getSharedInstance().studyIndex == 2)
             {
-                //incorrect
-                MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = false;
-                MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 0;
+                if(MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4)
+                {
+                    //check the result
+
+
+                    //save the result
+
+
+                }else
+                {
+                    //check the result
+
+                    //save the result
+
+
+                }
             }
 
-            //save the result
-            long timestamp = System.currentTimeMillis();
 
-            MainActivity.getSharedInstance().mStudyView.mStudy.trialEndTime = timestamp;
-            if(MainActivity.getSharedInstance().mStudyView.mStudy.trialStartTime != 0)
-            {
-                MainActivity.getSharedInstance().mStudyView.mStudy.trialDuration =
-                        MainActivity.getSharedInstance().mStudyView.mStudy.trialEndTime
-                        - MainActivity.getSharedInstance().mStudyView.mStudy.trialStartTime;
-            }
-
-            DataStorage.AddSample(MainActivity.getSharedInstance().mStudyView.mStudy.currentCondition,
-                    MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
-                    MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner,
-                    MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleNum,
-                    MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceNum,
-                    MainActivity.getSharedInstance().mStudyView.mPageRender.mClose,
-                    MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget,
-                    MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert,
-                    MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleActual,
-                    MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceActual, 3,
-                    timestamp,
-                    MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect,
-                    MainActivity.getSharedInstance().mStudyView.mStudy.numVistedCells,
-                    MainActivity.getSharedInstance().mStudyView.mStudy.numOvershoot,
-                    MainActivity.getSharedInstance().mStudyView.mStudy.trialDuration
-                    );
         }
 
 
@@ -599,26 +626,29 @@ public abstract class PageFlipModifyAbstract {
         // ready to flip
         // this could be ignored for now
 
-        else if (mFlipState == PageFlipState.BEGIN_FLIP) {
+        else if (mFlipState == PageFlipState.BEGIN_FLIP)
+        {
 
             //need to re-do this part
-
-            mIsVertical = false;
-            mFlipState = PageFlipState.END_FLIP;
-            page.setOriginAndDiagonalPoints(-touchY);
-
-            // if enable clicking to flip, compute scroller points for animation
-            if (mIsClickToFlip && Math.abs(touchX - mStartTouchP.x) < 2) {
-                computeScrollPointsForClickingFlip(touchX, start, end);
-
-            }
+            //disable this part for now
+//
+//            mIsVertical = false;
+//            mFlipState = PageFlipState.END_FLIP;
+//            page.setOriginAndDiagonalPoints(-touchY);
+//
+//            // if enable clicking to flip, compute scroller points for animation
+//            if (mIsClickToFlip && Math.abs(touchX - mStartTouchP.x) < 2) {
+//                computeScrollPointsForClickingFlip(touchX, start, end);
+//
+//            }
         }
 
         // start scroller for animating
         if (mFlipState == PageFlipState.FORWARD_FLIP ||
                 mFlipState == PageFlipState.BACKWARD_FLIP ||
                 mFlipState == PageFlipState.UPWARD_FLIP ||
-                mFlipState == PageFlipState.RESTORE_FLIP) {
+                mFlipState == PageFlipState.RESTORE_FLIP)
+        {
 
             //activiate the job sheduling
             mScroller.startScroll(start.x, start.y,

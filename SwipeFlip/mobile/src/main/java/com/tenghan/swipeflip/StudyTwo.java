@@ -21,9 +21,9 @@ public class StudyTwo extends PageFlipModifyAbstract{
     private final static int pageSize = 2;
 
     //conditions
-    public ArrayList<Integer> tasks;
+    public ArrayList<int[]> tasks;
     public ArrayList<int[]> conditions;
-    private ArrayList<Integer> tempTasks;
+    private ArrayList<int[]> tempTasks;
     public int taskCount;  // 6
     public int currentAttempt = 0;
     //this should be currentTask, just to keep the same with study one
@@ -34,6 +34,9 @@ public class StudyTwo extends PageFlipModifyAbstract{
 
     public PointF cursor = new PointF();
 
+    //should keep equal chance for close and far distances
+    private int closeBound = 50;
+    private int farBound = 99;
 
     //1 - start, 2 - move, 3 - end
     public int trialState;
@@ -51,23 +54,26 @@ public class StudyTwo extends PageFlipModifyAbstract{
     {
         super(context, pageSize);
 
-        tasks = new ArrayList<Integer>();
-        tempTasks = new ArrayList<Integer>();
+        tasks = new ArrayList<int[]>();
+        tempTasks = new ArrayList<int[]>();
         rand = new Random();
 
         conditions = new ArrayList<int[]>();
 
-        for(int itrt = 0; itrt < repeat; itrt++)
+
+        for(int itr = 1; itr < 7; itr++)
         {
-            //discrete
-            tempTasks.add(1);
-            tempTasks.add(2);
-            tempTasks.add(3);
-            //continuous
-            tempTasks.add(4);
-            tempTasks.add(5);
-            tempTasks.add(6);
+            for(int itrt = 0; itrt < repeat; itrt++)
+            {
+                int close = rand.nextInt(closeBound);
+                //discrete
+                tempTasks.add(new int[]{itr, 1, close});
+
+                int far = rand.nextInt(closeBound) + closeBound;
+                tempTasks.add(new int[]{itr, 2, far});
+            }
         }
+
 
         taskCount = tempTasks.size();
 
@@ -96,7 +102,7 @@ public class StudyTwo extends PageFlipModifyAbstract{
 
     }
 
-    public int obtainNextTask()
+    public int[] obtainNextTask()
     {
         currentTask++;
         currentAttempt = 1;
@@ -113,6 +119,19 @@ public class StudyTwo extends PageFlipModifyAbstract{
 
             currentTask = 0;
         }
+
+        return tasks.get(currentTask);
+    }
+
+    public int[] obtainCurrentTask()
+    {
+        currentAttempt++;
+
+        trialState = 0;
+        trialDuration = 0;
+        trialStartTime = 0;
+        trialEndTime = 0;
+        isCorrect = 0;
 
         return tasks.get(currentTask);
     }
@@ -326,7 +345,6 @@ public class StudyTwo extends PageFlipModifyAbstract{
             return true;
 
         }
-
 
         return false;
     }
