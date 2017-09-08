@@ -167,11 +167,11 @@ public class StudyOne extends PageFlipModifyAbstract{
                 }
             }
 
-            Log.d(TAG, "picked " + temp);
+            //Log.d(TAG, "picked " + temp);
         }
 
 
-        Log.d(TAG, "total trials " + conditions.size());
+        //Log.d(TAG, "total trials " + conditions.size());
 
         currentCondition = -1;
 

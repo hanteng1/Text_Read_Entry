@@ -74,6 +74,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
      */
     public int demoIndex = 0;
 
+    /**
+     * 1 - study 1
+     * 2 - study 2
+     */
+    public int studyIndex = 0;
+
     //to assist touch gesture detection
     public boolean isReseting = false;
     public boolean isDoubleTapping = false;
@@ -137,50 +143,51 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
          * demo group
          */
 
-        activityIndex = 2;
-        demoIndex = 3;
-        mDemoView = (DemoView)findViewById(R.id.demo_view);
-        mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
-        mDemoUIView.setDimension(320, 320);
-        mDemoUIView.demoIndex = demoIndex;
-
-        mGestureDetector = new GestureDetector(this, this);
-
-        if(Build.VERSION.SDK_INT < 16)
-        {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }else
-        {
-            mDemoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN |
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                    View.SYSTEM_UI_FLAG_IMMERSIVE |
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
-
-
-        /**
-         * study group
-         */
-
-//        activityIndex = 3;
-//        mStudyView = (StudyView)findViewById(R.id.study_view);
-//        mGestureDetector = new GestureDetector(this, this);
-//
+//        activityIndex = 2;
+//        demoIndex = 3;
+//        mDemoView = (DemoView)findViewById(R.id.demo_view);
 //        mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
-//        mDemoUIView.setDimension(watchedge, watchedge);
+//        mDemoUIView.setDimension(320, 320);
+//        mDemoUIView.demoIndex = demoIndex;
+//
+//        mGestureDetector = new GestureDetector(this, this);
 //
 //        if(Build.VERSION.SDK_INT < 16)
 //        {
 //            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 //        }else
 //        {
-//            mStudyView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN |
+//            mDemoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN |
 //                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
 //                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
 //                    View.SYSTEM_UI_FLAG_IMMERSIVE |
 //                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 //        }
+
+
+        /**
+         * study group
+         */
+
+        activityIndex = 3;
+        studyIndex = 2;
+        mStudyView = (StudyView)findViewById(R.id.study_view);
+        mGestureDetector = new GestureDetector(this, this);
+
+        mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
+        mDemoUIView.setDimension(watchedge, watchedge);
+
+        if(Build.VERSION.SDK_INT < 16)
+        {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }else
+        {
+            mStudyView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN |
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                    View.SYSTEM_UI_FLAG_IMMERSIVE |
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
 
     }
 

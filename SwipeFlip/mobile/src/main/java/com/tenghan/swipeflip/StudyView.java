@@ -25,8 +25,15 @@ public class StudyView extends GLSurfaceView implements GLSurfaceView.Renderer {
     int mPageNo;
     int mDuration;
     Handler mHandler;
-    public StudyOne mStudy;
-    public StudyOneRender mPageRender;
+
+    //public StudyOne mStudy;
+    //public StudyOneRender mPageRender;
+
+
+    public  StudyTwo mStudy;
+    public StudyTwoRender mPageRender;
+
+
     ReentrantLock mDrawLock;
 
     public StudyView(Context context, AttributeSet attrs)
@@ -38,19 +45,33 @@ public class StudyView extends GLSurfaceView implements GLSurfaceView.Renderer {
         int pixelsOfMesh = 10;
         boolean isAuto = false;
 
-        //create pageflip
-        mStudy = new StudyOne(context);
-        setEGLContextClientVersion(2);
+//        //create pageflip
+//        mStudy = new StudyOne(context);
+//        setEGLContextClientVersion(2);
+//        // create render
+//        mPageNo = mStudy.PAGE_SIZE;  //need to change, should equal to Page_Size in mPageFlip
+//        mDrawLock = new ReentrantLock();
+//        // init others
+//        mPageNo = 1;
+//        mDrawLock = new ReentrantLock();
+//
+//        mPageRender = new StudyOneRender(context, mStudy, mHandler, mPageNo);
 
+
+
+        //create pageflip
+        mStudy = new StudyTwo(context);
+        setEGLContextClientVersion(2);
         // create render
         mPageNo = mStudy.PAGE_SIZE;  //need to change, should equal to Page_Size in mPageFlip
         mDrawLock = new ReentrantLock();
-
         // init others
         mPageNo = 1;
         mDrawLock = new ReentrantLock();
 
-        mPageRender = new StudyOneRender(context, mStudy, mHandler, mPageNo);
+        mPageRender = new StudyTwoRender(context, mStudy, mHandler, mPageNo);
+
+
 
         // configure render
         setRenderer(this);
@@ -166,9 +187,17 @@ public class StudyView extends GLSurfaceView implements GLSurfaceView.Renderer {
 
             int pageNo = mPageRender.getPageNo();
 
-            if(!(mPageRender instanceof StudyOneRender)){
+//            if(!(mPageRender instanceof StudyOneRender)){
+//                mPageRender.release();
+//                mPageRender = new StudyOneRender(getContext(),
+//                        mStudy,
+//                        mHandler,
+//                        pageNo);
+//            }
+
+            if(!(mPageRender instanceof StudyTwoRender)){
                 mPageRender.release();
-                mPageRender = new StudyOneRender(getContext(),
+                mPageRender = new StudyTwoRender(getContext(),
                         mStudy,
                         mHandler,
                         pageNo);
