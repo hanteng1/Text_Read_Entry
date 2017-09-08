@@ -13,14 +13,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class WearableAdapter extends WearableListView.Adapter {
-    private ArrayList<Integer> mItems;
+    private ArrayList<Integer> mImageItems;
+    private List<String> mTextItems;
     private final LayoutInflater mInflater;
 
-    public WearableAdapter(Context context, ArrayList<Integer> items) {
+    public WearableAdapter(Context context, ArrayList<Integer> items, List<String> textItems) {
         mInflater = LayoutInflater.from(context);
-        mItems = items;
+        mImageItems = items;
+        mTextItems = textItems;
     }
 
     @Override
@@ -34,14 +37,14 @@ public class WearableAdapter extends WearableListView.Adapter {
                                  int position) {
         ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
         CircledImageView circledView = itemViewHolder.mCircledImageView;
-        circledView.setImageResource(mItems.get(position));
+        circledView.setImageResource(mImageItems.get(position));
         TextView textView = itemViewHolder.mItemTextView;
-        textView.setText(String.format("Item %d", position + 1));
+        textView.setText(mTextItems.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return mImageItems.size();
     }
 
     private static class ItemViewHolder extends WearableListView.ViewHolder {
