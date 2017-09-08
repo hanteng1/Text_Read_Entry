@@ -2,6 +2,7 @@ package com.tenghan.swipeflip;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -60,7 +61,51 @@ public class StudyTwoRender extends StudyRender{
         int curTask = MainActivity.getSharedInstance().mStudyView.mStudy.obtainNextTask();
         MainActivity.getSharedInstance().mStudyView.mStudy.currentTask--;
 
-        
+        if(curTask < 4)
+        {
+            mCorner = 0;  //left-top
+        }else
+        {
+            mCorner = 1;  //right-top
+        }
+
+        if(curTask == 1)
+        {
+            //task 1
+        }else if(curTask == 2)
+        {
+            //task 2
+        }else if(curTask == 3)
+        {
+            //task 3
+        }else if(curTask == 4)
+        {
+            //task 4
+        }else if(curTask == 5)
+        {
+            //task 5
+        }else if(curTask == 6)
+        {
+            //task 6
+        }
+
+        mPageFlipAbstract.deleteUnusedTextures();
+        PageModify[] pages = mPageFlipAbstract.getPages();
+
+        //set the first page
+        if(!pages[FIRST_PAGE].isFrontTextureSet())
+        {
+            loadPageWithTrialInfo(curTask);
+            pages[FIRST_PAGE].setFrontTexture(mBitmap);
+        }
+
+        //set the second page
+        if(!pages[SECOND_PAGE].isFrontTextureSet())
+        {
+            loadPageWithTask(curTask);
+            pages[SECOND_PAGE].setFrontTexture(mBitmap);
+        }
+
 
     }
 
@@ -71,7 +116,7 @@ public class StudyTwoRender extends StudyRender{
         page.waiting4TextureUpdate = true;
     }
 
-    //this reload is corresponding to page flip gesture
+    //this reload is corresponding to page flip gesture in real time
     public void ReloadSecondPageTexture()
     {
         PageModify page = mPageFlipAbstract.getPages()[SECOND_PAGE];
@@ -96,6 +141,65 @@ public class StudyTwoRender extends StudyRender{
     {
 
     }
+
+    public void loadPageWithTask(int taskIndex)
+    {
+        final int width = mCanvas.getWidth();
+        final int height = mCanvas.getHeight();
+
+        Paint p = new Paint();
+        p.setFilterBitmap(true);
+
+        // 1. load/draw background bitmap
+        Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
+        Rect rect = new Rect(0, 0, width, height);
+        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
+        background.recycle();
+        background = null;
+
+        //target
+
+
+
+        //and actual
+
+    }
+
+    //show the task on first page
+    public void loadPageWithTrialInfo(int taskIndex)
+    {
+        final int width = mCanvas.getWidth();
+        final int height = mCanvas.getHeight();
+
+        Paint p = new Paint();
+        p.setFilterBitmap(true);
+
+        // 1. load/draw background bitmap
+        Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
+        Rect rect = new Rect(0, 0, width, height);
+        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
+        background.recycle();
+        background = null;
+
+        int fontSize = calcFontSize(20);
+        p.setColor(Color.GRAY);
+        p.setStrokeWidth(1);
+        p.setAntiAlias(true);
+        p.setTextSize(fontSize);
+
+        String taskText = "" + (MainActivity.getSharedInstance().mStudyView.mStudy.currentTask + 1)
+                + " / " + MainActivity.getSharedInstance().mStudyView.mStudy.taskCount;
+
+        float textWidth = p.measureText(taskText);
+        float y = height / 2;
+        float x = width / 2 - textWidth / 2;
+        mCanvas.drawText(taskText, x, y, p);
+
+        //draw target
+
+
+    }
+
 
     //remove the first page texture
     public void loadPageWithoutTrialInfo()
