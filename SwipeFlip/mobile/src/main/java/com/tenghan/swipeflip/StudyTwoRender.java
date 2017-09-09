@@ -64,7 +64,7 @@ public class StudyTwoRender extends StudyRender{
 
 
     //for continuous values
-    public float mContinuousMax = maxDistance ; //160
+    public float mContinuousMax = maxDistance - reservedDistance ; //120 + 40
     public float mContinuousTarget = -1;
     public float mContinuousActual = -1;
     public float accuracyInterval = 0.05f;  // + -
@@ -204,7 +204,7 @@ public class StudyTwoRender extends StudyRender{
         mAngleActual = -1;
 
         //for continuous
-        mContinuousTarget = mContinuousMax * mCloseValue;
+        mContinuousTarget = mContinuousMax * mCloseValue + reservedDistance;  //40 - 160
         mContinuousActual = -1;
 
 
@@ -430,7 +430,7 @@ public class StudyTwoRender extends StudyRender{
             // size
 
             //target
-            if(mContinuousTarget != -1 && mContinuousTarget < mContinuousMax)
+            if(mContinuousTarget != -1 && mContinuousTarget < (mContinuousMax + reservedDistance))
             {
                 Path path = new Path();
                 path.moveTo(320, 0);
@@ -440,12 +440,13 @@ public class StudyTwoRender extends StudyRender{
 
                 p.setStyle(Paint.Style.STROKE);
                 p.setColor(Color.BLUE);
+                p.setStrokeWidth(2);
                 mCanvas.drawPath(path, p);
 
             }
 
             //actual
-            if(mContinuousActual != -1 && mContinuousActual < mContinuousMax)
+            if(mContinuousActual != -1 && mContinuousActual < (mContinuousMax + reservedDistance))
             {
                 Path path = new Path();
                 path.moveTo(320, 0);
@@ -455,6 +456,7 @@ public class StudyTwoRender extends StudyRender{
 
                 p.setStyle(Paint.Style.STROKE);
                 p.setColor(Color.GREEN);
+                p.setStrokeWidth(2);
                 mCanvas.drawPath(path, p);
             }
 
@@ -462,7 +464,7 @@ public class StudyTwoRender extends StudyRender{
         {
             //color
             //target
-            if(mContinuousTarget != -1 && mContinuousTarget < mContinuousMax)
+            if(mContinuousTarget != -1 && mContinuousTarget < (mContinuousMax + reservedDistance))
             {
                 Path path = new Path();
                 path.moveTo(320, 0);
@@ -471,13 +473,13 @@ public class StudyTwoRender extends StudyRender{
                 path.lineTo(320, 0);
 
                 p.setStyle(Paint.Style.FILL);
-                p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousTarget / mContinuousMax ))));
+                p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousTarget / (mContinuousMax + reservedDistance) ))));
                 mCanvas.drawPath(path, p);
 
             }
 
             //actual
-            if(mContinuousActual != -1 && mContinuousActual < mContinuousMax)
+            if(mContinuousActual != -1 && mContinuousActual < (mContinuousMax + reservedDistance))
             {
                 Path path = new Path();
                 path.moveTo(320, 0);
@@ -486,7 +488,7 @@ public class StudyTwoRender extends StudyRender{
                 path.lineTo(320, 0);
 
                 p.setStyle(Paint.Style.FILL);
-                p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousActual / mContinuousMax ))));
+                p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousActual / (mContinuousMax + reservedDistance) ))));
                 mCanvas.drawPath(path, p);
             }
 
@@ -495,7 +497,7 @@ public class StudyTwoRender extends StudyRender{
         {
             //width
             //target
-            if(mContinuousTarget != -1 && mContinuousTarget < mContinuousMax)
+            if(mContinuousTarget != -1 && mContinuousTarget < (mContinuousMax + reservedDistance))
             {
                 Path path = new Path();
                 path.moveTo(320, 0);
@@ -505,13 +507,13 @@ public class StudyTwoRender extends StudyRender{
 
                 p.setStyle(Paint.Style.STROKE);
                 p.setColor(Color.BLUE);
-                p.setStrokeWidth( 20 * (mContinuousTarget / mContinuousMax ));
+                p.setStrokeWidth( 20 * (mContinuousTarget / (mContinuousMax + reservedDistance) ));
                 mCanvas.drawPath(path, p);
 
             }
 
             //actual
-            if(mContinuousActual != -1 && mContinuousActual < mContinuousMax)
+            if(mContinuousActual != -1 && mContinuousActual < (mContinuousMax + reservedDistance))
             {
                 Path path = new Path();
                 path.moveTo(320, 0);
@@ -521,7 +523,7 @@ public class StudyTwoRender extends StudyRender{
 
                 p.setStyle(Paint.Style.STROKE);
                 p.setColor(Color.GREEN);
-                p.setStrokeWidth( 20 * (mContinuousActual / mContinuousMax ));
+                p.setStrokeWidth( 20 * (mContinuousActual / (mContinuousMax + reservedDistance) ));
                 mCanvas.drawPath(path, p);
             }
         }
@@ -564,7 +566,7 @@ public class StudyTwoRender extends StudyRender{
         {
             //draw letter
             p.setTextSize(calcFontSize(40));
-            p.setColor(Color.GREEN);
+            p.setColor(Color.BLUE);
             y = height/2 + 10;
             taskText = task_alphabet.get(mDistanceTargert);
             textWidth = p.measureText(taskText);
@@ -574,7 +576,7 @@ public class StudyTwoRender extends StudyRender{
         {
             //draw number
             p.setTextSize(calcFontSize(40));
-            p.setColor(Color.GREEN);
+            p.setColor(Color.BLUE);
             y = height/2 + 10;
             taskText = "" + task_number.get(mDistanceTargert);
             textWidth = p.measureText(taskText);
@@ -599,12 +601,12 @@ public class StudyTwoRender extends StudyRender{
                     path.lineTo(task_shape.get(mDistanceTargert)[itrs].x * scale + xoffSet, task_shape.get(mDistanceTargert)[itrs].y * scale + yoffSet);
                 }
 
-                p.setColor(Color.GREEN);
+                p.setColor(Color.BLUE);
                 p.setStyle(Paint.Style.FILL);
                 mCanvas.drawPath(path, p);
             }else
             {
-                p.setColor(Color.GREEN);
+                p.setColor(Color.BLUE);
                 p.setStyle(Paint.Style.FILL);
                 mCanvas.drawCircle(x, y, scale*0.5f, p);
             }
@@ -612,7 +614,7 @@ public class StudyTwoRender extends StudyRender{
         }else if(mTask == 4)
         {
             //font size
-            if(mContinuousTarget != -1 && mContinuousTarget < mContinuousMax)
+            if(mContinuousTarget != -1 && mContinuousTarget < (mContinuousMax + reservedDistance))
             {
                 Path path = new Path();
                 float mx = width/2;
@@ -626,12 +628,21 @@ public class StudyTwoRender extends StudyRender{
                 path.lineTo(320 - offx, 0- offy);
 
                 p.setStyle(Paint.Style.STROKE);
-                p.setColor(Color.GREEN);
+                p.setColor(Color.BLUE);
+                p.setStrokeWidth(2);
                 mCanvas.drawPath(path, p);
+
+                path.reset();
+                path.moveTo(300 - offx, 0 - offy);
+                path.lineTo(300 - offx, mContinuousTarget- offy);
+                mCanvas.drawPath(path, p);
+
+
+
             }
         }else if(mTask == 5)
         {
-
+            //color
             Path path = new Path();
             float mx = width/2;
             float my = height/2;
@@ -644,11 +655,13 @@ public class StudyTwoRender extends StudyRender{
             path.lineTo(320 - offx, 0- offy);
 
             p.setStyle(Paint.Style.FILL);
-            p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousTarget / mContinuousMax ))));
+            p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousTarget / (mContinuousMax + reservedDistance) ))));
             mCanvas.drawPath(path, p);
 
         }else if(mTask == 6)
         {
+
+            //wegght
             Path path = new Path();
             float mx = width/2;
             float my = height/2;
@@ -661,8 +674,8 @@ public class StudyTwoRender extends StudyRender{
             path.lineTo(320 - offx, 0- offy);
 
             p.setStyle(Paint.Style.STROKE);
-            p.setColor(Color.GREEN);
-            p.setStrokeWidth( 20 * (mContinuousActual / mContinuousMax ));
+            p.setColor(Color.BLUE);
+            p.setStrokeWidth( 20 * (mContinuousTarget / (mContinuousMax + reservedDistance) ));
 
             mCanvas.drawPath(path, p);
         }
