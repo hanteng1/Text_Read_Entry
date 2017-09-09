@@ -704,10 +704,19 @@ public class StudyTwoUIView extends View {
 
             //draw the list segments
             float segment = mHeight / list.size();
+            subMenuPaint.setColor(Color.BLUE);
             for(int itrc = 0; itrc < list.size(); itrc++)
             {
                 canvas.drawText(list.get(itrc), anchorX, anchorY + segment * (itrc + 1), subMenuPaint);
             }
+
+            //draw actual
+            if(mDistanceActual != -1)
+            {
+                subMenuPaint.setColor(Color.GREEN);
+                canvas.drawText(list.get(mDistanceActual), anchorX, anchorY + segment * (mDistanceActual + 1), subMenuPaint);
+            }
+
 
         }else
         {
@@ -785,6 +794,7 @@ public class StudyTwoUIView extends View {
 
             //draw the list segments
             float segment = mHeight / list.size();
+            subMenuPaint.setColor(Color.BLUE);
             for(int itrc = 0; itrc < list.size(); itrc++)
             {
                 //canvas.drawText(list.get(itrc), anchorX, anchorY + segment * (itrc + 1), subMenuPaint);
@@ -808,6 +818,31 @@ public class StudyTwoUIView extends View {
                     canvas.drawCircle(anchorX + subMenuWidth / 2, anchorY + segment * (itrc + 0.5f), scale*0.5f, subMenuPaint);
                 }
 
+            }
+
+
+            //actual
+            if(mDistanceActual != -1)
+            {
+                subMenuPaint.setColor(Color.GREEN);
+                float scale = 40;
+                float xoffSet = anchorX + subMenuWidth / 2  - scale * 0.5f;
+                float yoffSet = anchorY + segment * (mDistanceActual + 0.5f) - scale * 0.5f;
+
+                if(mDistanceActual != 1)
+                {
+                    Path path = new Path();
+                    path.moveTo(list.get(mDistanceActual)[0].x * scale + xoffSet, list.get(mDistanceActual)[0].y * scale + yoffSet);
+                    for(int itrs = 1; itrs < list.get(mDistanceActual).length; itrs++)
+                    {
+                        path.lineTo(list.get(mDistanceActual)[itrs].x * scale + xoffSet, list.get(mDistanceActual)[itrs].y * scale + yoffSet);
+                    }
+
+                    canvas.drawPath(path, subMenuPaint);
+                }else
+                {
+                    canvas.drawCircle(anchorX + subMenuWidth / 2, anchorY + segment * (mDistanceActual + 0.5f), scale*0.5f, subMenuPaint);
+                }
             }
 
         }else
@@ -894,6 +929,23 @@ public class StudyTwoUIView extends View {
             {
                 //to select a value
                 listCursor.set(x, y);
+
+                //to check selections, use y values
+                float segment = screenHeight / task_alphabet.size();
+                mDistanceActual = (int)(y / segment);
+
+                if(mTask == 4) {
+                    mContinuousActual = 2 * (screenHeight - y) / 3;
+
+                }else if(mTask == 5)
+                {
+                    mContinuousActual = 2 * Math.abs(screenHeight/2 - y) / 3;
+                }
+                else
+                {
+                    mContinuousActual = 2 * y / 3;
+                }
+
             }
 
 
