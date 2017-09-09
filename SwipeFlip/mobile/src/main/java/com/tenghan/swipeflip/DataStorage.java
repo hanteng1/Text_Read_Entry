@@ -87,6 +87,78 @@ public class DataStorage {
         }
     }
 
+
+    //for study 2
+    public static boolean AddSample(int _technique, int _trial, int _trialattemp, int _state, long _timestamp,
+                                    int _corner, int _task, int _tasktype, int _close,
+                                    int _angletarget, float _distancetarget, int  _angleactual, float _distanceActual)
+    {
+        if(instance != null)
+        {
+            instance.add( _technique,  _trial,  _trialattemp,  _state,  _timestamp,
+             _corner,  _task,  _tasktype,  _close,
+             _angletarget,  _distancetarget,   _angleactual,  _distanceActual);
+            return true;
+        }
+
+        return false;
+    }
+
+    public void add(int _technique, int _trial, int _trialattemp, int _state, long _timestamp,
+                    int _corner, int _task, int _tasktype, int _close,
+                    int _angletarget, float _distancetarget, int  _angleactual, float _distanceActual)
+    {
+        if(samples != null)
+        {
+            DataSample sample = new DataSample(_technique,  _trial,  _trialattemp,  _state,  _timestamp,
+                    _corner,  _task,  _tasktype,  _close,
+                    _angletarget,  _distancetarget,   _angleactual,  _distanceActual);
+            samples.add(sample);
+        }
+    }
+
+
+
+    public static boolean AddSample(int _technique, int _trial, int _trialattemp, int _state, long _timestamp,
+                                    int _corner, int _task, int _tasktype, int _close,
+                                    int _angletarget, float _distancetarget, int _angleactual, float _distanceActual,
+                                    int _isCorrect, int _numVistedCells, int _numOvershoot, long _trialDuration,
+                                    long _responsetime, int _fingertouchtime)
+    {
+        if(instance != null)
+        {
+            instance.add( _technique,  _trial,  _trialattemp,  _state,  _timestamp,
+             _corner,  _task,  _tasktype,  _close,
+             _angletarget,  _distancetarget,  _angleactual,  _distanceActual,
+             _isCorrect,  _numVistedCells,  _numOvershoot,  _trialDuration,
+             _responsetime,  _fingertouchtime);
+            return true;
+        }
+
+        return false;
+    }
+
+    public void add(int _technique, int _trial, int _trialattemp, int _state, long _timestamp,
+                    int _corner, int _task, int _tasktype, int _close,
+                    int _angletarget, float _distancetarget, int _angleactual, float _distanceActual,
+                    int _isCorrect, int _numVistedCells, int _numOvershoot, long _trialDuration,
+                    long _responsetime, int _fingertouchtime)
+    {
+        if(samples != null)
+        {
+            DataSample sample = new DataSample(_technique,  _trial,  _trialattemp,  _state,  _timestamp,
+                    _corner,  _task,  _tasktype,  _close,
+                    _angletarget,  _distancetarget,  _angleactual,  _distanceActual,
+                    _isCorrect,  _numVistedCells,  _numOvershoot,  _trialDuration,
+                    _responsetime,  _fingertouchtime);
+            samples.add(sample);
+        }
+    }
+
+
+
+
+
     public static DataStorage getInstance()
     {
         if(instance == null)
@@ -143,6 +215,58 @@ public class DataStorage {
             OutputStreamWriter outputstreamwriter = new OutputStreamWriter( new FileOutputStream(file, true));
 
             outputstreamwriter.write( DataSample.toCSV(samples) );
+            outputstreamwriter.close();
+            Log.i("DataStorage", "write samples completes.");
+
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+            Log.i("DataStorage", e.toString());
+        }
+
+        return surfix;
+    }
+
+
+    //for study 2
+    public String save2(){
+        return save(null);
+    }
+
+    public String save2(String surfix)
+    {
+        if(samples == null || samples.size() == 0)
+        {
+            return "";
+        }
+
+        if(surfix == null)
+        {
+            surfix = "LogData";
+        }
+        if(!surfix.startsWith("_"))
+        {
+            surfix = "_" + surfix;
+        }
+
+        File dir;
+        dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/FlipPage/");
+
+        String time = String.valueOf(System.currentTimeMillis());
+        String filename = time + surfix + "_samples.csv";
+
+        File file = new File(dir, filename);
+
+        if(!dir.exists())
+        {
+            dir.mkdir();
+        }
+
+        try
+        {
+            OutputStreamWriter outputstreamwriter = new OutputStreamWriter( new FileOutputStream(file, true));
+
+            outputstreamwriter.write( DataSample.toCSV2(samples) );
             outputstreamwriter.close();
             Log.i("DataStorage", "write samples completes.");
 
