@@ -21,7 +21,16 @@
         </activity>
         <activity
             android:name=".ExpActivity"
-            android:label="@string/title_activity_exp"></activity>
+            android:label="@string/title_activity_exp" />
+        <activity
+            android:name=".ConExpActivity"
+            android:label="@string/title_activity_con_exp">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

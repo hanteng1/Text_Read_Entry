@@ -11,7 +11,7 @@ public class TaskManager {
 
     public ExpTask getNextTask() {
         //temporary code
-        return new ExpTask(0, 1, -1);
+        return new ExpTask(3, 0, 50);
     }
 }
 

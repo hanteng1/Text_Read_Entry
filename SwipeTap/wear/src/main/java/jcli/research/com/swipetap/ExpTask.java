@@ -10,6 +10,7 @@ public class ExpTask {
     private int mTaskInd;
 
     public ExpTask(int typeInd, int targetInd, float value) {
+        mTaskInd = typeInd;
         mTaskType = mTaskNames[typeInd];
         mTaskTargetInd = targetInd;
         mTaskValue = value;

@@ -14,6 +14,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 import java.util.ArrayList;
@@ -27,8 +28,12 @@ public class MainActivity extends Activity {
     private static List<String> mNames;
     private MainActivity mSelf;
     private ExpTask mNextTask;
-    //private static List<String> mContinuousNames;
-    //private TextView mHeader;
+    private TextView mTargetDisplayTextView;
+    private GridViewPager mPager;
+
+    private static final String[] LETTER_OPTIONS = new String[] {"A", "B", "C", "D", "E"};
+    private static final String[] NUMBER_OPTIONS = new String[] {"1", "2", "3", "4", "5"};
+    private static final String[] SHAPE_OPTIONS = new String[] {"\u25a0", "\u25b2", "\u25cf", "\u2b1f", "\u25ac"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +57,16 @@ public class MainActivity extends Activity {
 
         //wearableListView.addOnScrollListener(mOnScrollListener);
 
-        final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
+        mPager = (GridViewPager) findViewById(R.id.pager);
 
         //---Assigns an adapter to provide the content for this pager---
-        pager.setAdapter(new ListInGridAdapter(this));
+        mPager.setAdapter(new ListInGridAdapter(this));
         mSelf = this;
 
         //Get the next task
         mNextTask = TaskManager.getInstance().getNextTask();
+
+
     }
 
     // Handle our Wearable List's click events
@@ -79,9 +86,15 @@ public class MainActivity extends Activity {
                             startActivity(disIntent);
                         } else {
                             //So it is a continuous task
+                            Intent conIntent = new Intent(mSelf, ConExpActivity.class);
+                            conIntent.putExtra("type", mNextTask.getType());
+                            conIntent.putExtra("value", mNextTask.getValue());
+                            startActivity(conIntent);
                         }
                     } else {
                         //Wrong option clicked, return to task display
+                        //TODO: increase error count
+                        mPager.setCurrentItem(0, 0);
                     }
 
                 }
@@ -123,7 +136,23 @@ public class MainActivity extends Activity {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             switch (col) {
                 case 0:
-                    View centerView = inflater.inflate(R.layout.view_center, viewGroup);
+                    View centerView = inflater.inflate(R.layout.view_center, null);
+                    //Set the target display
+                    mTargetDisplayTextView = centerView.findViewById(R.id.target_display_text);
+                    if(mNextTask.isDiscrete()) {
+                        //Is discrete task, set the target display with the actual target text
+                        String targetDisplay;
+                        String taskType = mNextTask.getType();
+                        if(taskType.equals("Letter")) {
+                            targetDisplay = LETTER_OPTIONS[mNextTask.getTargetInd()];
+                        } else if(taskType.equals("Number")) {
+                            targetDisplay = NUMBER_OPTIONS[mNextTask.getTargetInd()];
+                        } else targetDisplay = SHAPE_OPTIONS[mNextTask.getTargetInd()];
+                        mTargetDisplayTextView.setText(targetDisplay);
+                    } else {
+                        //Is a continuous task, we should draw something then
+                    }
+                    viewGroup.addView(centerView);
                     return centerView;
                 case 1:
                     View discreteList = inflater.inflate(R.layout.list_side, null);

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jcli.research.com.swipetap.ExpOptionListItemLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    >
+
+    <TextView
+        android:id="@+id/exp_option_name"
+        android:alpha="0.5"
+        android:gravity="center"
+        android:fontFamily="sans-serif-condensed-light"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</jcli.research.com.swipetap.ExpOptionListItemLayout>

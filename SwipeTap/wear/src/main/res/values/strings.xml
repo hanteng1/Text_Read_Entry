@@ -3,5 +3,6 @@
     <string name="title_activity_exp">ExpActivity</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
+    <string name="title_activity_con_exp">ConExpActivity</string>
 
 </resources>

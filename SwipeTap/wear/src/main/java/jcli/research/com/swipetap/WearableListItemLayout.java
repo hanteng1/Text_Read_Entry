@@ -15,7 +15,6 @@ public class WearableListItemLayout extends LinearLayout
         implements WearableListView.OnCenterProximityListener {
 
     private static final float NO_ALPHA = 1f, PARTIAL_ALPHA = 0.40f;
-    private static final float NO_X_TRANSLATION = 0f, X_TRANSLATION = 20f;
 
     private CircledImageView mCircle;
     private final int mUnselectedCircleColor, mSelectedCircleColor;

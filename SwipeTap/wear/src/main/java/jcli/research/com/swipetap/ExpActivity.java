@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ExpActivity extends Activity {
 
-    private TextView mTextView;
+    //private TextView mTextView;
     private List<String> mOptions;
     private int mTargetIndInOptions;
 
