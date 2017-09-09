@@ -82,11 +82,11 @@ public class StudyTwoRender extends StudyRender{
 
         //task 1
         task_alphabet = new ArrayList<String>();
-        task_alphabet.add("#");
-        task_alphabet.add("$");
-        task_alphabet.add("=");
-        task_alphabet.add("@");
-        task_alphabet.add("&");
+        task_alphabet.add("A");
+        task_alphabet.add("B");
+        task_alphabet.add("C");
+        task_alphabet.add("D");
+        task_alphabet.add("E");
 
         task_number = new ArrayList<Integer>();
         task_number.add(1);
