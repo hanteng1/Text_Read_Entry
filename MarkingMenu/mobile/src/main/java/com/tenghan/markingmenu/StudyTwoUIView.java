@@ -944,6 +944,8 @@ public class StudyTwoUIView extends View {
                 float segment = screenHeight / task_alphabet.size();
                 mDistanceActual = (int)(y / segment);
 
+                //Log.d(TAG, " " + mDistanceActual);
+
                 if(mTask == 4) {
                     mContinuousActual = 2 * (screenHeight - y) / 3;
 
@@ -966,26 +968,60 @@ public class StudyTwoUIView extends View {
 
     public void onFingerUp(float x, float y)
     {
-        isTriggered = false;
 
-
-        mAngleActual = -1;
-        mDistanceActual = -1;
-        mContinuousActual = -1;
 
         //check the result
 
         //show the next target
         if(isSubMenuing)
         {
-            obtainNext = true;
+            if(mTask < 4)
+            {
+                if(mAngleActual == mAngleTarget && mDistanceTargert == mDistanceActual)
+                {
+                    obtainNext = true;
+                }else
+                {
+                    obtainNext = false;
+                }
+            }else
+            {
+                if(mAngleActual == mAngleTarget && isWithin(mContinuousTarget, mContinuousActual, 0.1f))
+                {
+                    obtainNext = true;
+                }else
+                {
+                    obtainNext = false;
+                }
+            }
+
         }else {
             obtainNext = false;
         }
+
+        //save the data
+
+
+
+
+        isTriggered = false;
+        mAngleActual = -1;
+        mDistanceActual = -1;
+        mContinuousActual = -1;
+
         ReloadTrial();
         isSubMenuing = false;
 
         invalidate();
+    }
+
+    private boolean isWithin(float targetValue, float actualValue, float ratio)
+    {
+        if (Math.abs(actualValue - targetValue) < targetValue * ratio)
+        {
+            return true;
+        }
+        return false;
     }
 
     public void onLongPressed(float x, float y)

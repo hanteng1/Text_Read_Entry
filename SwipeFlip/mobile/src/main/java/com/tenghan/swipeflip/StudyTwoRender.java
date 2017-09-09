@@ -67,7 +67,7 @@ public class StudyTwoRender extends StudyRender{
     public float mContinuousMax = maxDistance - reservedDistance ; //120 + 40
     public float mContinuousTarget = -1;
     public float mContinuousActual = -1;
-    public float accuracyInterval = 0.05f;  // + -
+    public float accuracyInterval = 0.1f;  // + -
 
 
 
@@ -295,7 +295,7 @@ public class StudyTwoRender extends StudyRender{
                 float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
 
                 //p.setStyle(Paint.Style.STROKE);
-                p.setTextSize(calcFontSize(20));
+                p.setTextSize(calcFontSize(30));
                 p.setColor(Color.BLUE);
                 String taskText = task_alphabet.get(itr);
                 float textWidth = p.measureText(taskText);
@@ -311,7 +311,7 @@ public class StudyTwoRender extends StudyRender{
                 float targetY = origin.y + actualLength * (float)Math.sin(actualAngle);
 
                 //p.setStyle(Paint.Style.STROKE);
-                p.setTextSize(calcFontSize(20));
+                p.setTextSize(calcFontSize(30));
                 p.setColor(Color.GREEN);
                 String taskText = task_alphabet.get(mDistanceActual);
                 float textWidth = p.measureText(taskText);
@@ -331,7 +331,7 @@ public class StudyTwoRender extends StudyRender{
                 float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
 
                 //p.setStyle(Paint.Style.STROKE);
-                p.setTextSize(calcFontSize(20));
+                p.setTextSize(calcFontSize(30));
                 p.setColor(Color.BLUE);
                 String taskText = "" + task_number.get(itr);
                 float textWidth = p.measureText(taskText);
@@ -347,7 +347,7 @@ public class StudyTwoRender extends StudyRender{
                 float targetY = origin.y + actualLength * (float)Math.sin(actualAngle);
 
                 //p.setStyle(Paint.Style.STROKE);
-                p.setTextSize(calcFontSize(20));
+                p.setTextSize(calcFontSize(30));
                 p.setColor(Color.GREEN);
                 String taskText = "" + task_number.get(mDistanceActual);
                 float textWidth = p.measureText(taskText);
@@ -366,7 +366,7 @@ public class StudyTwoRender extends StudyRender{
                 float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
                 float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
 
-                float scale = 20;
+                float scale = 30;
                 float xoffSet = targetX - scale * 0.5f;
                 float yoffSet = targetY - scale * 0.5f;
 
@@ -399,7 +399,7 @@ public class StudyTwoRender extends StudyRender{
                 float targetX = origin.x + actualLength * (float)Math.cos(actualAngle);
                 float targetY = origin.y + actualLength * (float)Math.sin(actualAngle);
 
-                float scale = 20;
+                float scale = 30;
                 float xoffSet = targetX - scale * 0.5f;
                 float yoffSet = targetY - scale * 0.5f;
 
