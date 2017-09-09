@@ -68,7 +68,7 @@ public class StudyTwoUIView extends View {
     public ArrayList<String> task_alphabet;
 
     //task 2, number
-    public ArrayList<Integer> task_number;
+    public ArrayList<String> task_number;
 
     //task 3, shape
     public ArrayList<PointF[]> task_shape;
@@ -176,12 +176,12 @@ public class StudyTwoUIView extends View {
         task_alphabet.add("D");
         task_alphabet.add("E");
 
-        task_number = new ArrayList<Integer>();
-        task_number.add(1);
-        task_number.add(2);
-        task_number.add(3);
-        task_number.add(4);
-        task_number.add(5);
+        task_number = new ArrayList<String>();
+        task_number.add("1");
+        task_number.add("2");
+        task_number.add("3");
+        task_number.add("4");
+        task_number.add("5");
 
         task_shape = new ArrayList<PointF[]>();
         task_shape.add(new PointF[]{new PointF(0, 0), new PointF(1, 0), new PointF(1, 1), new PointF(0, 1), new PointF(0, 0)});
@@ -282,10 +282,10 @@ public class StudyTwoUIView extends View {
 
         if(mTask < 4)
         {
-            isSubMenuLeftTop = true;
+            isSubMenuLeftTop = false;
         }else
         {
-            isSubMenuLeftTop = false;
+            isSubMenuLeftTop = true;
         }
 
         //1, 2, 3, 4, 5, 6
@@ -293,7 +293,7 @@ public class StudyTwoUIView extends View {
 
         //distance target
         mDistanceTargert = (int)(mDistanceNum * mCloseValue);
-        mContinuousTarget = mContinuousMax * mCloseValue;
+        mContinuousTarget = mContinuousMax * mCloseValue + reservedDistance;
         mDistanceActual = -1;
         mContinuousActual = -1;
         mAngleActual = -1;
@@ -525,7 +525,6 @@ public class StudyTwoUIView extends View {
                 }
 
 
-
                 //finger stoke
                 //draw touch path
                 if (touchPoints.size() > 0)
@@ -548,7 +547,25 @@ public class StudyTwoUIView extends View {
             }else
             {
                 //show submenu task
+                if(mTask == 1)
+                {
+                    drawListPanel(canvas, isSubMenuVertical, isSubMenuLeftTop, task_alphabet);
+                }else if(mTask == 2)
+                {
+                    drawListPanel(canvas, isSubMenuVertical, isSubMenuLeftTop, task_number);
+                }else if(mTask == 3)
+                {
+                    drawShapePanel(canvas, isSubMenuVertical, isSubMenuLeftTop, task_shape);
+                }else if(mTask == 4)
+                {
 
+                }else if(mTask == 5)
+                {
+
+                }else if(mTask == 6)
+                {
+
+                }
 
             }
         }
@@ -556,6 +573,210 @@ public class StudyTwoUIView extends View {
 
 
     }
+
+
+    private void drawListPanel(Canvas canvas, boolean isVertical, boolean isLeftTop, ArrayList<String> list)
+    {
+        float mWidth;
+        float mHeight;
+        float anchorX;
+        float anchorY;
+
+        subMenuPaint.setStyle(Paint.Style.STROKE);
+        subMenuPaint.setTextSize(60);
+        subMenuPaint.setColor(Color.GRAY);
+
+        if(isVertical)
+        {
+            mWidth = subMenuWidth;
+            mHeight = screenHeight;
+            anchorY = 0;
+
+            if(isLeftTop)
+            {
+                //on left
+                anchorX = 0;
+
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX, anchorY + listCursor.y, anchorX + mWidth * 2, anchorY + listCursor.y, subMenuSliderPaint);
+                }
+            }else
+            {
+                //on right
+                anchorX = screenWidth - subMenuWidth;
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX - mWidth, anchorY + listCursor.y, anchorX + mWidth, anchorY + listCursor.y, subMenuSliderPaint);
+                }
+            }
+
+            //draw the list segments
+            float segment = mHeight / list.size();
+            for(int itrc = 0; itrc < list.size(); itrc++)
+            {
+                canvas.drawText(list.get(itrc), anchorX, anchorY + segment * (itrc + 1), subMenuPaint);
+            }
+
+        }else
+        {
+            //on top or bottom
+            mWidth = screenWidth;
+            mHeight = subMenuWidth;
+            anchorX = 0;
+
+            if(isLeftTop)
+            {
+                //on top
+                anchorY = mHeight;
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX + listCursor.x, anchorY - mHeight, anchorX + listCursor.x, anchorY + mHeight, subMenuSliderPaint);
+                }
+            }else
+            {
+                //on bottom
+                anchorY = screenHeight;
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX + listCursor.x, anchorY - mHeight, anchorX + listCursor.x, anchorY + mHeight, subMenuSliderPaint);
+                }
+            }
+
+            float segment = mWidth / list.size();
+            for(int itrc = 0; itrc < list.size(); itrc++)
+            {
+                canvas.drawText(list.get(itrc), anchorX + segment * itrc, anchorY, subMenuPaint);
+            }
+
+        }
+
+    }
+
+    private void drawShapePanel(Canvas canvas, boolean isVertical, boolean isLeftTop, ArrayList<PointF[]> list)
+    {
+        float mWidth;
+        float mHeight;
+        float anchorX;
+        float anchorY;
+
+        subMenuPaint.setStyle(Paint.Style.FILL);
+        subMenuPaint.setColor(Color.BLUE);
+
+        if(isVertical)
+        {
+            mWidth = subMenuWidth;
+            mHeight = screenHeight;
+            anchorY = 0;
+
+            if(isLeftTop)
+            {
+                //on left
+                anchorX = 0;
+
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX, anchorY + listCursor.y, anchorX + mWidth * 2, anchorY + listCursor.y, subMenuSliderPaint);
+                }
+            }else
+            {
+                //on right
+                anchorX = screenWidth - subMenuWidth;
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX - mWidth, anchorY + listCursor.y, anchorX + mWidth, anchorY + listCursor.y, subMenuSliderPaint);
+                }
+            }
+
+            //draw the list segments
+            float segment = mHeight / list.size();
+            for(int itrc = 0; itrc < list.size(); itrc++)
+            {
+                //canvas.drawText(list.get(itrc), anchorX, anchorY + segment * (itrc + 1), subMenuPaint);
+
+                float scale = 40;
+                float xoffSet = anchorX + subMenuWidth / 2  - scale * 0.5f;
+                float yoffSet = anchorY + segment * (itrc + 0.5f) - scale * 0.5f;
+
+                if(itrc != 1)
+                {
+                    Path path = new Path();
+                    path.moveTo(list.get(itrc)[0].x * scale + xoffSet, list.get(itrc)[0].y * scale + yoffSet);
+                    for(int itrs = 1; itrs < list.get(itrc).length; itrs++)
+                    {
+                        path.lineTo(list.get(itrc)[itrs].x * scale + xoffSet, list.get(itrc)[itrs].y * scale + yoffSet);
+                    }
+
+                    canvas.drawPath(path, subMenuPaint);
+                }else
+                {
+                    canvas.drawCircle(anchorX + subMenuWidth / 2, anchorY + segment * (itrc + 0.5f), scale*0.5f, subMenuPaint);
+                }
+
+            }
+
+        }else
+        {
+            //on top or bottom
+            mWidth = screenWidth;
+            mHeight = subMenuWidth;
+            anchorX = 0;
+
+            if(isLeftTop)
+            {
+                //on top
+                anchorY = mHeight;
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX + listCursor.x, anchorY - mHeight, anchorX + listCursor.x, anchorY + mHeight, subMenuSliderPaint);
+                }
+            }else
+            {
+                //on bottom
+                anchorY = screenHeight;
+                //draw list cursor
+                if(isDrawingCursor)
+                {
+                    canvas.drawLine(anchorX + listCursor.x, anchorY - mHeight, anchorX + listCursor.x, anchorY + mHeight, subMenuSliderPaint);
+                }
+            }
+
+            float segment = mWidth / list.size();
+            for(int itrc = 0; itrc < list.size(); itrc++)
+            {
+                //canvas.drawText(list.get(itrc), anchorX + segment * itrc, anchorY, subMenuPaint);
+                float scale = 20;
+                float xoffSet = anchorX + segment * itrc - scale * 0.5f;
+                float yoffSet = anchorY - scale * 0.5f;
+
+                if(itrc != 1)
+                {
+                    Path path = new Path();
+                    path.moveTo(list.get(itrc)[0].x * scale + xoffSet, list.get(itrc)[0].y * scale + yoffSet);
+                    for(int itrs = 1; itrs < list.get(itrc).length; itrs++)
+                    {
+                        path.lineTo(list.get(itrc)[itrs].x * scale + xoffSet, list.get(itrc)[itrs].y * scale + yoffSet);
+                    }
+
+                    canvas.drawPath(path, subMenuPaint);
+                }else
+                {
+                    canvas.drawCircle(anchorX + segment * itrc, anchorY, scale*0.5f, subMenuPaint);
+                }
+
+            }
+
+        }
+
+    }
+
 
     public void onFingerDown(float x, float y)
     {
@@ -583,7 +804,7 @@ public class StudyTwoUIView extends View {
             }else
             {
                 //to select a value
-
+                listCursor.set(x, y);
             }
 
 
