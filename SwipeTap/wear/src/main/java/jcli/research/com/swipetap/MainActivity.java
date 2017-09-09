@@ -5,6 +5,7 @@ package jcli.research.com.swipetap;
  */
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.GridPagerAdapter;
@@ -20,10 +21,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends Activity {
-    private static ArrayList<Integer> mDiscreteIcons;
-    private static ArrayList<Integer> mContinuousIcons;
-    private static List<String> mDiscreteNames;
-    private static List<String> mContinuousNames;
+
+    private static ArrayList<Integer> mIcons;
+    //private static ArrayList<Integer> mContinuousIcons;
+    private static List<String> mNames;
+    private MainActivity mSelf;
+    private ExpTask mNextTask;
+    //private static List<String> mContinuousNames;
     //private TextView mHeader;
 
     @Override
@@ -32,17 +36,15 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         // Sample icons for the list
-        mDiscreteIcons = new ArrayList<Integer>();
-        mDiscreteIcons.add(R.drawable.ic_action_attach);
-        mDiscreteIcons.add(R.drawable.ic_action_call);
-        mDiscreteIcons.add(R.drawable.ic_action_locate);
+        mIcons = new ArrayList<Integer>();
+        mIcons.add(R.drawable.ic_action_attach);
+        mIcons.add(R.drawable.ic_action_call);
+        mIcons.add(R.drawable.ic_action_locate);
+        mIcons.add(R.drawable.ic_action_locate);
+        mIcons.add(R.drawable.ic_action_locate);
+        mIcons.add(R.drawable.ic_action_locate);
 
-        mContinuousIcons = new ArrayList<Integer>();
-        mContinuousIcons.add(R.drawable.ic_action_mail);
-        mContinuousIcons.add(R.drawable.ic_action_microphone);
-        mContinuousIcons.add(R.drawable.ic_action_photo);
-        mDiscreteNames = Arrays.asList("Letter", "Number", "Shape");
-        mContinuousNames = Arrays.asList("Font Size", "Font Weight", "Grayscale");
+        mNames = Arrays.asList("Letter", "Number", "Shape", "Size", "Colour", "Weight");
 
         // This is our list header
         //mHeader = (TextView) findViewById(R.id.header);
@@ -54,17 +56,34 @@ public class MainActivity extends Activity {
 
         //---Assigns an adapter to provide the content for this pager---
         pager.setAdapter(new ListInGridAdapter(this));
-        pager.setCurrentItem(0, 1);
+        mSelf = this;
+
+        //Get the next task
+        mNextTask = TaskManager.getInstance().getNextTask();
     }
 
     // Handle our Wearable List's click events
-    private WearableListView.ClickListener mDiscreteClickListener =
+    private WearableListView.ClickListener mListClickListener =
             new WearableListView.ClickListener() {
                 @Override
                 public void onClick(WearableListView.ViewHolder viewHolder) {
-                    switch (viewHolder.getAdapterPosition()) {
-                        //TODO: initiate different tasks
+
+                    int indClicked = viewHolder.getAdapterPosition();
+                    //Check if the correct option is clicked
+                    if(indClicked == mNames.indexOf(mNextTask.getType())) {
+                        if(mNextTask.isDiscrete()) {
+                            //So it is a discrete task, start the discrete activity
+                            Intent disIntent = new Intent(mSelf, ExpActivity.class);
+                            disIntent.putExtra("type", mNextTask.getType());
+                            disIntent.putExtra("target", mNextTask.getTargetInd());
+                            startActivity(disIntent);
+                        } else {
+                            //So it is a continuous task
+                        }
+                    } else {
+                        //Wrong option clicked, return to task display
                     }
+
                 }
 
                 @Override
@@ -72,44 +91,7 @@ public class MainActivity extends Activity {
                 }
             };
 
-    private WearableListView.ClickListener mContinuousClickListener =
-            new WearableListView.ClickListener() {
-                @Override
-                public void onClick(WearableListView.ViewHolder viewHolder) {
-                    switch (viewHolder.getAdapterPosition()) {
-                        //TODO: initiate different tasks
-                    }
 
-                }
-
-                @Override
-                public void onTopEmptyRegionClick() {
-
-                }
-            };
-
-    private WearableListView.OnScrollListener mOnScrollListener = new WearableListView.OnScrollListener() {
-
-        @Override
-        public void onScroll(int i) {
-
-        }
-
-        @Override
-        public void onAbsoluteScrollChange(int i) {
-
-        }
-
-        @Override
-        public void onScrollStateChanged(int i) {
-
-        }
-
-        @Override
-        public void onCentralPositionChanged(int i) {
-
-        }
-    };
 
     public class ListInGridAdapter extends GridPagerAdapter {
         final Context mContext;
@@ -125,7 +107,7 @@ public class MainActivity extends Activity {
 
         @Override
         public int getColumnCount(int i) {
-            return 3;
+            return 2;
         }
 
         //---Go to current column when scrolling up or down (instead of default column 0)---
@@ -141,28 +123,17 @@ public class MainActivity extends Activity {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             switch (col) {
                 case 0:
+                    View centerView = inflater.inflate(R.layout.view_center, viewGroup);
+                    return centerView;
+                case 1:
                     View discreteList = inflater.inflate(R.layout.list_side, null);
                     WearableListView discreteWearableListView =
-                            (WearableListView) discreteList.findViewById(R.id.wearable_List);
-                    discreteWearableListView.setAdapter(new WearableAdapter(mContext, mDiscreteIcons, mDiscreteNames));
-                    discreteWearableListView.setClickListener(mDiscreteClickListener);
-                    discreteWearableListView.addOnScrollListener(mOnScrollListener);
+                                (WearableListView) discreteList.findViewById(R.id.wearable_List);
+                    discreteWearableListView.setAdapter(new WearableAdapter(mContext, mIcons, mNames));
+                    discreteWearableListView.setClickListener(mListClickListener);
                     discreteWearableListView.setGreedyTouchMode(true);
                     viewGroup.addView(discreteList);
                     return discreteList;
-                case 1:
-                    View centerView = inflater.inflate(R.layout.view_center, viewGroup);
-                    return centerView;
-                case 2:
-                    View continuousList = inflater.inflate(R.layout.list_side, null);
-                    WearableListView continuousWearableListView =
-                            (WearableListView) continuousList.findViewById(R.id.wearable_List);
-                    continuousWearableListView.setAdapter(new WearableAdapter(mContext, mContinuousIcons, mContinuousNames));
-                    continuousWearableListView.setClickListener(mContinuousClickListener);
-                    continuousWearableListView.addOnScrollListener(mOnScrollListener);
-                    continuousWearableListView.setGreedyTouchMode(true);
-                    viewGroup.addView(continuousList);
-                    return continuousList;
                 default:
                     return null;
 
