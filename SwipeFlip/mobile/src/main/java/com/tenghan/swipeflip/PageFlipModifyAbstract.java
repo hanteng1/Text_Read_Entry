@@ -572,8 +572,16 @@ public abstract class PageFlipModifyAbstract {
                 if(MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4)
                 {
                     //check the result
-                    MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = true;
-                    MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 1;
+                    if(MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget == MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleActual
+                            && MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert == MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceActual)
+                    {
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = true;
+                        MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 1;
+                    }else
+                    {
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = false;
+                        MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 0;
+                    }
 
                     //save the result
 
@@ -581,10 +589,23 @@ public abstract class PageFlipModifyAbstract {
                 }else
                 {
                     //check the result
-                    MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = true;
-                    MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 1;
+                    if(MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget == MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleActual
+                            && isWithin(MainActivity.getSharedInstance().mStudyView.mPageRender.mContinuousTarget,
+                            MainActivity.getSharedInstance().mStudyView.mPageRender.mContinuousActual,
+                            MainActivity.getSharedInstance().mStudyView.mPageRender.accuracyInterval))
+                    {
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = true;
+                        MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 1;
+                    }else
+                    {
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = false;
+                        MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 0;
+                    }
+
 
                     //save the result
+
+
 
 
                 }
@@ -664,6 +685,15 @@ public abstract class PageFlipModifyAbstract {
         return false;
     }
 
+
+    private boolean isWithin(float targetValue, float actualValue, float ratio)
+    {
+        if (Math.abs(actualValue - targetValue) < targetValue * ratio)
+        {
+            return true;
+        }
+        return false;
+    }
 
 
     /**
