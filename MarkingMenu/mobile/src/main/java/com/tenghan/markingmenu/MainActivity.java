@@ -34,7 +34,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         return instance;
     }
 
-    public DemoUIView mDemoUIView;
+    //public DemoUIView mDemoUIView;
+    public StudyTwoUIView mStudyUIView;
+
     public ContentView mContentView;
     public GestureDetector mGestureDetetor;  //handle touch screen events
 
@@ -61,8 +63,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         mContentView = (ContentView)findViewById(R.id.content_view);
         mContentView.setDimension(320, 320);
-        mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
-        mDemoUIView.setDimension(320, 320);
+
+//        mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
+//        mDemoUIView.setDimension(320, 320);
+
+        mStudyUIView = (StudyTwoUIView)findViewById(R.id.study_two_ui_view);
+        mStudyUIView.setDimension(320, 320);
 
         mGestureDetetor = new GestureDetector(this, this);
 
@@ -111,11 +117,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         if(event.getAction() == MotionEvent.ACTION_UP)
         {
             //Log.d(TAG, "up");
-            mDemoUIView.onFingerUp(event.getX(), event.getY());
+            //mDemoUIView.onFingerUp(event.getX(), event.getY());
+            mStudyUIView.onFingerUp(event.getX()- offsetX, event.getY()- offsetY);
         }else if(event.getAction() == MotionEvent.ACTION_MOVE)
         {
             //Log.d(TAG, "move");
-            mDemoUIView.onFingerMove(event.getX() - offsetX, event.getY() - offsetY);
+            //mDemoUIView.onFingerMove(event.getX() - offsetX, event.getY() - offsetY);
+            mStudyUIView.onFingerMove(event.getX()- offsetX, event.getY()- offsetY);
         }
 
         return mGestureDetetor.onTouchEvent(event);
@@ -125,8 +133,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public boolean onDown(MotionEvent e)
     {
         //Log.d(TAG, "down");
-        mDemoUIView.onFingerDown(e.getX(), e.getY());
-
+        //mDemoUIView.onFingerDown(e.getX(), e.getY());
+        mStudyUIView.onFingerDown(e.getX()- offsetX, e.getY()- offsetY);
         return true;
     }
 
@@ -141,7 +149,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public void onLongPress(MotionEvent e) {
 
-        mDemoUIView.onLongPressed(e.getX() - offsetX, e.getY() - offsetY);
+        //mDemoUIView.onLongPressed(e.getX() - offsetX, e.getY() - offsetY);
+        mStudyUIView.onLongPressed(e.getX() - offsetX, e.getY() - offsetY);
         //Log.d(TAG, "long press");
     }
 

@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class StudyTwoUIView extends View {
     private int touchLength = 10;
     private ArrayList<PointF> touchPoints;
 
-    private float menuDistance = 80.0f;
+    private float menuDistance = 120.0f;
     private PointF menuCenter = new PointF();
 
     private Runnable strokeDeleting;
@@ -41,11 +42,17 @@ public class StudyTwoUIView extends View {
     public boolean isTriggered = false;
     public boolean isSubMenuing = false;
 
-    private boolean isSubMenuVertical = false;
+    private boolean isSubMenuVertical = true;
     private boolean isSubMenuLeftTop = false;
     private float subMenuWidth = 60;
     private int currentSubMenu = -1;
     private PointF subMenuTouchAchor = new PointF();
+
+
+    //first layer menu
+    private ArrayList<String> menuItems;
+
+
 
     //continuous bar
     private float barWidth = 40;
@@ -54,12 +61,19 @@ public class StudyTwoUIView extends View {
     private float offsetY = 3;
 
 
-    private ArrayList<String> scrollList;
-    private int totallists = 5;
     private PointF listCursor = new PointF();
     boolean isDrawingCursor = true;
-    private String[] alphabet = {"A", "B", "C", "D", "E"};
-    private String[] number = {"1", "2", "3", "4", "5"};
+
+    //task 1, alphabet
+    public ArrayList<String> task_alphabet;
+
+    //task 2, number
+    public ArrayList<Integer> task_number;
+
+    //task 3, shape
+    public ArrayList<PointF[]> task_shape;
+
+
 
 
     //tasks
@@ -84,6 +98,32 @@ public class StudyTwoUIView extends View {
     //these willn not be used
     public int numVistedCells;
     public int numOvershoot;
+
+    //current task
+    public int mTask;
+
+    //for discrete task
+    public int mAngleTarget = -1;
+    public int mDistanceTargert = -1;
+    public int mAngleNum = 3;
+    public int mDistanceNum = 5;
+    public int mClose;
+    public float mCloseValue;
+    public int mAngleActual = -1;
+    public int mDistanceActual = -1;
+
+    //for continuous values
+
+    public float mContinuousMax = 120;
+    public float reservedDistance = 40;
+    public float mContinuousTarget = -1;
+    public float mContinuousActual = -1;
+    public float accuracyInterval = 0.05f;  // + -
+
+
+    public boolean obtainNext = true;
+
+
 
 
     public StudyTwoUIView(Context context, AttributeSet attrs)
@@ -119,8 +159,38 @@ public class StudyTwoUIView extends View {
 
         this.setBackgroundColor(Color.parseColor("#559B9B9B"));
 
-        scrollList = new ArrayList<String>();
-        generateScrollList(totallists);
+        menuItems = new ArrayList<String>();
+        menuItems.add("Letter");
+        menuItems.add("Number");
+        menuItems.add("Icon");
+        menuItems.add("Size");
+        menuItems.add("Color");
+        menuItems.add("Weight");
+
+
+        //task 1
+        task_alphabet = new ArrayList<String>();
+        task_alphabet.add("A");
+        task_alphabet.add("B");
+        task_alphabet.add("C");
+        task_alphabet.add("D");
+        task_alphabet.add("E");
+
+        task_number = new ArrayList<Integer>();
+        task_number.add(1);
+        task_number.add(2);
+        task_number.add(3);
+        task_number.add(4);
+        task_number.add(5);
+
+        task_shape = new ArrayList<PointF[]>();
+        task_shape.add(new PointF[]{new PointF(0, 0), new PointF(1, 0), new PointF(1, 1), new PointF(0, 1), new PointF(0, 0)});
+        //this one will not be used
+        task_shape.add(new PointF[]{new PointF(0, 0), new PointF(1, 0), new PointF(1, 1), new PointF(0, 1), new PointF(0, 0)});
+
+        task_shape.add(new PointF[]{new PointF(0.5f, 0), new PointF(1, 1), new PointF(0, 1), new PointF(0.5f, 0)});
+        task_shape.add(new PointF[]{new PointF(0.5f, 0), new PointF(1, 0.5f), new PointF(0.75f, 1), new PointF(0.25f, 1), new PointF(0, 0.5f), new PointF(0.5f, 0)});
+        task_shape.add(new PointF[]{new PointF(0, 0.25f), new PointF(1, 0.25f), new PointF(1, 0.75f), new PointF(0, 0.75f), new PointF(0, 25f)});
 
         touchPoints = new ArrayList<PointF>();
 
@@ -169,6 +239,8 @@ public class StudyTwoUIView extends View {
         }
         //the task orders has been set
 
+        //get the first task
+        ReloadTrial();
 
 
         mHandler = new Handler();
@@ -187,6 +259,44 @@ public class StudyTwoUIView extends View {
         };
 
         mHandler.post(strokeDeleting);
+
+    }
+
+    public void ReloadTrial()
+    {
+        int[] curTask;
+
+        if(obtainNext == true)
+        {
+            curTask = obtainNextTask();
+        }else
+        {
+            curTask = obtainCurrentTask();
+        }
+
+        obtainNext = false;
+
+        mTask = curTask[0];
+        mClose = curTask[1];
+        mCloseValue = curTask[2] / 100.0f;
+
+        if(mTask < 4)
+        {
+            isSubMenuLeftTop = true;
+        }else
+        {
+            isSubMenuLeftTop = false;
+        }
+
+        //1, 2, 3, 4, 5, 6
+        mAngleTarget = mTask;
+
+        //distance target
+        mDistanceTargert = (int)(mDistanceNum * mCloseValue);
+        mContinuousTarget = mContinuousMax * mCloseValue;
+        mDistanceActual = -1;
+        mContinuousActual = -1;
+        mAngleActual = -1;
 
     }
 
@@ -223,15 +333,6 @@ public class StudyTwoUIView extends View {
         return tasks.get(currentTask);
     }
 
-
-    private void generateScrollList(int num)
-    {
-        for(int itrl =0; itrl < num; itrl++)
-        {
-            scrollList.add(alphabet[itrl]);
-        }
-    }
-
     public void setDimension(int x, int y)
     {
         screenWidth = x;
@@ -246,26 +347,213 @@ public class StudyTwoUIView extends View {
     @Override
     protected void onDraw(Canvas canvas)
     {
-        if(!isTriggered)
+
+        Paint p = new Paint();
+        p.setFilterBitmap(true);
+
+        //draw the target
+        int fontSize = calcFontSize(20);
+        p.setColor(Color.GRAY);
+        p.setStrokeWidth(1);
+        p.setAntiAlias(true);
+        p.setTextSize(fontSize);
+
+        String taskText = "" + (currentTask + 1)
+                + " / " + taskCount;
+
+        float textWidth = p.measureText(taskText);
+        float y = screenHeight / 4;
+        float x = screenWidth / 2 - textWidth / 2;
+        canvas.drawText(taskText, x, y, p);
+
+        //draw target
+        if(mTask == 1)
         {
-            return;
+            //draw letter
+            p.setTextSize(calcFontSize(40));
+            p.setColor(Color.BLUE);
+            y = screenHeight/2 + 10;
+            taskText = task_alphabet.get(mDistanceTargert);
+            textWidth = p.measureText(taskText);
+            x = screenWidth / 2 - textWidth/2;
+            canvas.drawText(taskText, x, y, p);
+        }else if(mTask == 2)
+        {
+            //draw number
+            p.setTextSize(calcFontSize(40));
+            p.setColor(Color.BLUE);
+            y = screenHeight/2 + 10;
+            taskText = "" + task_number.get(mDistanceTargert);
+            textWidth = p.measureText(taskText);
+            x = screenWidth / 2 - textWidth/2;
+            canvas.drawText(taskText, x, y, p);
+
+        }else if(mTask == 3)
+        {
+            //draw shape
+            float scale = 40;
+            x = screenWidth / 2;
+            y = screenHeight / 2;
+            float xoffSet = x - scale * 0.5f;
+            float yoffSet = y - scale * 0.5f;
+
+            if(mDistanceTargert != 1)
+            {
+                Path path = new Path();
+                path.moveTo(task_shape.get(mDistanceTargert)[0].x * scale + xoffSet, task_shape.get(mDistanceTargert)[0].y * scale + yoffSet);
+                for(int itrs = 1; itrs < task_shape.get(mDistanceTargert).length; itrs++)
+                {
+                    path.lineTo(task_shape.get(mDistanceTargert)[itrs].x * scale + xoffSet, task_shape.get(mDistanceTargert)[itrs].y * scale + yoffSet);
+                }
+
+                p.setColor(Color.BLUE);
+                p.setStyle(Paint.Style.FILL);
+                canvas.drawPath(path, p);
+            }else
+            {
+                p.setColor(Color.BLUE);
+                p.setStyle(Paint.Style.FILL);
+                canvas.drawCircle(x, y, scale*0.5f, p);
+            }
+
+        }else if(mTask == 4)
+        {
+            //font size
+            if(mContinuousTarget != -1 && mContinuousTarget < (mContinuousMax + reservedDistance))
+            {
+                Path path = new Path();
+                float mx = screenWidth/2;
+                float my = screenHeight/2;
+                float offx = 320 - mContinuousTarget / 2 - mx;
+                float offy = mContinuousTarget / 2 - my;
+
+                path.moveTo(320 - offx, 0 - offy);
+                path.lineTo(320 - offx, mContinuousTarget- offy);
+                path.lineTo(320 - mContinuousTarget - offx, mContinuousTarget- offy);
+                path.lineTo(320 - offx, 0- offy);
+
+                p.setStyle(Paint.Style.STROKE);
+                p.setColor(Color.BLUE);
+                p.setStrokeWidth(2);
+                canvas.drawPath(path, p);
+
+                path.reset();
+                path.moveTo(300 - offx, 0 - offy);
+                path.lineTo(300 - offx, mContinuousTarget- offy);
+                canvas.drawPath(path, p);
+
+            }
+        }else if(mTask == 5)
+        {
+            //color
+            Path path = new Path();
+            float mx = screenWidth/2;
+            float my = screenHeight/2;
+            float offx = 320 - 160 / 2 - mx;
+            float offy = 160 / 2 - my;
+
+            path.moveTo(320 - offx, 0 - offy);
+            path.lineTo(320 - offx, 160 - offy);
+            path.lineTo(320 - 160 - offx, 160- offy);
+            path.lineTo(320 - offx, 0- offy);
+
+            p.setStyle(Paint.Style.FILL);
+            p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousTarget / (mContinuousMax + reservedDistance) ))));
+            canvas.drawPath(path, p);
+
+        }else if(mTask == 6)
+        {
+
+            //wegght
+            Path path = new Path();
+            float mx = screenWidth/2;
+            float my = screenHeight/2;
+            float offx = 320 - 160 / 2 - mx;
+            float offy = 160 / 2 - my;
+
+            path.moveTo(320 - offx, 0 - offy);
+            path.lineTo(320 - offx, 160 - offy);
+            path.lineTo(320 - 160 - offx, 160- offy);
+            path.lineTo(320 - offx, 0- offy);
+
+            p.setStyle(Paint.Style.STROKE);
+            p.setColor(Color.BLUE);
+            p.setStrokeWidth( 20 * (mContinuousTarget / (mContinuousMax + reservedDistance) ));
+
+            canvas.drawPath(path, p);
         }
 
-        if(!isSubMenuing)
+
+
+
+        if(!isTriggered)
         {
-            /**
-             *  1         4
-             *
-             *  2         5
-             *
-             *  3         6
-             */
 
 
         }else
         {
+            if(!isSubMenuing)
+            {
+                /**
+                 *  1         6
+                 *
+                 *  2         5
+                 *
+                 *  3         4
+                 */
 
+                //show marking menu
+                float midX = screenWidth / 2;
+                float midY = screenHeight / 2;
+                float menuAngle = 5 *  (float) Math.PI / 4.0f;
+                float menuAngleSeg = (float) Math.PI / 4.0f;
+
+                for(int itrc = 0; itrc < menuItems.size(); itrc++)
+                {
+                    float angleItr = itrc;
+                    if(itrc >= 3)
+                    {
+                        angleItr++;
+                    }
+                    float mx = midX + menuDistance * (float)Math.cos(menuAngle - menuAngleSeg * angleItr);
+                    float my = midY + menuDistance * (float)Math.sin(menuAngle - menuAngleSeg * angleItr);
+
+                    String text = menuItems.get(itrc);
+                    float textLength = inputPaint.measureText(text);
+
+                    canvas.drawText(text, mx - textLength / 2, my, inputPaint);
+                }
+
+
+
+                //finger stoke
+                //draw touch path
+                if (touchPoints.size() > 0)
+                {
+                    touchPath.reset();
+                    for (int itrt = 0; itrt < touchPoints.size(); itrt++)
+                    {
+                        if(itrt == 0)
+                        {
+                            touchPath.moveTo(touchPoints.get(itrt).x, touchPoints.get(itrt).y);
+                        }else
+                        {
+                            touchPath.lineTo(touchPoints.get(itrt).x, touchPoints.get(itrt).y);
+                        }
+                    }
+
+                    canvas.drawPath(touchPath, strokePaint);
+                }
+
+            }else
+            {
+                //show submenu task
+
+
+            }
         }
+
+
 
     }
 
@@ -280,6 +568,26 @@ public class StudyTwoUIView extends View {
         if(isTriggered)
         {
 
+            if(!isSubMenuing)
+            {
+                touchPoints.add(new PointF(x, y));
+
+                //to select a menu
+                detectGesture(touchPoints);
+                if(mAngleActual == mAngleTarget)
+                {
+                    isSubMenuing = true;
+
+                }
+
+            }else
+            {
+                //to select a value
+
+            }
+
+
+
             invalidate();
         }
     }
@@ -287,9 +595,23 @@ public class StudyTwoUIView extends View {
     public void onFingerUp(float x, float y)
     {
         isTriggered = false;
-        isSubMenuing = false;
+
+
+        mAngleActual = -1;
+        mDistanceActual = -1;
+        mContinuousActual = -1;
+
+        //check the result
 
         //show the next target
+        if(isSubMenuing)
+        {
+            obtainNext = true;
+        }else {
+            obtainNext = false;
+        }
+        ReloadTrial();
+        isSubMenuing = false;
 
         invalidate();
     }
@@ -303,20 +625,51 @@ public class StudyTwoUIView extends View {
     }
 
     //detect which menu selected
-    private int detectGesture(ArrayList<PointF> points)
+    private void detectGesture(ArrayList<PointF> points)
     {
-        int gestureResult = -1;
         /**
-         *  1         4
+         *  1         6
          *
          *  2         5
          *
-         *  3         6
+         *  3         4
          */
 
+        if(points.size() > 2)
+        {
+            float origX = points.get(0).x;
+            float origY = points.get(0).y;
+            float destX = points.get(points.size() - 1).x;
+            float destY = points.get(points.size() - 1).y;
 
+            if(calDistance(origX, origY, destX, destY) > menuDistance)
+            {
+                //calculate the angle
+                float angle = calAngle(origX, origY, destX, destY);
 
-        return gestureResult;
+                //Log.d(TAG, "" + angle);
+                if(angle > 202.5 && angle < 247.5)
+                {
+                    mAngleActual = 1;
+                }else if(angle  > 157.5 && angle < 202.5)
+                {
+                    mAngleActual = 2;
+                }else if(angle > 112.5 && angle < 157.5)
+                {
+                    mAngleActual = 3;
+                }else if(angle > 292.5 && angle < 337.5)
+                {
+                    mAngleActual = 6;
+                }else if(angle > 337.5 || angle < 22.5)
+                {
+                    mAngleActual = 5;
+                }else if(angle > 22.5 && angle < 67.5)
+                {
+                    mAngleActual = 4;
+                }
+
+            }
+        }
     }
 
 
@@ -327,12 +680,21 @@ public class StudyTwoUIView extends View {
 
     private float calAngle(float x1, float y1, float x2, float y2)
     {
-        return 0;
+        float angle = (float) Math.toDegrees(Math.atan2(y2 - y1, x2 - x1));
+        if(angle < 0){
+            angle += 360;
+        }
+        return angle;
     }
 
     private void drawListPanel(Canvas canvas, boolean isVertical, boolean isLeftTop)
     {
 
+    }
+
+    protected int calcFontSize(int size)
+    {
+        return (int)(size * MainActivity.getSharedInstance().getResources().getDisplayMetrics().scaledDensity);
     }
 
 }
