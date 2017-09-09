@@ -30,13 +30,12 @@ public class StudyTwo extends PageFlipModifyAbstract{
     public int currentCondition = -1;
     public int currentTask = -1;
     private Random rand;
-    private int repeat = 5;
+    private int repeat = 3;
 
     public PointF cursor = new PointF();
 
     //should keep equal chance for close and far distances
-    private int closeBound = 50;
-    private int farBound = 99;
+    private int closeBound = 20;
 
     //1 - start, 2 - move, 3 - end
     public int trialState;
@@ -65,12 +64,22 @@ public class StudyTwo extends PageFlipModifyAbstract{
         {
             for(int itrt = 0; itrt < repeat; itrt++)
             {
-                int close = rand.nextInt(closeBound);
+                int level1 = rand.nextInt(closeBound);
                 //discrete
-                tempTasks.add(new int[]{itr, 1, close});
+                tempTasks.add(new int[]{itr, 1, level1});
 
-                int far = rand.nextInt(closeBound) + closeBound;
-                tempTasks.add(new int[]{itr, 2, far});
+                int level2 = rand.nextInt(closeBound) + closeBound;
+                tempTasks.add(new int[]{itr, 2, level2});
+
+                int level3 = rand.nextInt(closeBound) + 2*closeBound;
+                tempTasks.add(new int[]{itr, 3, level3});
+
+                int level4 = rand.nextInt(closeBound) + 3*closeBound;
+                tempTasks.add(new int[]{itr, 4, level4});
+
+                int level5 = rand.nextInt(closeBound) + 4*closeBound;
+                tempTasks.add(new int[]{itr, 5, level5});
+
             }
         }
 
