@@ -194,7 +194,6 @@ public class StudyTwoUIView extends View {
 
         touchPoints = new ArrayList<PointF>();
 
-
         //set up the tasks
         tasks = new ArrayList<int[]>();
         tempTasks = new ArrayList<int[]>();
@@ -242,7 +241,6 @@ public class StudyTwoUIView extends View {
         //get the first task
         ReloadTrial();
 
-
         mHandler = new Handler();
         strokeDeleting = new Runnable() {
             @Override
@@ -282,10 +280,10 @@ public class StudyTwoUIView extends View {
 
         if(mTask < 4)
         {
-            isSubMenuLeftTop = false;
+            isSubMenuLeftTop = true;
         }else
         {
-            isSubMenuLeftTop = true;
+            isSubMenuLeftTop = false;
         }
 
         //1, 2, 3, 4, 5, 6
@@ -416,7 +414,7 @@ public class StudyTwoUIView extends View {
                 canvas.drawCircle(x, y, scale*0.5f, p);
             }
 
-        }else if(mTask == 4)
+        }else if(mTask == 4 && !isTriggered)
         {
             //font size
             if(mContinuousTarget != -1 && mContinuousTarget < (mContinuousMax + reservedDistance))
@@ -443,7 +441,7 @@ public class StudyTwoUIView extends View {
                 canvas.drawPath(path, p);
 
             }
-        }else if(mTask == 5)
+        }else if(mTask == 5 && !isTriggered)
         {
             //color
             Path path = new Path();
@@ -461,7 +459,7 @@ public class StudyTwoUIView extends View {
             p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousTarget / (mContinuousMax + reservedDistance) ))));
             canvas.drawPath(path, p);
 
-        }else if(mTask == 6)
+        }else if(mTask == 6 && !isTriggered)
         {
 
             //wegght
@@ -485,7 +483,6 @@ public class StudyTwoUIView extends View {
 
 
 
-
         if(!isTriggered)
         {
 
@@ -495,17 +492,17 @@ public class StudyTwoUIView extends View {
             if(!isSubMenuing)
             {
                 /**
-                 *  1         6
+                 *  6         1
                  *
-                 *  2         5
+                 *  5         2
                  *
-                 *  3         4
+                 *  4         3
                  */
 
                 //show marking menu
                 float midX = screenWidth / 2;
                 float midY = screenHeight / 2;
-                float menuAngle = 5 *  (float) Math.PI / 4.0f;
+                float menuAngle = - (float) Math.PI / 4.0f;
                 float menuAngleSeg = (float) Math.PI / 4.0f;
 
                 for(int itrc = 0; itrc < menuItems.size(); itrc++)
@@ -515,8 +512,8 @@ public class StudyTwoUIView extends View {
                     {
                         angleItr++;
                     }
-                    float mx = midX + menuDistance * (float)Math.cos(menuAngle - menuAngleSeg * angleItr);
-                    float my = midY + menuDistance * (float)Math.sin(menuAngle - menuAngleSeg * angleItr);
+                    float mx = midX + menuDistance * (float)Math.cos(menuAngle + menuAngleSeg * angleItr);
+                    float my = midY + menuDistance * (float)Math.sin(menuAngle + menuAngleSeg * angleItr);
 
                     String text = menuItems.get(itrc);
                     float textLength = inputPaint.measureText(text);
@@ -559,12 +556,104 @@ public class StudyTwoUIView extends View {
                 }else if(mTask == 4)
                 {
 
+                    //size
+                    //target
+                    if(mContinuousTarget != -1 && mContinuousTarget < (mContinuousMax + reservedDistance))
+                    {
+                        Path path = new Path();
+                        path.moveTo(320, 0);
+                        path.lineTo(320, mContinuousTarget);
+                        path.lineTo(320 - mContinuousTarget, mContinuousTarget);
+                        path.lineTo(320, 0);
+
+                        p.setStyle(Paint.Style.STROKE);
+                        p.setColor(Color.BLUE);
+                        p.setStrokeWidth(2);
+                        canvas.drawPath(path, p);
+
+                    }
+
+                    //actual
+                    if(mContinuousActual != -1 && mContinuousActual < (mContinuousMax + reservedDistance))
+                    {
+                        Path path = new Path();
+                        path.moveTo(320, 0);
+                        path.lineTo(320 - mContinuousActual, 0);
+                        path.lineTo(320 - mContinuousActual, mContinuousActual);
+                        path.lineTo(320, 0);
+
+                        p.setStyle(Paint.Style.STROKE);
+                        p.setColor(Color.GREEN);
+                        p.setStrokeWidth(2);
+                        canvas.drawPath(path, p);
+                    }
+
                 }else if(mTask == 5)
                 {
 
+                    //color
+                    //target
+                    if(mContinuousTarget != -1 && mContinuousTarget < (mContinuousMax + reservedDistance))
+                    {
+                        Path path = new Path();
+                        path.moveTo(320, 0);
+                        path.lineTo(320, 160);
+                        path.lineTo(160, 160);
+                        path.lineTo(320, 0);
+
+                        p.setStyle(Paint.Style.FILL);
+                        p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousTarget / (mContinuousMax + reservedDistance) ))));
+                        canvas.drawPath(path, p);
+
+                    }
+
+                    //actual
+                    if(mContinuousActual != -1 && mContinuousActual < (mContinuousMax + reservedDistance))
+                    {
+                        Path path = new Path();
+                        path.moveTo(320, 0);
+                        path.lineTo(160, 0);
+                        path.lineTo(160, 160);
+                        path.lineTo(320, 0);
+
+                        p.setStyle(Paint.Style.FILL);
+                        p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousActual / (mContinuousMax + reservedDistance) ))));
+                        canvas.drawPath(path, p);
+                    }
+
                 }else if(mTask == 6)
                 {
+                    //width
+                    //target
+                    if(mContinuousTarget != -1 && mContinuousTarget < (mContinuousMax + reservedDistance))
+                    {
+                        Path path = new Path();
+                        path.moveTo(320, 0);
+                        path.lineTo(320, 160);
+                        path.lineTo(160, 160);
+                        path.lineTo(320, 0);
 
+                        p.setStyle(Paint.Style.STROKE);
+                        p.setColor(Color.BLUE);
+                        p.setStrokeWidth( 20 * (mContinuousTarget / (mContinuousMax + reservedDistance) ));
+                        canvas.drawPath(path, p);
+
+                    }
+
+                    //actual
+                    if(mContinuousActual != -1 && mContinuousActual < (mContinuousMax + reservedDistance))
+                    {
+                        Path path = new Path();
+                        path.moveTo(320, 0);
+                        path.lineTo(160, 0);
+                        path.lineTo(160, 160);
+                        path.lineTo(320, 0);
+
+                        p.setStyle(Paint.Style.STROKE);
+                        p.setColor(Color.GREEN);
+                        p.setStrokeWidth( 20 * (mContinuousActual / (mContinuousMax + reservedDistance) ));
+                        canvas.drawPath(path, p);
+                    }
                 }
 
             }
@@ -849,11 +938,11 @@ public class StudyTwoUIView extends View {
     private void detectGesture(ArrayList<PointF> points)
     {
         /**
-         *  1         6
+         *  6         1
          *
-         *  2         5
+         *  5         2
          *
-         *  3         4
+         *  4         3
          */
 
         if(points.size() > 2)
@@ -871,22 +960,22 @@ public class StudyTwoUIView extends View {
                 //Log.d(TAG, "" + angle);
                 if(angle > 202.5 && angle < 247.5)
                 {
-                    mAngleActual = 1;
+                    mAngleActual = 6;
                 }else if(angle  > 157.5 && angle < 202.5)
                 {
-                    mAngleActual = 2;
+                    mAngleActual = 5;
                 }else if(angle > 112.5 && angle < 157.5)
                 {
-                    mAngleActual = 3;
+                    mAngleActual = 4;
                 }else if(angle > 292.5 && angle < 337.5)
                 {
-                    mAngleActual = 6;
+                    mAngleActual = 1;
                 }else if(angle > 337.5 || angle < 22.5)
                 {
-                    mAngleActual = 5;
+                    mAngleActual = 2;
                 }else if(angle > 22.5 && angle < 67.5)
                 {
-                    mAngleActual = 4;
+                    mAngleActual = 3;
                 }
 
             }
