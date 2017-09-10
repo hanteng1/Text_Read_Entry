@@ -130,7 +130,7 @@ public class StudyTwoUIView extends View {
     public boolean obtainNext = true;
 
 
-    public StudyTwoUIView(Context context, AttributeSet attrs)
+    public StudyTwoUIView (Context context, AttributeSet attrs)
     {
         super(context, attrs);
 

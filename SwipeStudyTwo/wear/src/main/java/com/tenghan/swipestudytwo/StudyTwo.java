@@ -301,7 +301,7 @@ public class StudyTwo extends PageFlipModifyAbstract{
             }
             //skip the calculation when the flip is either horizontal or vertical
             if(mIsHorizontal || mIsVertical) {
-                Log.d(TAG, "skipping a frame ..............");
+                //Log.d(TAG, "skipping a frame ..............");
                 return false;
             }
 
@@ -455,7 +455,7 @@ public class StudyTwo extends PageFlipModifyAbstract{
         {
             cross.set(x0, a1*x0 + b1);
 
-            Log.d(TAG, "x " + cross.x + " , y " + cross.y);
+            //Log.d(TAG, "x " + cross.x + " , y " + cross.y);
 
             return cross;
         }else

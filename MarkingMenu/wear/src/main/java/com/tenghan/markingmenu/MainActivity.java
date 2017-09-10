@@ -26,8 +26,6 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
     }
 
     public DataStorage storage;
-    public int offsetx = 0;//400;  //110;
-    public int offsety =  0;//960; ///320;
 
     public StudyTwoUIView mStudyUIView;
 
@@ -85,6 +83,7 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
         if (event.getAction() == MotionEvent.ACTION_UP) {
 
             mStudyUIView.onFingerUp(event.getX(), event.getY());
+            return true;
 
         }else if(event.getAction() == MotionEvent.ACTION_MOVE)
         {

@@ -130,7 +130,7 @@ public class DataStorage {
         }
 
         File dir;
-        dir = new File("/storage/self/primary/MarkMenu/");
+        dir = new File("/storage/self/primary/FlipPage/");
 
         String time = String.valueOf(System.currentTimeMillis());
         String filename = time + surfix + "_samples.csv";

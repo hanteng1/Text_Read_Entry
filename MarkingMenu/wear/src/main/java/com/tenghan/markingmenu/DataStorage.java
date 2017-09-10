@@ -131,7 +131,7 @@ public class DataStorage {
         }
 
         File dir;
-        dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/MarkMenu/");
+        dir = new File("/storage/self/primary/MarkMenu/");
 
         String time = String.valueOf(System.currentTimeMillis());
         String filename = time + surfix + "_samples.csv";
