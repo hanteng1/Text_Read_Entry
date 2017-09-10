@@ -38,10 +38,24 @@ public class MainActivity extends Activity {
     private static final String[] NUMBER_OPTIONS = new String[] {"1", "2", "3", "4", "5"};
     private static final String[] SHAPE_OPTIONS = new String[] {"\u25a0", "\u25b2", "\u25cf", "\u2b1f", "\u25ac"};
 
+    public static MainActivity instance;
+    public static MainActivity getSharedInstance()
+    {
+        if(instance == null)
+        {
+            instance = new MainActivity();
+        }
+        return instance;
+    }
+
+    public ConTargetView mConTargetView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        instance = this;
 
         mNames = Arrays.asList("Letter", "Number", "Shape", "Size", "Colour", "Weight");
 
@@ -126,6 +140,7 @@ public class MainActivity extends Activity {
                     View centerView = inflater.inflate(R.layout.view_center, null);
                     mStartButton = (Button) centerView.findViewById(R.id.start_button);
                     mTargetDisplayTextView = (TextView)centerView.findViewById(R.id.target_display_text);
+                    mConTargetView = (ConTargetView)centerView.findViewById(R.id.con_target_view);
 
                     if(!TaskManager.getInstance().isFirstTrial()) {
                         mStartButton.setVisibility(View.GONE);
@@ -142,6 +157,9 @@ public class MainActivity extends Activity {
                     //Set the target display
                     if(mNextTask.isDiscrete()) {
                         //Is discrete task, set the target display with the actual target text
+                        mConTargetView.setVisibility(View.INVISIBLE);
+                        mTargetDisplayTextView.setVisibility(View.VISIBLE);
+
                         String targetDisplay;
                         String taskType = mNextTask.getType();
                         if(taskType.equals("Letter")) {
@@ -152,6 +170,11 @@ public class MainActivity extends Activity {
                         mTargetDisplayTextView.setText(targetDisplay);
                     } else {
                         //Is a continuous task, we should draw something then
+                        mConTargetView.setTask( );
+                        mConTargetView.setVisibility(View.VISIBLE);
+                        mTargetDisplayTextView.setVisibility(View.INVISIBLE);
+                        mConTargetView.invalidate();
+
                     }
                     viewGroup.addView(centerView);
                     return centerView;
