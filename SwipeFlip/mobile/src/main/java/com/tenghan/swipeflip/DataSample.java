@@ -157,7 +157,7 @@ public class DataSample {
         isCorrect = _isCorrect;
 
         //is wrong corner, start by a wrong target
-        //1 - start wrong, 2 middle wrong, 3 - start and middle wrong
+        //1 - start wrong, 2 middle wrong, 0 - correct
         numVistedCells = _isWrongTask;
         //is over shot.. if target is correct, but has overshot
         numOvershoot = _isOvershoot;
@@ -232,7 +232,7 @@ public class DataSample {
                 stringbuilder.append("" + sample.technique + "," + sample.trial + "," + sample.trialAttempt + "," +
                         sample.state + "," + sample.timestamp  + "," +
                         sample.cornerIndex + "," + sample.task + "," + sample.taskType  + "," +sample.close + "," +
-                        sample.angleTarget + "," + sample.distancevaluetarget + "," + sample.angleActual + "," + sample.distancevalueactual + "," +
+                        sample.angleTarget + "," + String.format("%.2f", sample.distancevaluetarget) + "," + sample.angleActual + "," + String.format("%.2f", sample.distancevalueactual) + "," +
                         sample.isCorrect + "," + sample.numVistedCells  + "," + sample.numOvershoot  + "," +
                         sample.trialDuration  + "," + sample.responseTime + "," + sample.fingerTouchTimes + "," +
                         "\r\n");
@@ -241,7 +241,7 @@ public class DataSample {
                 stringbuilder.append("" + sample.technique + "," + sample.trial + "," + sample.trialAttempt + "," +
                         sample.state + "," + sample.timestamp  + "," +
                         sample.cornerIndex + "," + sample.task + "," + sample.taskType  + "," +sample.close + "," +
-                        sample.angleTarget + "," + sample.distancevaluetarget + "," + sample.angleActual + "," + sample.distancevalueactual + "," +
+                        sample.angleTarget + "," + String.format("%.2f", sample.distancevaluetarget) + "," + sample.angleActual + "," + String.format("%.2f", sample.distancevalueactual)+ "," +
                         "\r\n");
             }
 

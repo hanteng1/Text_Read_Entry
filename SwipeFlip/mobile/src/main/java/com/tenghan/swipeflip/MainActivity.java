@@ -223,7 +223,17 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             mStudyView.onPause();
         }
 
-        storage.save();
+        if(activityIndex == 3)
+        {
+            if(studyIndex == 1)
+            {
+                storage.save();
+            }else if(studyIndex == 2)
+            {
+                storage.save2();
+            }
+        }
+
 
         LoadBitmapTask.get(this).stop();
     }
@@ -363,14 +373,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public void onLongPress(MotionEvent e) {
 
-        //could do something
-
-        //save the data and count -1
-        if(activityIndex == 3)
-        {
-            storage.save();
-            isReseting = true;
-        }
 
     }
 

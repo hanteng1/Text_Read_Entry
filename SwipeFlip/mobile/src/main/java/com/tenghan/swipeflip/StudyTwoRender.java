@@ -226,8 +226,8 @@ public class StudyTwoRender extends StudyRender{
         DataStorage.AddSample(1, MainActivity.getSharedInstance().mStudyView.mStudy.currentTask,
                 MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
                 1, currentTimestamp, mCorner, mTask, mTaskType, mClose,
-                mAngleTarget, distancevaluetarget, -1, -1);
-
+                mAngleTarget, distancevaluetarget,
+                -1, -1);
 
 
         mPageFlipAbstract.getPages()[FIRST_PAGE].waiting4TextureUpdate = true;
@@ -758,6 +758,11 @@ public class StudyTwoRender extends StudyRender{
         float segDis = maxDistance / mDistanceNum;
         int disSegs = (int) ( (dis - reservedDistance )/ segDis);
 
+
+
+
+
+
         //then angle
         float ang = 0;
         if(mCorner == 0 || mCorner == 2)
@@ -778,6 +783,19 @@ public class StudyTwoRender extends StudyRender{
                     || angSegs != mAngleActual)
             {
 
+
+                //check logical error
+                //when first start, it should go to 0, 1, ....
+                if(mDistanceActual == -1)
+                {
+                    if(disSegs != 0)
+                    {
+                        return;
+                    }
+                }
+
+
+
                 mDistanceActual = disSegs;
 
                 if(isOvershot <  (mDistanceActual - mDistanceTargert))
@@ -785,16 +803,25 @@ public class StudyTwoRender extends StudyRender{
                     isOvershot = (mDistanceActual - mDistanceTargert);
                 }
 
-                if(mAngleActual != angSegs)
+                if(mAngleActual != angSegs && mAngleActual == -1)
                 {
+                    //a start angle
+
                     if(isWrongTask == 1)
                     {
-                        //start with wrong task
-                        isWrongTask = 3;
+                        //start with wrong corner
+                        //isWrongTask = 3;
                     }else if(isWrongTask == 0)
                     {
-                        //start with right task
-                        isWrongTask = 2;
+                        //start with right corner
+                        if(angSegs == mAngleTarget)
+                        {
+                            //correct
+                        }else
+                        {
+                            isWrongTask = 2;
+                        }
+
                     }
                 }
 
@@ -820,19 +847,33 @@ public class StudyTwoRender extends StudyRender{
         {
             if((2 * dis /3) != mContinuousActual || angSegs != mAngleActual)
             {
+
+                //do we have logical error here?
+
                 mDistanceActual = disSegs;
+
                 mContinuousActual = (2*dis /3);
 
                 if(angSegs != mAngleActual)
                 {
-                    if(isWrongTask == 1)
+                    if(mAngleActual == -1)
                     {
-                        //start with wrong task
-                        isWrongTask = 3;
-                    }else if(isWrongTask == 0)
-                    {
-                        //start with right task
-                        isWrongTask = 2;
+                        if(isWrongTask == 1)
+                        {
+
+                        }else if(isWrongTask == 0)
+                        {
+                            //start with right corner
+                            if(angSegs == mAngleTarget)
+                            {
+                                //correct
+                            }else
+                            {
+                                isWrongTask = 2;
+                            }
+
+                        }
+
                     }
 
                     mAngleActual = angSegs;

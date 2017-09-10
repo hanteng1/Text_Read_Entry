@@ -230,7 +230,7 @@ public class DataStorage {
 
     //for study 2
     public String save2(){
-        return save(null);
+        return save2(null);
     }
 
     public String save2(String surfix)

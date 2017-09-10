@@ -209,6 +209,9 @@ public class StudyTwo extends PageFlipModifyAbstract{
             if(MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner != startCorner)
             {
                 MainActivity.getSharedInstance().mStudyView.mPageRender.isWrongTask = 1;
+            }else
+            {
+
             }
 
             //save the data
@@ -221,7 +224,8 @@ public class StudyTwo extends PageFlipModifyAbstract{
             DataStorage.AddSample(1, MainActivity.getSharedInstance().mStudyView.mStudy.currentTask,
                     MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
                     2, currentTimestamp, MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner, MainActivity.getSharedInstance().mStudyView.mPageRender.mTask, mTaskType, MainActivity.getSharedInstance().mStudyView.mPageRender.mClose,
-                    MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget, distancevaluetarget, -1, -1);
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget, distancevaluetarget,
+                    -1, -1);
 
             trialFingerTouchTimes++;
 
