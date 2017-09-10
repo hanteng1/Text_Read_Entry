@@ -583,7 +583,7 @@ public abstract class PageFlipModifyAbstract {
                         MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 0;
                     }
 
-                    //save the result
+
 
 
                 }else
@@ -603,12 +603,53 @@ public abstract class PageFlipModifyAbstract {
                     }
 
 
-                    //save the result
-
-
-
 
                 }
+
+
+                //save the result
+                long currentTimestamp = System.currentTimeMillis();
+                MainActivity.getSharedInstance().mStudyView.mStudy.trialEndTime = currentTimestamp;
+
+                if(MainActivity.getSharedInstance().mStudyView.mStudy.trialFingerStartTime != 0)
+                {
+                    MainActivity.getSharedInstance().mStudyView.mStudy.trialDuration =
+                            MainActivity.getSharedInstance().mStudyView.mStudy.trialEndTime
+                                    - MainActivity.getSharedInstance().mStudyView.mStudy.trialFingerStartTime;
+                }
+
+                if(MainActivity.getSharedInstance().mStudyView.mStudy.trialStartTime != 0)
+                {
+                    MainActivity.getSharedInstance().mStudyView.mStudy.trialResponseDuration =
+                            MainActivity.getSharedInstance().mStudyView.mStudy.trialFingerStartTime
+                                    - MainActivity.getSharedInstance().mStudyView.mStudy.trialStartTime;
+                }
+
+
+                int mTaskType = MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4 ? 1 : 2;
+                float distancevaluetarget = MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4 ? MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert : MainActivity.getSharedInstance().mStudyView.mPageRender.mContinuousTarget;
+                float distancevalueactual = MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4 ? MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceActual : MainActivity.getSharedInstance().mStudyView.mPageRender.mContinuousActual;
+
+                DataStorage.AddSample(1, MainActivity.getSharedInstance().mStudyView.mStudy.currentTask,
+                        MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
+                        5, currentTimestamp, MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner, MainActivity.getSharedInstance().mStudyView.mPageRender.mTask, mTaskType, MainActivity.getSharedInstance().mStudyView.mPageRender.mClose,
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget, distancevaluetarget,
+
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleActual, distancevalueactual,
+                        MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect,
+
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.isWrongTask,
+                        MainActivity.getSharedInstance().mStudyView.mPageRender.isOvershot,
+
+                        MainActivity.getSharedInstance().mStudyView.mStudy.trialDuration,
+                        MainActivity.getSharedInstance().mStudyView.mStudy.trialResponseDuration,
+
+                        MainActivity.getSharedInstance().mStudyView.mStudy.trialFingerTouchTimes
+
+                );
+
+                //state has no 4 in this task
+
             }
 
 

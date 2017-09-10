@@ -40,7 +40,10 @@ public class StudyTwo extends PageFlipModifyAbstract{
     //1 - start, 2 - move, 3 - end
     public int trialState;
     public long trialDuration;
+    public long trialResponseDuration;
+    public int trialFingerTouchTimes = 0;
     public long trialStartTime = 0;
+    public long trialFingerStartTime = 0;
     public long trialEndTime = 0;
     public int isCorrect;  // 1 - correct, 0 - incorrect
 
@@ -119,8 +122,10 @@ public class StudyTwo extends PageFlipModifyAbstract{
         trialState = 0;
         trialDuration = 0;
         trialStartTime = 0;
+        trialFingerStartTime = 0;
         trialEndTime = 0;
         isCorrect = 0;
+        trialFingerTouchTimes = 0;
 
         if(currentTask == tasks.size())
         {
@@ -139,8 +144,10 @@ public class StudyTwo extends PageFlipModifyAbstract{
         trialState = 0;
         trialDuration = 0;
         trialStartTime = 0;
+        trialFingerStartTime = 0;
         trialEndTime = 0;
         isCorrect = 0;
+        trialFingerTouchTimes = 0;
 
         return tasks.get(currentTask);
     }
@@ -206,6 +213,8 @@ public class StudyTwo extends PageFlipModifyAbstract{
 
             //save the data
             long currentTimestamp = System.currentTimeMillis();
+            trialFingerStartTime = currentTimestamp;
+
             int mTaskType = MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4 ? 1 : 2;
             float distancevaluetarget = MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4 ? MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert : MainActivity.getSharedInstance().mStudyView.mPageRender.mContinuousTarget;
 
@@ -214,7 +223,7 @@ public class StudyTwo extends PageFlipModifyAbstract{
                     2, currentTimestamp, MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner, MainActivity.getSharedInstance().mStudyView.mPageRender.mTask, mTaskType, MainActivity.getSharedInstance().mStudyView.mPageRender.mClose,
                     MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget, distancevaluetarget, -1, -1);
 
-
+            trialFingerTouchTimes++;
 
             //reload the first page texture
 
@@ -223,19 +232,7 @@ public class StudyTwo extends PageFlipModifyAbstract{
                 MainActivity.getSharedInstance().mStudyView.mPageRender.ReloadFirstPageTexture();
             }
 
-            //save data, a trial starts
-            long timestamp = System.currentTimeMillis();
-            trialState = 1;
-            trialStartTime = timestamp;
-//            DataStorage.AddSample(currentCondition, currentAttempt,
-//                    MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner,
-//                    MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleNum,
-//                    MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceNum,
-//                    MainActivity.getSharedInstance().mStudyView.mPageRender.mClose,
-//                    MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget,
-//                    MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert,
-//                    -1, -1, trialState,
-//                    timestamp);
+
 
             // compute max degree between X axis and line from TouchP to OriginP
             // and max degree between X axis and line from TouchP to

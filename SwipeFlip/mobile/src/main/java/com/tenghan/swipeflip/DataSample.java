@@ -101,7 +101,6 @@ public class DataSample {
     // 4 - finger up
     // 5 - trial end
 
-    // 6 - wrong corner
 
 
     public DataSample(int _technique, int _trial, int _trialattemp, int _state, long _timestamp,

@@ -218,6 +218,8 @@ public class StudyTwoRender extends StudyRender{
 
         //save the trial start
         long currentTimestamp = System.currentTimeMillis();
+        MainActivity.getSharedInstance().mStudyView.mStudy.trialStartTime = currentTimestamp;
+
         mTaskType = mTask < 4 ? 1 : 2;
         float distancevaluetarget = mTask < 4 ? mDistanceTargert : mContinuousTarget;
 
@@ -772,8 +774,8 @@ public class StudyTwoRender extends StudyRender{
         if(mTask < 4)
         {
             //discrete
-            if(dis >= reservedDistance &&
-                    (disSegs != mDistanceActual || angSegs != mAngleActual))
+            if( (dis >= reservedDistance && disSegs != mDistanceActual)
+                    || angSegs != mAngleActual)
             {
 
                 mDistanceActual = disSegs;
@@ -800,7 +802,17 @@ public class StudyTwoRender extends StudyRender{
 
                 //record the change of distance or angle
 
+                {
+                    long currentTimestamp = System.currentTimeMillis();
+                    int mTaskType =  1 ;
+                    float distancevaluetarget = mDistanceTargert;
 
+                    DataStorage.AddSample(1, MainActivity.getSharedInstance().mStudyView.mStudy.currentTask,
+                            MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
+                            3, currentTimestamp, mCorner, MainActivity.getSharedInstance().mStudyView.mPageRender.mTask, mTaskType, mClose,
+                            mAngleTarget, distancevaluetarget, mAngleActual, mDistanceActual);
+
+                }
 
                 ReloadSecondPageTexture();
             }
@@ -822,18 +834,27 @@ public class StudyTwoRender extends StudyRender{
                         //start with right task
                         isWrongTask = 2;
                     }
-                }
 
-                mAngleActual = angSegs;
+                    mAngleActual = angSegs;
+
+                    //record the change of angle
+                    {
+                        long currentTimestamp = System.currentTimeMillis();
+                        int mTaskType = 2;
+                        float distancevaluetarget = mContinuousActual;
+
+                        DataStorage.AddSample(1, MainActivity.getSharedInstance().mStudyView.mStudy.currentTask,
+                                MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
+                                3, currentTimestamp, mCorner, MainActivity.getSharedInstance().mStudyView.mPageRender.mTask, mTaskType, mClose,
+                                mAngleTarget, distancevaluetarget, mAngleActual, mContinuousActual);
+                    }
+
+                }
 
                 if(isOvershot == 0 && mContinuousActual > (mContinuousTarget * (1 + accuracyInterval)))
                 {
                     isOvershot = 1;
                 }
-
-
-                //record the change of angle
-
 
                 ReloadSecondPageTexture();
             }
