@@ -45,12 +45,6 @@ public class MainActivity extends Activity {
 
         mNames = Arrays.asList("Letter", "Number", "Shape", "Size", "Colour", "Weight");
 
-        // This is our list header
-        //mHeader = (TextView) findViewById(R.id.header);
-
-
-        //wearableListView.addOnScrollListener(mOnScrollListener);
-
         mPager = (GridViewPager) findViewById(R.id.pager);
 
         //---Assigns an adapter to provide the content for this pager---
