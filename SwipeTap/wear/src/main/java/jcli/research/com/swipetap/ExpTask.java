@@ -5,10 +5,10 @@ import java.util.Arrays;
 public class ExpTask {
     private String[] mTaskNames = new String[]{"Letter", "Number", "Shape", "Size", "Colour", "Weight"};
     private int mClose;
-    private float mTaskValue;
+    private int mTaskValue;
     private int mTaskInd;
 
-    public ExpTask(int taskInd, int closeInd, float value) {
+    public ExpTask(int taskInd, int closeInd, int value) {
         mTaskInd = taskInd;
         mClose = closeInd;
         mTaskValue = value;
@@ -18,5 +18,5 @@ public class ExpTask {
 
     public int getTaskInd () {return mTaskInd; }
 
-    public float getValue() {return mTaskValue;}
+    public int getValue() {return mTaskValue;}
 }

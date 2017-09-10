@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -13,6 +14,9 @@ import android.view.View;
  */
 
 public class ConExpTaskView extends View {
+
+    private final static String TAG = "exptaskview";
+
 
     private String mCurrentTaskType ="";
     private float mCurrentTaskValue = -1.0f; //Target value
@@ -25,29 +29,27 @@ public class ConExpTaskView extends View {
 
     public int mTask;
     public int mClose;
-    public int mCloseValue;
+    public float mCloseValue;
 
 
     private Paint inputPaint = new Paint();
     private Paint subMenuPaint = new Paint();
     private Paint p = new Paint();
 
-    public void setTask (String type, float value) {
-        mCurrentTaskType = type;
-        mCurrentTaskValue = value;
-    }
 
 
     public void setTask (int _task, int _closevalue) {
-        mTask = _task;
-        mCloseValue = _closevalue;
+        mTask = _task + 1;
+        mCloseValue = _closevalue / 100.0f;
 
         mContinuousTarget = mContinuousMax * mCloseValue + reservedDistance;
+
+        Log.d(TAG, "task " + mTask + " , value " + mContinuousTarget);
+        invalidate();
     }
 
     public ConExpTaskView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
 
         inputPaint.setAntiAlias(true);
         inputPaint.setStrokeWidth(0);

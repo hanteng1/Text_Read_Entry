@@ -16,15 +16,17 @@ public class ConExpActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_con_exp);
+
         mSeekBar = (SeekBar) findViewById(R.id.con_exp_seekbar);
         mSeekBar.setOnSeekBarChangeListener(mSeekBarChangeListener);
         mCanvasView = (ConExpTaskView) findViewById(R.id.con_exp_canvas_view);
 
         //Get the data passed in
         Intent intent = getIntent();
-        String type = intent.getStringExtra("type");
-        float targetValue = intent.getFloatExtra("value", -1);
-        mCanvasView.setTask(type, targetValue);
+        int task = intent.getIntExtra("task", -1);
+        int targetValue = intent.getIntExtra("value", -1);
+        //mCanvasView.setTask(type, targetValue);
+        mCanvasView.setTask(task, targetValue);
     }
 
     private SeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {

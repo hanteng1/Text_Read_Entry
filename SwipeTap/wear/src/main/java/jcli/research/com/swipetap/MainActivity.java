@@ -85,13 +85,14 @@ public class MainActivity extends Activity{
                         if(mNextTask.isDiscrete()) {
                             //So it is a discrete task, start the discrete activity
                             Intent disIntent = new Intent(mSelf, ExpActivity.class);
-                            disIntent.putExtra("type", mNames.get(mNextTask.getTaskInd()));
+                            disIntent.putExtra("task", mNextTask.getTaskInd());
+
                             disIntent.putExtra("target", mNextTask.getValue());
                             startActivity(disIntent);
                         } else {
                             //So it is a continuous task
                             Intent conIntent = new Intent(mSelf, ConExpActivity.class);
-                            conIntent.putExtra("type", mNames.get(mNextTask.getTaskInd()));
+                            conIntent.putExtra("task", mNextTask.getTaskInd());
                             conIntent.putExtra("value", mNextTask.getValue());
                             startActivity(conIntent);
                         }
@@ -161,8 +162,6 @@ public class MainActivity extends Activity{
                     });
                     //Set the target display
                     if(mNextTask.isDiscrete()) {
-
-
                         //Is discrete task, set the target display with the actual target text
                         mConTargetView.setVisibility(View.INVISIBLE);
                         mTargetDisplayTextView.setVisibility(View.VISIBLE);
