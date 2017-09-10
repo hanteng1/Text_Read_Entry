@@ -3,6 +3,7 @@ package com.tenghan.markingmenu;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
+import android.support.wearable.input.WearableButtons;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -64,7 +65,20 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
                 button.setVisibility(View.INVISIBLE);
             }
         });
+
     }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_STEM_PRIMARY) {
+
+            Log.d(TAG, "test");
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 
 
     @Override

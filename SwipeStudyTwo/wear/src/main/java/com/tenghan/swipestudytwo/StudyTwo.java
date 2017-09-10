@@ -130,7 +130,7 @@ public class StudyTwo extends PageFlipModifyAbstract{
         if(currentTask == tasks.size())
         {
             //save
-
+            MainActivity.getSharedInstance().storage.save2();
             currentTask = 0;
         }
 
