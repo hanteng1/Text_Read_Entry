@@ -9,11 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#559B9B9B">
+        android:background="@drawable/background">
         <jcli.research.com.swipetap.ConExpTaskView
             android:id="@+id/con_exp_canvas_view"
             android:layout_width="match_parent"
-            android:layout_height="120dp" />
+            android:layout_height="120dp"
+            />
         <SeekBar
             android:id="@+id/con_exp_seekbar"
             android:layout_width="match_parent"

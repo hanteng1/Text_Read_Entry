@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#559B9B9B">
+        android:background="@drawable/background">
         <TextView
             android:id="@+id/exp_target_text"
             android:layout_width="match_parent"

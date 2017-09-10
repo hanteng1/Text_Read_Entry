@@ -14,6 +14,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -21,15 +22,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
+
 public class MainActivity extends Activity {
 
-    private static ArrayList<Integer> mIcons;
     //private static ArrayList<Integer> mContinuousIcons;
     private static List<String> mNames;
     private MainActivity mSelf;
     private ExpTask mNextTask;
     private TextView mTargetDisplayTextView;
     private GridViewPager mPager;
+    private Button mStartButton;
 
     private static final String[] LETTER_OPTIONS = new String[] {"A", "B", "C", "D", "E"};
     private static final String[] NUMBER_OPTIONS = new String[] {"1", "2", "3", "4", "5"};
@@ -39,15 +42,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Sample icons for the list
-        mIcons = new ArrayList<Integer>();
-        mIcons.add(R.drawable.ic_action_attach);
-        mIcons.add(R.drawable.ic_action_call);
-        mIcons.add(R.drawable.ic_action_locate);
-        mIcons.add(R.drawable.ic_action_locate);
-        mIcons.add(R.drawable.ic_action_locate);
-        mIcons.add(R.drawable.ic_action_locate);
 
         mNames = Arrays.asList("Letter", "Number", "Shape", "Size", "Colour", "Weight");
 
@@ -65,7 +59,6 @@ public class MainActivity extends Activity {
 
         //Get the next task
         mNextTask = TaskManager.getInstance().getNextTask();
-
 
     }
 
@@ -137,8 +130,23 @@ public class MainActivity extends Activity {
             switch (col) {
                 case 0:
                     View centerView = inflater.inflate(R.layout.view_center, null);
-                    //Set the target display
+                    mStartButton = centerView.findViewById(R.id.start_button);
+
                     mTargetDisplayTextView = centerView.findViewById(R.id.target_display_text);
+
+                    if(!TaskManager.getInstance().isFirstTrial()) {
+                        mStartButton.setVisibility(View.GONE);
+                        mTargetDisplayTextView.setVisibility(View.VISIBLE);
+                    }
+                    
+                    mStartButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            mStartButton.setVisibility(View.GONE);
+                            mTargetDisplayTextView.setVisibility(View.VISIBLE);
+                        }
+                    });
+                    //Set the target display
                     if(mNextTask.isDiscrete()) {
                         //Is discrete task, set the target display with the actual target text
                         String targetDisplay;
@@ -158,7 +166,7 @@ public class MainActivity extends Activity {
                     View discreteList = inflater.inflate(R.layout.list_side, null);
                     WearableListView discreteWearableListView =
                                 (WearableListView) discreteList.findViewById(R.id.wearable_List);
-                    discreteWearableListView.setAdapter(new WearableAdapter(mContext, mIcons, mNames));
+                    discreteWearableListView.setAdapter(new WearableAdapter(mContext, mNames));
                     discreteWearableListView.setClickListener(mListClickListener);
                     discreteWearableListView.setGreedyTouchMode(true);
                     viewGroup.addView(discreteList);

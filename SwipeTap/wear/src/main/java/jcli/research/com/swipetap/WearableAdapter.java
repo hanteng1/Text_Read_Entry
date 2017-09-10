@@ -16,13 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WearableAdapter extends WearableListView.Adapter {
-    private ArrayList<Integer> mImageItems;
     private List<String> mTextItems;
     private final LayoutInflater mInflater;
 
-    public WearableAdapter(Context context, ArrayList<Integer> items, List<String> textItems) {
+    public WearableAdapter(Context context, List<String> textItems) {
         mInflater = LayoutInflater.from(context);
-        mImageItems = items;
         mTextItems = textItems;
     }
 
@@ -36,25 +34,20 @@ public class WearableAdapter extends WearableListView.Adapter {
     public void onBindViewHolder(WearableListView.ViewHolder viewHolder,
                                  int position) {
         ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
-        CircledImageView circledView = itemViewHolder.mCircledImageView;
-        circledView.setImageResource(mImageItems.get(position));
         TextView textView = itemViewHolder.mItemTextView;
         textView.setText(mTextItems.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return mImageItems.size();
+        return mTextItems.size();
     }
 
     private static class ItemViewHolder extends WearableListView.ViewHolder {
-        private CircledImageView mCircledImageView;
         private TextView mItemTextView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            mCircledImageView = (CircledImageView)
-                    itemView.findViewById(R.id.circle);
             mItemTextView = (TextView) itemView.findViewById(R.id.name);
         }
     }

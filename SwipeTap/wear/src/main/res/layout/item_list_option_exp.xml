@@ -7,10 +7,9 @@
 
     <TextView
         android:id="@+id/exp_option_name"
-        android:alpha="0.5"
         android:gravity="center"
         android:fontFamily="sans-serif-condensed-light"
-        android:textColor="@color/white"
+        android:textColor="@color/red"
         android:textSize="16sp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
