@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
+import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -63,6 +65,7 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
             }
         });
     }
+
 
     @Override
     protected void onResume()

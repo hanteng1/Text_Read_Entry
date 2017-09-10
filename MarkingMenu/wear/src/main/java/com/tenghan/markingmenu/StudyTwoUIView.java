@@ -1172,7 +1172,7 @@ public class StudyTwoUIView extends View {
             float destX = points.get(points.size() - 1).x;
             float destY = points.get(points.size() - 1).y;
 
-            if(calDistance(origX, origY, destX, destY) > menuDistance)
+            if(calDistance(origX, origY, destX, destY) > (menuDistance / 2))
             {
                 //calculate the angle
                 float angle = calAngle(origX, origY, destX, destY);
