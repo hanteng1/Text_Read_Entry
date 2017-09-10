@@ -32,6 +32,10 @@ public class ConExpTaskView extends View {
     private Paint subMenuPaint = new Paint();
     private Paint p = new Paint();
 
+    public void setTask (String type, float value) {
+        mCurrentTaskType = type;
+        mCurrentTaskValue = value;
+    }
 
 
     public void setTask (int _task, int _closevalue) {
