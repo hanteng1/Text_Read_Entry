@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public int offsetX = 110;
     public int offsetY = 320;
 
+    //storage
+    public DataStorage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         layoutParams.leftMargin = offsetX;
         layoutParams.topMargin = offsetY;
         frameLayout.setLayoutParams(layoutParams);
+
+        storage = DataStorage.getInstance();
+        storage.clearData();
 
         mContentView = (ContentView)findViewById(R.id.content_view);
         mContentView.setDimension(320, 320);
@@ -90,12 +95,14 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     protected void onResume()
     {
         super.onResume();
+
     }
 
     @Override
     protected void onPause()
     {
         super.onPause();
+        storage.save2();
     }
 
     @Override

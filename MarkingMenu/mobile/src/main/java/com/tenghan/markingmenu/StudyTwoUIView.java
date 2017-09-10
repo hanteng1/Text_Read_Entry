@@ -92,6 +92,9 @@ public class StudyTwoUIView extends View {
     public int trialState;
     public long trialDuration;
     public long trialStartTime = 0;
+    public long trialResponseDuration;
+    public int trialFingerTouchTimes = 0;
+    public long trialFingerStartTime = 0;
     public long trialEndTime = 0;
     public int isCorrect;  // 1 - correct, 0 - incorrect
 
@@ -101,7 +104,7 @@ public class StudyTwoUIView extends View {
 
     //current task
     public int mTask;
-
+    public int mTaskType;
     //for discrete task
     public int mAngleTarget = -1;
     public int mDistanceTargert = -1;
@@ -305,6 +308,19 @@ public class StudyTwoUIView extends View {
         mDistanceActual = -1;
         mContinuousActual = -1;
         mAngleActual = -1;
+
+
+        //trial start
+        long currentTimestamp = System.currentTimeMillis();
+        trialStartTime = currentTimestamp;
+        mTaskType = mTask < 4 ? 1 : 2;
+        float distancevaluetarget = mTask < 4 ? mDistanceTargert : mContinuousTarget;
+        DataStorage.AddSample(1, currentTask,
+                currentAttempt,
+                1, currentTimestamp, 0, mTask, mTaskType, mClose,
+                mAngleTarget, distancevaluetarget,
+                -1, -1);
+
 
     }
 
