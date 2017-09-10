@@ -7,6 +7,8 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import com.eschao.android.widget.pageflip.PageFlipException;
+
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -26,7 +28,6 @@ public class StudyView extends GLSurfaceView implements GLSurfaceView.Renderer {
 
     //public StudyOne mStudy;
     //public StudyOneRender mPageRender;
-
 
     public  StudyTwo mStudy;
     public StudyTwoRender mPageRender;

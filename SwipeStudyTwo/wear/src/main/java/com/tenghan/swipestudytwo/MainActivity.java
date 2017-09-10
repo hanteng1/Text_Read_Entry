@@ -13,7 +13,6 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
     public StudyView mStudyView;
 
     public GestureDetector mGestureDetector;
-    public GestureService mGestureService;
 
     public static String TAG = "WatchActivity";
     public static MainActivity instance;
@@ -34,6 +33,14 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
      */
     public int activityIndex = 0;
 
+
+    /**
+     * 1 - study 1
+     * 2 - study 2
+     */
+    public int studyIndex = 0;
+
+
     public int offsetx = 0;//400;  //110;
     public int offsety =  0;//960; ///320;
 
@@ -44,31 +51,15 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
         setAmbientEnabled();
         instance = this;
 
-        //setAmbientEnabled();
-
-        //Log.d(TAG, "" + Environment.getExternalStorageDirectory().getAbsolutePath());
-        //Log.d(TAG, "" + Environment.getDataDirectory());
-
-        mGestureService = new GestureService();
-
         storage = DataStorage.getInstance();
         storage.clearData();
 
         activityIndex = 3;
+        studyIndex = 2;
         mStudyView = (StudyView)findViewById(R.id.watch_study_view);
         mGestureDetector = new GestureDetector(this, this);
 
     }
-
-//    @Override
-//    public void onEnterAmbient(Bundle ambientDetails) {
-//        super.onEnterAmbient(ambientDetails);
-//    }
-//
-//    @Override
-//    public void onExitAmbient() {
-//        super.onExitAmbient();
-//    }
 
     @Override
     protected void onResume()
@@ -86,7 +77,7 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
 
         mStudyView.onPause();
 
-        storage.save();
+        storage.save2();
 
         LoadBitmapTask.get(this).stop();
     }
