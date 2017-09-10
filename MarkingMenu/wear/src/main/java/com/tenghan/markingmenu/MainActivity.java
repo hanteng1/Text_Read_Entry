@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends WearableActivity implements GestureDetector.OnGestureListener  {
+public class MainActivity extends WearableActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener  {
 
     public GestureDetector mGestureDetetor;
 
@@ -100,7 +100,7 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
         if (event.getAction() == MotionEvent.ACTION_UP) {
 
             mStudyUIView.onFingerUp(event.getX(), event.getY());
-            return true;
+            //return true;
 
         }else if(event.getAction() == MotionEvent.ACTION_MOVE)
         {
@@ -144,5 +144,31 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
     public boolean onSingleTapUp(MotionEvent e) {
         return false;
     }
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent e)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent e)
+    {
+        Log.d(TAG, "double tap");
+
+        finish();
+        moveTaskToBack(true);
+
+        return true;
+    }
+
+
+
 
 }
