@@ -7,9 +7,21 @@
     tools:context="com.tenghan.markingmenu.MainActivity"
     tools:deviceIds="wear_square">
 
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_square" />
+    <com.tenghan.markingmenu.ContentView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/content_view"
+        android:background="@drawable/p2_320"/>
+
+    <com.tenghan.markingmenu.StudyTwoUIView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/study_two_ui_view"/>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/start_button"
+        android:text="click to start"/>
+
 </LinearLayout>
