@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
@@ -188,6 +189,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                     View.SYSTEM_UI_FLAG_IMMERSIVE |
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
+
+
+
 
     }
 

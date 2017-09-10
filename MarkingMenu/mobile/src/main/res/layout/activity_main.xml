@@ -27,4 +27,11 @@
         android:layout_height="fill_parent"
         android:id="@+id/study_two_ui_view"/>
 
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/start_button"
+        android:text="click to start"/>
+    
+
 </FrameLayout>

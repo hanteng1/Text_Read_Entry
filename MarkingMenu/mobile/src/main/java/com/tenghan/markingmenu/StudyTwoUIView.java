@@ -256,7 +256,7 @@ public class StudyTwoUIView extends View {
 
 
         //get the first task
-        ReloadTrial();
+        //ReloadTrial();
 
         mHandler = new Handler();
         strokeDeleting = new Runnable() {
@@ -322,7 +322,7 @@ public class StudyTwoUIView extends View {
         long currentTimestamp = System.currentTimeMillis();
         trialStartTime = currentTimestamp;
         float distancevaluetarget = mTask < 4 ? mDistanceTargert : mContinuousTarget;
-        DataStorage.AddSample(1, currentTask,
+        DataStorage.AddSample(2, currentTask,
                 currentAttempt,
                 1, currentTimestamp, 0, mTask, mTaskType, mClose,
                 mAngleTarget, distancevaluetarget,
@@ -940,7 +940,6 @@ public class StudyTwoUIView extends View {
 
     }
 
-
     public void onFingerDown(float x, float y)
     {
         touchPoints.clear();
@@ -952,7 +951,7 @@ public class StudyTwoUIView extends View {
         trialFingerTouchTimes++;
 
         float distancevaluetarget = mTask < 4 ? mDistanceTargert : mContinuousTarget;
-        DataStorage.AddSample(1, currentTask,
+        DataStorage.AddSample(2, currentTask,
                 currentAttempt,
                 2, currentTimestamp, 0, mTask, mTaskType, mClose,
                 mAngleTarget, distancevaluetarget,
@@ -978,7 +977,14 @@ public class StudyTwoUIView extends View {
 
                 }else
                 {
-                    isWrongTask = 1;
+                    if(mAngleActual == -1)
+                    {
+                        isWrongTask = -1;
+                    }else
+                    {
+                        isWrongTask = 1;
+                    }
+
                 }
 
             }else
@@ -997,7 +1003,7 @@ public class StudyTwoUIView extends View {
 
                 }else if(mTask == 5)
                 {
-                    mContinuousActual = 2 * Math.abs(screenHeight/2 - y) / 3;
+                    mContinuousActual = 3 * Math.abs(screenHeight/2 - y) / 3;
                 }
                 else
                 {
@@ -1005,21 +1011,51 @@ public class StudyTwoUIView extends View {
                 }
 
 
-                //check overshot
-                if(mTask < 4)
-                {
-                    if(isOvershot <  (mDistanceActual - mDistanceTargert))
-                    {
-                        isOvershot = (mDistanceActual - mDistanceTargert);
-                    }
-
-                }else
-                {
-                    if(isOvershot == 0 && mContinuousActual > (mContinuousTarget * (1 + accuracyInterval)))
-                    {
-                        isOvershot = 1;
-                    }
-                }
+//                //check overshot, nononono.. it's too complex
+//                if(mTask < 4)
+//                {
+//                    if(mTask == 1)
+//                    {
+//                        if(isOvershot <  (mDistanceActual - mDistanceTargert))
+//                        {
+//                            isOvershot = (mDistanceActual - mDistanceTargert);
+//                        }
+//                    }else if(mTask == 2)
+//                    {
+//                        if(mDistanceTargert < 3)
+//                        {
+//                            //move to smaller
+//                            if(isOvershot <  (mDistanceTargert - mDistanceActual))
+//                            {
+//                                isOvershot = (mDistanceTargert - mDistanceActual);
+//                            }
+//                        }else if(mDistanceTargert > 3)
+//                        {
+//                            //move to larger
+//                            if(isOvershot <  (mDistanceActual - mDistanceTargert))
+//                            {
+//                                isOvershot = (mDistanceActual - mDistanceTargert);
+//                            }
+//                        }else
+//                        {
+//                            //move to either
+//                            if(isOvershot <  Math.abs(mDistanceActual - mDistanceTargert))
+//                            {
+//                                isOvershot = Math.abs(mDistanceActual - mDistanceTargert);
+//                            }
+//                        }
+//                    }
+//
+//
+//
+//
+//                }else
+//                {
+//                    if(isOvershot == 0 && mContinuousActual > (mContinuousTarget * (1 + accuracyInterval)))
+//                    {
+//                        isOvershot = 1;
+//                    }
+//                }
 
             }
 
@@ -1083,7 +1119,7 @@ public class StudyTwoUIView extends View {
         }
 
 
-        DataStorage.AddSample(1, currentTask, currentAttempt, 5, currentTimestamp,
+        DataStorage.AddSample(2, currentTask, currentAttempt, 5, currentTimestamp,
                 0, mTask, mTaskType, mClose,
                 mAngleTarget, distancevaluetarget, mAngleActual, distancevalueactual,
                 isCorrect, isWrongTask, isOvershot,
@@ -1091,7 +1127,7 @@ public class StudyTwoUIView extends View {
                 trialResponseDuration,
                 trialFingerTouchTimes
         );
-        
+
 
         isTriggered = false;
         mAngleActual = -1;

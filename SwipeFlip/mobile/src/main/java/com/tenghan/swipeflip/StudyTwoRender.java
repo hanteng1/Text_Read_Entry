@@ -827,19 +827,19 @@ public class StudyTwoRender extends StudyRender{
 
                 mAngleActual = angSegs;
 
-                //record the change of distance or angle
-
-                {
-                    long currentTimestamp = System.currentTimeMillis();
-                    int mTaskType =  1 ;
-                    float distancevaluetarget = mDistanceTargert;
-
-                    DataStorage.AddSample(1, MainActivity.getSharedInstance().mStudyView.mStudy.currentTask,
-                            MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
-                            3, currentTimestamp, mCorner, MainActivity.getSharedInstance().mStudyView.mPageRender.mTask, mTaskType, mClose,
-                            mAngleTarget, distancevaluetarget, mAngleActual, mDistanceActual);
-
-                }
+//                //record the change of distance or angle
+//
+//                {
+//                    long currentTimestamp = System.currentTimeMillis();
+//                    int mTaskType =  1 ;
+//                    float distancevaluetarget = mDistanceTargert;
+//
+//                    DataStorage.AddSample(1, MainActivity.getSharedInstance().mStudyView.mStudy.currentTask,
+//                            MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
+//                            3, currentTimestamp, mCorner, MainActivity.getSharedInstance().mStudyView.mPageRender.mTask, mTaskType, mClose,
+//                            mAngleTarget, distancevaluetarget, mAngleActual, mDistanceActual);
+//
+//                }
 
                 ReloadSecondPageTexture();
             }
@@ -878,17 +878,17 @@ public class StudyTwoRender extends StudyRender{
 
                     mAngleActual = angSegs;
 
-                    //record the change of angle
-                    {
-                        long currentTimestamp = System.currentTimeMillis();
-                        int mTaskType = 2;
-                        float distancevaluetarget = mContinuousActual;
-
-                        DataStorage.AddSample(1, MainActivity.getSharedInstance().mStudyView.mStudy.currentTask,
-                                MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
-                                3, currentTimestamp, mCorner, MainActivity.getSharedInstance().mStudyView.mPageRender.mTask, mTaskType, mClose,
-                                mAngleTarget, distancevaluetarget, mAngleActual, mContinuousActual);
-                    }
+//                    //record the change of angle
+//                    {
+//                        long currentTimestamp = System.currentTimeMillis();
+//                        int mTaskType = 2;
+//                        float distancevaluetarget = mContinuousActual;
+//
+//                        DataStorage.AddSample(1, MainActivity.getSharedInstance().mStudyView.mStudy.currentTask,
+//                                MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
+//                                3, currentTimestamp, mCorner, MainActivity.getSharedInstance().mStudyView.mPageRender.mTask, mTaskType, mClose,
+//                                mAngleTarget, distancevaluetarget, mAngleActual, mContinuousActual);
+//                    }
 
                 }
 
