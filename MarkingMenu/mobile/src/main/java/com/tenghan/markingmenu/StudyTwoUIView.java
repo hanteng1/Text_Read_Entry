@@ -92,7 +92,7 @@ public class StudyTwoUIView extends View {
     public int trialState;
     public long trialDuration;
     public long trialStartTime = 0;
-    public long trialResponseDuration;
+    public long trialResponseDuration = 0;
     public int trialFingerTouchTimes = 0;
     public long trialFingerStartTime = 0;
     public long trialEndTime = 0;
@@ -115,13 +115,17 @@ public class StudyTwoUIView extends View {
     public int mAngleActual = -1;
     public int mDistanceActual = -1;
 
+
+    public int isWrongTask =0;
+    public int isOvershot = 0;
+
     //for continuous values
 
     public float mContinuousMax = 120;
     public float reservedDistance = 40;
     public float mContinuousTarget = -1;
     public float mContinuousActual = -1;
-    public float accuracyInterval = 0.05f;  // + -
+    public float accuracyInterval = 0.1f;  // + -
 
 
     public boolean obtainNext = true;
@@ -288,6 +292,7 @@ public class StudyTwoUIView extends View {
         obtainNext = false;
 
         mTask = curTask[0];
+        mTaskType = mTask < 4 ? 1 : 2;
         mClose = curTask[1];
         mCloseValue = curTask[2] / 100.0f;
 
@@ -309,11 +314,13 @@ public class StudyTwoUIView extends View {
         mContinuousActual = -1;
         mAngleActual = -1;
 
+        isWrongTask = 0;
+        isOvershot = 0;
+
 
         //trial start
         long currentTimestamp = System.currentTimeMillis();
         trialStartTime = currentTimestamp;
-        mTaskType = mTask < 4 ? 1 : 2;
         float distancevaluetarget = mTask < 4 ? mDistanceTargert : mContinuousTarget;
         DataStorage.AddSample(1, currentTask,
                 currentAttempt,
@@ -334,6 +341,9 @@ public class StudyTwoUIView extends View {
         trialStartTime = 0;
         trialEndTime = 0;
         isCorrect = 0;
+        trialResponseDuration = 0;
+        trialFingerTouchTimes = 0;
+        trialFingerStartTime = 0;
 
         if(currentTask == tasks.size())
         {
@@ -353,6 +363,9 @@ public class StudyTwoUIView extends View {
         trialStartTime = 0;
         trialEndTime = 0;
         isCorrect = 0;
+        trialResponseDuration = 0;
+        trialFingerTouchTimes = 0;
+        trialFingerStartTime = 0;
 
         return tasks.get(currentTask);
     }
@@ -932,6 +945,19 @@ public class StudyTwoUIView extends View {
     {
         touchPoints.clear();
         touchPoints.add(new PointF(x, y));
+
+        long currentTimestamp = System.currentTimeMillis();
+        trialFingerStartTime = currentTimestamp;
+
+        trialFingerTouchTimes++;
+
+        float distancevaluetarget = mTask < 4 ? mDistanceTargert : mContinuousTarget;
+        DataStorage.AddSample(1, currentTask,
+                currentAttempt,
+                2, currentTimestamp, 0, mTask, mTaskType, mClose,
+                mAngleTarget, distancevaluetarget,
+                -1, -1);
+
     }
 
     public void onFingerMove(float x, float y)
@@ -948,7 +974,11 @@ public class StudyTwoUIView extends View {
                 if(mAngleActual == mAngleTarget)
                 {
                     isSubMenuing = true;
+                    isWrongTask = 0;
 
+                }else
+                {
+                    isWrongTask = 1;
                 }
 
             }else
@@ -974,6 +1004,23 @@ public class StudyTwoUIView extends View {
                     mContinuousActual = 2 * y / 3;
                 }
 
+
+                //check overshot
+                if(mTask < 4)
+                {
+                    if(isOvershot <  (mDistanceActual - mDistanceTargert))
+                    {
+                        isOvershot = (mDistanceActual - mDistanceTargert);
+                    }
+
+                }else
+                {
+                    if(isOvershot == 0 && mContinuousActual > (mContinuousTarget * (1 + accuracyInterval)))
+                    {
+                        isOvershot = 1;
+                    }
+                }
+
             }
 
 
@@ -996,18 +1043,22 @@ public class StudyTwoUIView extends View {
                 if(mAngleActual == mAngleTarget && mDistanceTargert == mDistanceActual)
                 {
                     obtainNext = true;
+                    isCorrect = 1;
                 }else
                 {
                     obtainNext = false;
+                    isCorrect = 0;
                 }
             }else
             {
                 if(mAngleActual == mAngleTarget && isWithin(mContinuousTarget, mContinuousActual, 0.1f))
                 {
                     obtainNext = true;
+                    isCorrect = 1;
                 }else
                 {
                     obtainNext = false;
+                    isCorrect = 0;
                 }
             }
 
@@ -1016,9 +1067,31 @@ public class StudyTwoUIView extends View {
         }
 
         //save the data
+        long currentTimestamp = System.currentTimeMillis();
+        trialEndTime = currentTimestamp;
+        float distancevaluetarget = mTask < 4 ? mDistanceTargert : mContinuousTarget;
+        float distancevalueactual = mTask < 4 ? mDistanceActual : mContinuousActual;
+
+        if(trialFingerStartTime != 0)
+        {
+            trialDuration = trialEndTime - trialFingerStartTime;
+        }
+
+        if(trialStartTime != 0)
+        {
+            trialResponseDuration = trialFingerStartTime - trialStartTime;
+        }
 
 
-
+        DataStorage.AddSample(1, currentTask, currentAttempt, 5, currentTimestamp,
+                0, mTask, mTaskType, mClose,
+                mAngleTarget, distancevaluetarget, mAngleActual, distancevalueactual,
+                isCorrect, isWrongTask, isOvershot,
+                trialDuration,
+                trialResponseDuration,
+                trialFingerTouchTimes
+        );
+        
 
         isTriggered = false;
         mAngleActual = -1;
