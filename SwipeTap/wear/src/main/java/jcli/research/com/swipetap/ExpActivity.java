@@ -24,15 +24,15 @@ public class ExpActivity extends Activity {
 
         //Get the data passed in
         Intent intent = getIntent();
-        String type = intent.getStringExtra("type");
-        int target = intent.getIntExtra("target", -1);
+        int task = intent.getIntExtra("task", -1);
+        int target = (int) (5 * (intent.getIntExtra("target", -1) / 100.0f));
 
         //Populate option list according to target type
         final WearableListView optionListView = (WearableListView)findViewById(R.id.exp_option_list);
         //L for letter, N for number, S for shape
-        if(type.equals("Letter") ){
+        if(task == 0){
             mOptions = Arrays.asList("A", "B", "C", "D", "E");
-        } else if (type.equals("Number")){
+        } else if (task == 1){
             mOptions = Arrays.asList("1", "2", "3", "4", "5");
         } else {
             mOptions = Arrays.asList("\u25a0", "\u25b2", "\u25cf", "\u2b1f", "\u25ac");

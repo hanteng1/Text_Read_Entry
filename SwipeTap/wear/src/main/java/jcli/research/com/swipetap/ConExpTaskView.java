@@ -17,11 +17,6 @@ public class ConExpTaskView extends View {
 
     private final static String TAG = "exptaskview";
 
-
-    private String mCurrentTaskType ="";
-    private float mCurrentTaskValue = -1.0f; //Target value
-    private float mCurrentValue = 0.0f;
-
     public float mContinuousMax = 120;
     public float reservedDistance = 40;
     public float mContinuousTarget = -1;
@@ -66,10 +61,12 @@ public class ConExpTaskView extends View {
 
     }
 
-    public void updateState (float progress) {
+    public void updateState (int progress) {
         //Set the progress according
-        mCurrentValue = progress;
+        mContinuousActual = progress * 2.0f / 3.0f;
+        invalidate();
     }
+
 
     @Override
     protected void onDraw(Canvas canvas) {

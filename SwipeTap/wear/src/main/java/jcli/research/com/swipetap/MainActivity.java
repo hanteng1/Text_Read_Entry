@@ -86,7 +86,6 @@ public class MainActivity extends Activity{
                             //So it is a discrete task, start the discrete activity
                             Intent disIntent = new Intent(mSelf, ExpActivity.class);
                             disIntent.putExtra("task", mNextTask.getTaskInd());
-
                             disIntent.putExtra("target", mNextTask.getValue());
                             startActivity(disIntent);
                         } else {

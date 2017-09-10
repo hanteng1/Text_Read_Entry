@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
+import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class ConExpActivity extends Activity {
+
+    private final static String TAG = "ConExpActivity";
 
     private SeekBar mSeekBar;
     private ConExpTaskView mCanvasView;
@@ -32,7 +35,7 @@ public class ConExpActivity extends Activity {
     private SeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-            mCanvasView.updateState(((float)i) / seekBar.getMax());
+            mCanvasView.updateState(i);
         }
 
         @Override
@@ -42,6 +45,9 @@ public class ConExpActivity extends Activity {
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
+
+            //check the result and save
+
 
         }
     };
