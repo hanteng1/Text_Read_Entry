@@ -11,7 +11,10 @@ import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.GridPagerAdapter;
 import android.support.wearable.view.WearableListView;
 import android.content.Context;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,7 +27,7 @@ import java.util.List;
 
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity{
 
     //private static ArrayList<Integer> mContinuousIcons;
     private static List<String> mNames;
@@ -78,17 +81,17 @@ public class MainActivity extends Activity {
 
                     int indClicked = viewHolder.getAdapterPosition();
                     //Check if the correct option is clicked
-                    if(indClicked == mNames.indexOf(mNextTask.getType())) {
+                    if(indClicked == mNextTask.getTaskInd()) {
                         if(mNextTask.isDiscrete()) {
                             //So it is a discrete task, start the discrete activity
                             Intent disIntent = new Intent(mSelf, ExpActivity.class);
-                            disIntent.putExtra("type", mNextTask.getType());
-                            disIntent.putExtra("target", mNextTask.getTargetInd());
+                            disIntent.putExtra("type", mNames.get(mNextTask.getTaskInd()));
+                            disIntent.putExtra("target", mNextTask.getValue());
                             startActivity(disIntent);
                         } else {
                             //So it is a continuous task
                             Intent conIntent = new Intent(mSelf, ConExpActivity.class);
-                            conIntent.putExtra("type", mNextTask.getType());
+                            conIntent.putExtra("type", mNames.get(mNextTask.getTaskInd()));
                             conIntent.putExtra("value", mNextTask.getValue());
                             startActivity(conIntent);
                         }
@@ -108,6 +111,8 @@ public class MainActivity extends Activity {
 
 
     public class ListInGridAdapter extends GridPagerAdapter {
+        private final static String TAG = "listingridadapter";
+
         final Context mContext;
 
         public ListInGridAdapter(final Context context) {
@@ -156,21 +161,23 @@ public class MainActivity extends Activity {
                     });
                     //Set the target display
                     if(mNextTask.isDiscrete()) {
+
+
                         //Is discrete task, set the target display with the actual target text
                         mConTargetView.setVisibility(View.INVISIBLE);
                         mTargetDisplayTextView.setVisibility(View.VISIBLE);
 
                         String targetDisplay;
-                        String taskType = mNextTask.getType();
-                        if(taskType.equals("Letter")) {
-                            targetDisplay = LETTER_OPTIONS[mNextTask.getTargetInd()];
-                        } else if(taskType.equals("Number")) {
-                            targetDisplay = NUMBER_OPTIONS[mNextTask.getTargetInd()];
-                        } else targetDisplay = SHAPE_OPTIONS[mNextTask.getTargetInd()];
+                        int task = mNextTask.getTaskInd();
+                        if(task == 0) {
+                            targetDisplay = LETTER_OPTIONS[(int)(mNextTask.getValue() / 20.0f)];
+                        } else if(task == 1) {
+                            targetDisplay = NUMBER_OPTIONS[(int)(mNextTask.getValue() / 20.0f)];
+                        } else targetDisplay = SHAPE_OPTIONS[(int)(mNextTask.getValue() / 20.0f)];
                         mTargetDisplayTextView.setText(targetDisplay);
                     } else {
                         //Is a continuous task, we should draw something then
-                        mConTargetView.setTask( mNextTask.getTargetInd() + 1, (int)mNextTask.getValue());
+                        mConTargetView.setTask( mNextTask.getTaskInd() + 1, (int)mNextTask.getValue());
                         mConTargetView.setVisibility(View.VISIBLE);
                         mTargetDisplayTextView.setVisibility(View.INVISIBLE);
                         mConTargetView.invalidate();

@@ -18,11 +18,12 @@ public class ConTargetView extends View {
     private Paint inputPaint = new Paint();
     private Paint subMenuPaint = new Paint();
     private Paint p = new Paint();
-    private int screenWidth, screenHeight;
+    private int screenWidth =320;
+    private int screenHeight = 320;
 
     public int mTask;
     public int mClose;
-    public int mCloseValue;
+    public float mCloseValue;
 
     public float mContinuousMax = 120;
     public float reservedDistance = 40;
@@ -48,7 +49,7 @@ public class ConTargetView extends View {
     public void setTask(int _task, int _closevalue)
     {
         mTask = _task;
-        mCloseValue = _closevalue;
+        mCloseValue = _closevalue / 100.0f;
 
         mContinuousTarget = mContinuousMax * mCloseValue + reservedDistance;
     }
@@ -112,7 +113,6 @@ public class ConTargetView extends View {
 
         }else if(mTask == 6)
         {
-
             //wegght
             Path path = new Path();
             float mx = screenWidth/2;

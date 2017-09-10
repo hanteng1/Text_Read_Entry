@@ -34,7 +34,7 @@ public class TaskManager {
         int closeBound = 20;
         int taskCount;
 
-        for(int itr = 1; itr < 7; itr++)
+        for(int itr = 0; itr < 6; itr++)
         {
             for(int itrt = 0; itrt < repeat; itrt++)
             {
@@ -83,7 +83,7 @@ public class TaskManager {
 
         for(int itrtt = 0; itrtt < taskCount; itrtt++) {
             int[] task = tasks.get(itrtt);
-            mTasks.add(new ExpTask(task[0] - 1, task[1] - 1, task[2]));
+            mTasks.add(new ExpTask(task[0], task[1], task[2]));
         }
     }
 

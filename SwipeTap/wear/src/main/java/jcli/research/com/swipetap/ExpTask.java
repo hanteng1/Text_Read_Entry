@@ -4,29 +4,19 @@ import java.util.Arrays;
 
 public class ExpTask {
     private String[] mTaskNames = new String[]{"Letter", "Number", "Shape", "Size", "Colour", "Weight"};
-    private String mTaskType;
-    private int mTaskTargetInd;
+    private int mClose;
     private float mTaskValue;
     private int mTaskInd;
 
-    public ExpTask(int typeInd, int targetInd, float value) {
-        mTaskInd = typeInd;
-        mTaskType = mTaskNames[typeInd];
-        mTaskTargetInd = targetInd;
+    public ExpTask(int taskInd, int closeInd, float value) {
+        mTaskInd = taskInd;
+        mClose = closeInd;
         mTaskValue = value;
     }
 
-    public boolean isDiscrete () { return mTaskInd < 3 && mTaskInd >= 0; }
+    public boolean isDiscrete () { return mTaskInd < 3; }
 
-    public String getType() {
-        return mTaskType;
-    }
-
-    public int getTypeInd () {return mTaskInd; }
-
-    public int getTargetInd() {
-        return mTaskTargetInd;
-    }
+    public int getTaskInd () {return mTaskInd; }
 
     public float getValue() {return mTaskValue;}
 }
