@@ -22,6 +22,8 @@ public class ExpTask {
         return mTaskType;
     }
 
+    public int getTypeInd () {return mTaskInd; }
+
     public int getTargetInd() {
         return mTaskTargetInd;
     }
