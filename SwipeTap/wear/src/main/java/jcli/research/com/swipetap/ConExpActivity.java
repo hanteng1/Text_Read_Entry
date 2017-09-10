@@ -16,9 +16,9 @@ public class ConExpActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_con_exp);
-        mSeekBar = findViewById(R.id.con_exp_seekbar);
+        mSeekBar = (SeekBar) findViewById(R.id.con_exp_seekbar);
         mSeekBar.setOnSeekBarChangeListener(mSeekBarChangeListener);
-        mCanvasView = findViewById(R.id.con_exp_canvas_view);
+        mCanvasView = (ConExpTaskView) findViewById(R.id.con_exp_canvas_view);
 
         //Get the data passed in
         Intent intent = getIntent();

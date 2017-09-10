@@ -29,7 +29,7 @@ public class ExpActivity extends Activity {
 
 
         //Populate option list according to target type
-        final WearableListView optionListView = findViewById(R.id.exp_option_list);
+        final WearableListView optionListView = (WearableListView)findViewById(R.id.exp_option_list);
         //L for letter, N for number, S for shape
         if(type.equals("Letter") ){
             mOptions = Arrays.asList("A", "B", "C", "D", "E");
@@ -39,7 +39,7 @@ public class ExpActivity extends Activity {
             mOptions = Arrays.asList("\u25a0", "\u25b2", "\u25cf", "\u2b1f", "\u25ac");
         }
         mTargetIndInOptions = target;
-        final TextView tv = findViewById(R.id.exp_target_text);
+        final TextView tv = (TextView)findViewById(R.id.exp_target_text);
         tv.setText(mOptions.get(mTargetIndInOptions));
 
         optionListView.setAdapter(new ExpOptionListAdapter(this, mOptions));

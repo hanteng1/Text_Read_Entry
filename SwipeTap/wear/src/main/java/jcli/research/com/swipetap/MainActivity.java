@@ -130,9 +130,8 @@ public class MainActivity extends Activity {
             switch (col) {
                 case 0:
                     View centerView = inflater.inflate(R.layout.view_center, null);
-                    mStartButton = centerView.findViewById(R.id.start_button);
-
-                    mTargetDisplayTextView = centerView.findViewById(R.id.target_display_text);
+                    mStartButton = (Button) centerView.findViewById(R.id.start_button);
+                    mTargetDisplayTextView = (TextView)centerView.findViewById(R.id.target_display_text);
 
                     if(!TaskManager.getInstance().isFirstTrial()) {
                         mStartButton.setVisibility(View.GONE);
