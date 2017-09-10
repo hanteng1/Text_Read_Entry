@@ -17,6 +17,7 @@ public class ConTargetView extends View {
     private final static String TAG = "ConTargetView";
     private Paint inputPaint = new Paint();
     private Paint subMenuPaint = new Paint();
+    private Paint p = new Paint();
     private int screenWidth, screenHeight;
 
     public int mTask;
@@ -44,10 +45,9 @@ public class ConTargetView extends View {
         subMenuPaint.setStyle(Paint.Style.FILL);
     }
 
-    public void setTask(int _task, int _close, int _closevalue)
+    public void setTask(int _task, int _closevalue)
     {
         mTask = _task;
-        mClose = _close;
         mCloseValue = _closevalue;
 
         mContinuousTarget = mContinuousMax * mCloseValue + reservedDistance;
@@ -56,9 +56,7 @@ public class ConTargetView extends View {
     @Override
     protected void onDraw(Canvas canvas)
     {
-        Paint p = new Paint();
         p.setFilterBitmap(true);
-
         //draw the target
         int fontSize = calcFontSize(20);
         p.setColor(Color.GRAY);

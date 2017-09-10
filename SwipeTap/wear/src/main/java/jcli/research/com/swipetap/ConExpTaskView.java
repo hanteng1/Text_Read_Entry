@@ -2,6 +2,9 @@ package jcli.research.com.swipetap;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -15,13 +18,46 @@ public class ConExpTaskView extends View {
     private float mCurrentTaskValue = -1.0f; //Target value
     private float mCurrentValue = 0.0f;
 
-    public void setTask (String type, float value) {
-        mCurrentTaskType = type;
-        mCurrentTaskValue = value;
+    public float mContinuousMax = 120;
+    public float reservedDistance = 40;
+    public float mContinuousTarget = -1;
+    public float mContinuousActual = -1;
+
+    public int mTask;
+    public int mClose;
+    public int mCloseValue;
+
+
+    private Paint inputPaint = new Paint();
+    private Paint subMenuPaint = new Paint();
+    private Paint p = new Paint();
+
+
+
+    public void setTask (int _task, int _closevalue) {
+        mTask = _task;
+        mCloseValue = _closevalue;
+
+        mContinuousTarget = mContinuousMax * mCloseValue + reservedDistance;
     }
 
     public ConExpTaskView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+
+        inputPaint.setAntiAlias(true);
+        inputPaint.setStrokeWidth(0);
+        inputPaint.setColor(Color.RED);
+        inputPaint.setTextSize(28);
+        //inputPaint.setStyle(Paint.Style.STROKE);
+        inputPaint.setStrokeJoin(Paint.Join.ROUND);
+
+        subMenuPaint.setAntiAlias(true);
+        subMenuPaint.setStrokeWidth(0);
+        subMenuPaint.setColor(Color.RED);
+        subMenuPaint.setStyle(Paint.Style.FILL);
+
+
     }
 
     public void updateState (float progress) {
@@ -31,8 +67,111 @@ public class ConExpTaskView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        //update the canvas according to current task type and value
-        //Do not do anything if the task type is empty and current value is negatives
-        super.onDraw(canvas);
+        p.setFilterBitmap(true);
+        p.setColor(Color.GRAY);
+        p.setStrokeWidth(1);
+        p.setAntiAlias(true);
+
+        if(mTask == 4)
+        {
+            //size
+            //target
+            if(mContinuousTarget != -1 && mContinuousTarget < (mContinuousMax + reservedDistance))
+            {
+                Path path = new Path();
+                path.moveTo(320, 0);
+                path.lineTo(320, mContinuousTarget);
+                path.lineTo(320 - mContinuousTarget, mContinuousTarget);
+                path.lineTo(320, 0);
+
+                p.setStyle(Paint.Style.STROKE);
+                p.setColor(Color.BLUE);
+                p.setStrokeWidth(2);
+                canvas.drawPath(path, p);
+
+            }
+
+            //actual
+            if(mContinuousActual != -1 && mContinuousActual < (mContinuousMax + reservedDistance))
+            {
+                Path path = new Path();
+                path.moveTo(320, 0);
+                path.lineTo(320 - mContinuousActual, 0);
+                path.lineTo(320 - mContinuousActual, mContinuousActual);
+                path.lineTo(320, 0);
+
+                p.setStyle(Paint.Style.STROKE);
+                p.setColor(Color.GREEN);
+                p.setStrokeWidth(2);
+                canvas.drawPath(path, p);
+            }
+
+        }else if(mTask == 5)
+        {
+
+            //color
+            //target
+            if(mContinuousTarget != -1 && mContinuousTarget < (mContinuousMax + reservedDistance))
+            {
+                Path path = new Path();
+                path.moveTo(320, 0);
+                path.lineTo(320, 160);
+                path.lineTo(160, 160);
+                path.lineTo(320, 0);
+
+                p.setStyle(Paint.Style.FILL);
+                p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousTarget / (mContinuousMax + reservedDistance) ))));
+                canvas.drawPath(path, p);
+
+            }
+
+            //actual
+            if(mContinuousActual != -1 && mContinuousActual < (mContinuousMax + reservedDistance))
+            {
+                Path path = new Path();
+                path.moveTo(320, 0);
+                path.lineTo(160, 0);
+                path.lineTo(160, 160);
+                path.lineTo(320, 0);
+
+                p.setStyle(Paint.Style.FILL);
+                p.setColor(Color.argb(255, 0, 0, (int)(255 * (mContinuousActual / (mContinuousMax + reservedDistance) ))));
+                canvas.drawPath(path, p);
+            }
+
+        }else if(mTask == 6)
+        {
+            //width
+            //target
+            if(mContinuousTarget != -1 && mContinuousTarget < (mContinuousMax + reservedDistance))
+            {
+                Path path = new Path();
+                path.moveTo(320, 0);
+                path.lineTo(320, 160);
+                path.lineTo(160, 160);
+                path.lineTo(320, 0);
+
+                p.setStyle(Paint.Style.STROKE);
+                p.setColor(Color.BLUE);
+                p.setStrokeWidth( 20 * (mContinuousTarget / (mContinuousMax + reservedDistance) ));
+                canvas.drawPath(path, p);
+
+            }
+
+            //actual
+            if(mContinuousActual != -1 && mContinuousActual < (mContinuousMax + reservedDistance))
+            {
+                Path path = new Path();
+                path.moveTo(320, 0);
+                path.lineTo(160, 0);
+                path.lineTo(160, 160);
+                path.lineTo(320, 0);
+
+                p.setStyle(Paint.Style.STROKE);
+                p.setColor(Color.GREEN);
+                p.setStrokeWidth( 20 * (mContinuousActual / (mContinuousMax + reservedDistance) ));
+                canvas.drawPath(path, p);
+            }
+        }
     }
 }
