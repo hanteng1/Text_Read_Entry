@@ -170,7 +170,7 @@ public class MainActivity extends Activity {
                         mTargetDisplayTextView.setText(targetDisplay);
                     } else {
                         //Is a continuous task, we should draw something then
-                        mConTargetView.setTask( );
+                        mConTargetView.setTask( mNextTask.getTargetInd() + 1, (int)mNextTask.getValue());
                         mConTargetView.setVisibility(View.VISIBLE);
                         mTargetDisplayTextView.setVisibility(View.INVISIBLE);
                         mConTargetView.invalidate();
