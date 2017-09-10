@@ -188,6 +188,34 @@ public class StudyTwo extends PageFlipModifyAbstract{
             MainActivity.getSharedInstance().mGestureService.setOrigin(new float[]{touchX, touchY});
             MainActivity.getSharedInstance().mGestureService.handleData(new float[]{touchX, touchY});
 
+
+            //find out the start corner
+            int startCorner = -1;
+            if(originP.x > 0)
+            {
+                startCorner = 1;
+            }else
+            {
+                startCorner = 0;
+            }
+
+            if(MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner != startCorner)
+            {
+                MainActivity.getSharedInstance().mStudyView.mPageRender.isWrongTask = 1;
+            }
+
+            //save the data
+            long currentTimestamp = System.currentTimeMillis();
+            int mTaskType = MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4 ? 1 : 2;
+            float distancevaluetarget = MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4 ? MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert : MainActivity.getSharedInstance().mStudyView.mPageRender.mContinuousTarget;
+
+            DataStorage.AddSample(1, MainActivity.getSharedInstance().mStudyView.mStudy.currentTask,
+                    MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
+                    2, currentTimestamp, MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner, MainActivity.getSharedInstance().mStudyView.mPageRender.mTask, mTaskType, MainActivity.getSharedInstance().mStudyView.mPageRender.mClose,
+                    MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget, distancevaluetarget, -1, -1);
+
+
+
             //reload the first page texture
 
             if(MainActivity.getSharedInstance().mStudyView.mPageRender.mTask > 4)

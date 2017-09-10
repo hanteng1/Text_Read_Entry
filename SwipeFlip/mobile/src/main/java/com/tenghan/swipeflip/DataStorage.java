@@ -122,7 +122,7 @@ public class DataStorage {
     public static boolean AddSample(int _technique, int _trial, int _trialattemp, int _state, long _timestamp,
                                     int _corner, int _task, int _tasktype, int _close,
                                     int _angletarget, float _distancetarget, int _angleactual, float _distanceActual,
-                                    int _isCorrect, int _numVistedCells, int _numOvershoot, long _trialDuration,
+                                    int _isCorrect, int _isWrongTask, int _numOvershoot, long _trialDuration,
                                     long _responsetime, int _fingertouchtime)
     {
         if(instance != null)
@@ -130,7 +130,7 @@ public class DataStorage {
             instance.add( _technique,  _trial,  _trialattemp,  _state,  _timestamp,
              _corner,  _task,  _tasktype,  _close,
              _angletarget,  _distancetarget,  _angleactual,  _distanceActual,
-             _isCorrect,  _numVistedCells,  _numOvershoot,  _trialDuration,
+             _isCorrect,  _isWrongTask,  _numOvershoot,  _trialDuration,
              _responsetime,  _fingertouchtime);
             return true;
         }
@@ -141,7 +141,7 @@ public class DataStorage {
     public void add(int _technique, int _trial, int _trialattemp, int _state, long _timestamp,
                     int _corner, int _task, int _tasktype, int _close,
                     int _angletarget, float _distancetarget, int _angleactual, float _distanceActual,
-                    int _isCorrect, int _numVistedCells, int _numOvershoot, long _trialDuration,
+                    int _isCorrect, int _isWrongTask, int _numOvershoot, long _trialDuration,
                     long _responsetime, int _fingertouchtime)
     {
         if(samples != null)
@@ -149,7 +149,7 @@ public class DataStorage {
             DataSample sample = new DataSample(_technique,  _trial,  _trialattemp,  _state,  _timestamp,
                     _corner,  _task,  _tasktype,  _close,
                     _angletarget,  _distancetarget,  _angleactual,  _distanceActual,
-                    _isCorrect,  _numVistedCells,  _numOvershoot,  _trialDuration,
+                    _isCorrect,  _isWrongTask,  _numOvershoot,  _trialDuration,
                     _responsetime,  _fingertouchtime);
             samples.add(sample);
         }

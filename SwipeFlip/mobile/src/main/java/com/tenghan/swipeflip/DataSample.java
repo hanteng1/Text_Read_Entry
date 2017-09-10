@@ -136,7 +136,7 @@ public class DataSample {
     public DataSample(int _technique, int _trial, int _trialattemp, int _state, long _timestamp,
                       int _corner, int _task, int _tasktype, int _close,
                       int _angletarget, float _distancetarget, int _angleactual, float _distanceActual,
-                      int _isCorrect, int _numVistedCells, int _numOvershoot, long _trialDuration,
+                      int _isCorrect, int _isWrongTask, int _isOvershoot, long _trialDuration,
                       long _responsetime, int _fingertouchtime)
     {
         technique = _technique;
@@ -156,8 +156,13 @@ public class DataSample {
         distancevalueactual = _distanceActual;
 
         isCorrect = _isCorrect;
-        numVistedCells = _numVistedCells;
-        numOvershoot = _numOvershoot;
+
+        //is wrong corner, start by a wrong target
+        //1 - start wrong, 2 middle wrong, 3 - start and middle wrong
+        numVistedCells = _isWrongTask;
+        //is over shot.. if target is correct, but has overshot
+        numOvershoot = _isOvershoot;
+
         trialDuration = _trialDuration;
 
         responseTime = _responsetime;

@@ -38,6 +38,7 @@ public class StudyTwoRender extends StudyRender{
 
 
     public int mTask;
+    public int mTaskType;
     public int mCorner;
     public int mAngleTarget = -1;
     public int mDistanceTargert = -1;
@@ -47,6 +48,11 @@ public class StudyTwoRender extends StudyRender{
     public float mCloseValue;
     public int mAngleActual = -1;
     public int mDistanceActual = -1;
+
+
+    public int isWrongTask = 0;
+    public int isOvershot = 0;
+
 
     public boolean obtainNext = true;
 
@@ -206,6 +212,20 @@ public class StudyTwoRender extends StudyRender{
         //for continuous
         mContinuousTarget = mContinuousMax * mCloseValue + reservedDistance;  //40 - 160
         mContinuousActual = -1;
+
+        isWrongTask = 0;
+        isOvershot = 0;
+
+        //save the trial start
+        long currentTimestamp = System.currentTimeMillis();
+        mTaskType = mTask < 4 ? 1 : 2;
+        float distancevaluetarget = mTask < 4 ? mDistanceTargert : mContinuousTarget;
+
+        DataStorage.AddSample(1, MainActivity.getSharedInstance().mStudyView.mStudy.currentTask,
+                MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
+                1, currentTimestamp, mCorner, mTask, mTaskType, mClose,
+                mAngleTarget, distancevaluetarget, -1, -1);
+
 
 
         mPageFlipAbstract.getPages()[FIRST_PAGE].waiting4TextureUpdate = true;
@@ -753,10 +773,35 @@ public class StudyTwoRender extends StudyRender{
         {
             //discrete
             if(dis >= reservedDistance &&
-                    disSegs != mDistanceActual || angSegs != mAngleActual)
+                    (disSegs != mDistanceActual || angSegs != mAngleActual))
             {
+
                 mDistanceActual = disSegs;
+
+                if(isOvershot <  (mDistanceActual - mDistanceTargert))
+                {
+                    isOvershot = (mDistanceActual - mDistanceTargert);
+                }
+
+                if(mAngleActual != angSegs)
+                {
+                    if(isWrongTask == 1)
+                    {
+                        //start with wrong task
+                        isWrongTask = 3;
+                    }else if(isWrongTask == 0)
+                    {
+                        //start with right task
+                        isWrongTask = 2;
+                    }
+                }
+
                 mAngleActual = angSegs;
+
+                //record the change of distance or angle
+
+
+
                 ReloadSecondPageTexture();
             }
         }else
@@ -765,9 +810,36 @@ public class StudyTwoRender extends StudyRender{
             {
                 mDistanceActual = disSegs;
                 mContinuousActual = (2*dis /3);
+
+                if(angSegs != mAngleActual)
+                {
+                    if(isWrongTask == 1)
+                    {
+                        //start with wrong task
+                        isWrongTask = 3;
+                    }else if(isWrongTask == 0)
+                    {
+                        //start with right task
+                        isWrongTask = 2;
+                    }
+                }
+
                 mAngleActual = angSegs;
+
+                if(isOvershot == 0 && mContinuousActual > (mContinuousTarget * (1 + accuracyInterval)))
+                {
+                    isOvershot = 1;
+                }
+
+
+                //record the change of angle
+
+
                 ReloadSecondPageTexture();
             }
+
+
+
         }
 
 
