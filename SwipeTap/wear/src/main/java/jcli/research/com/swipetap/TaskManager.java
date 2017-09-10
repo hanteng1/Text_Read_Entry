@@ -1,6 +1,5 @@
 package jcli.research.com.swipetap;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -14,11 +13,11 @@ public class TaskManager {
     public static TaskManager getInstance() { return mSelf; }
 
     private int mCurrentTrialNum = 0;
-    private boolean mIsFisrtTrial = true;
+    private boolean mIsFirstTrial = true;
     private ArrayList<ExpTask> mTasks;
 
     public boolean isFirstTrial() {
-        return mIsFisrtTrial;
+        return mIsFirstTrial;
     }
 
     public TaskManager() {
@@ -27,6 +26,7 @@ public class TaskManager {
     }
 
     private void generateTasks () {
+        mTasks = new ArrayList<ExpTask>();
         ArrayList<int[]> tasks = new ArrayList<int[]>();
         ArrayList<int[]> tempTasks = new ArrayList<int[]>();
         Random rand = new Random();
@@ -89,7 +89,7 @@ public class TaskManager {
 
     public ExpTask getNextTask() {
         //Not the first trial anymore
-        if(mIsFisrtTrial) mIsFisrtTrial = false;
+        if(mIsFirstTrial) mIsFirstTrial = false;
         if(mCurrentTrialNum + 1 < mTasks.size()) {
             //make sure we don't have invalid index
             mCurrentTrialNum++;

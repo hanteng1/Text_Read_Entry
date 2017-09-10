@@ -27,7 +27,6 @@ public class ExpActivity extends Activity {
         String type = intent.getStringExtra("type");
         int target = intent.getIntExtra("target", -1);
 
-
         //Populate option list according to target type
         final WearableListView optionListView = (WearableListView)findViewById(R.id.exp_option_list);
         //L for letter, N for number, S for shape
