@@ -13,6 +13,7 @@
         android:textColor="@color/white"
         android:background="@color/blue"
         />
+
     <TextView
         android:id="@+id/target_display_text"
         android:layout_width="match_parent"
@@ -22,5 +23,11 @@
         android:gravity="center"
         android:visibility="gone"
         />
+
+    <jcli.research.com.swipetap.ConTargetView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/con_target_view"/>
+
 
 </LinearLayout>
