@@ -15,8 +15,11 @@ public class ExpTask {
     }
 
     public boolean isDiscrete () { return mTaskInd < 3; }
+    public int getTaskType() { return mTaskInd < 3 ? 1 : 2;}
 
     public int getTaskInd () {return mTaskInd; }
 
     public int getValue() {return mTaskValue;}
+
+    public int getClose() {return mClose;}
 }
