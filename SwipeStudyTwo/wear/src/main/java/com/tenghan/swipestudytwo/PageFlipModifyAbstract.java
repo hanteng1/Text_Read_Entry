@@ -510,6 +510,10 @@ public abstract class PageFlipModifyAbstract {
                     {
                         MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = false;
                         MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 0;
+                        if(MainActivity.getSharedInstance().mStudyView.mPageRender.isWrongTask == 0)
+                        {
+                            MainActivity.getSharedInstance().mStudyView.mPageRender.isWrongTask = 2;
+                        }
                     }
 
 
@@ -527,12 +531,15 @@ public abstract class PageFlipModifyAbstract {
                     {
                         MainActivity.getSharedInstance().mStudyView.mPageRender.obtainNext = false;
                         MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect = 0;
+
+                        if(MainActivity.getSharedInstance().mStudyView.mPageRender.isWrongTask == 0)
+                        {
+                            MainActivity.getSharedInstance().mStudyView.mPageRender.isWrongTask = 2;
+                        }
+
                     }
 
-
-
                 }
-
 
                 //save the result
                 long currentTimestamp = System.currentTimeMillis();
