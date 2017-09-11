@@ -43,6 +43,10 @@ public class StudyTwo extends PageFlipModifyAbstract{
     public long trialResponseDuration;
     public int trialFingerTouchTimes = 0;
     public long trialStartTime = 0;
+    public long trialMenuDuration = 0;
+    public long trialTaskDuration = 0;
+    public long trialMenuStartTime = 0;
+    public long trialTaskStartTime = 0;
     public long trialFingerStartTime = 0;
     public long trialEndTime = 0;
     public int isCorrect;  // 1 - correct, 0 - incorrect
@@ -127,6 +131,13 @@ public class StudyTwo extends PageFlipModifyAbstract{
         isCorrect = 0;
         trialFingerTouchTimes = 0;
 
+        trialResponseDuration = 0;
+        trialMenuDuration = 0;
+        trialTaskDuration = 0;
+        trialMenuStartTime = 0;
+        trialTaskStartTime = 0;
+
+
         if(currentTask == tasks.size())
         {
             //save
@@ -148,6 +159,12 @@ public class StudyTwo extends PageFlipModifyAbstract{
         trialEndTime = 0;
         isCorrect = 0;
         trialFingerTouchTimes = 0;
+
+        trialResponseDuration = 0;
+        trialMenuDuration = 0;
+        trialTaskDuration = 0;
+        trialMenuStartTime = 0;
+        trialTaskStartTime = 0;
 
         return tasks.get(currentTask);
     }
@@ -211,6 +228,8 @@ public class StudyTwo extends PageFlipModifyAbstract{
             //save the data
             long currentTimestamp = System.currentTimeMillis();
             trialFingerStartTime = currentTimestamp;
+            trialMenuStartTime = currentTimestamp;
+            trialTaskStartTime = currentTimestamp;
 
             int mTaskType = MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4 ? 1 : 2;
             float distancevaluetarget = MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4 ? MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert : MainActivity.getSharedInstance().mStudyView.mPageRender.mContinuousTarget;

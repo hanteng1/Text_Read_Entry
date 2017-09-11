@@ -84,6 +84,8 @@ public class MainActivity extends Activity{
 
     public long trialDuration;
     public long responseTime;
+    public long menuTime;
+    public long taskTime;
     public int fingerTouches;
     public long mTrialStartTime;
     public long mTrialFingerStartTime;
@@ -147,11 +149,13 @@ public class MainActivity extends Activity{
         //Get the next task
         if(success) {
             //record the result
-            if(mTrialStartTime != 0 && mTrialFingerStartTime != 0)
+            if(mTrialStartTime != 0 && mTrialFingerStartTime != 0 && mNavigateToListTime != 0 && mTaskActivityStartTime != 0)
             {
                 mTrialEndTime = System.currentTimeMillis();
-                trialDuration = mTrialEndTime - mTrialFingerStartTime;
+                trialDuration = mTrialEndTime - mTrialStartTime;
                 responseTime = mTrialFingerStartTime - mTrialStartTime;
+                menuTime = mTaskActivityStartTime - mNavigateToListTime;
+                taskTime = mTrialEndTime - mTaskActivityStartTime;
 
                 isCorrect = 1;
 
@@ -159,7 +163,7 @@ public class MainActivity extends Activity{
                         mCorner, mTask, mTaskType, mClose, anglevaluetarget, distancevaluetarget,
                         anglevalueactual, distancevalueactual,
                         isCorrect, isWrongTask, isOvershot, trialDuration,
-                        responseTime, fingerTouches);
+                        responseTime, menuTime, taskTime, fingerTouches);
 
             }
 
@@ -171,11 +175,13 @@ public class MainActivity extends Activity{
         } else {
             //record with result
             //dont save the first trial first trial
-            if(mTrialStartTime != 0 && mTrialFingerStartTime != 0)
+            if(mTrialStartTime != 0 && mTrialFingerStartTime != 0 && mNavigateToListTime != 0 && mTaskActivityStartTime != 0)
             {
                 mTrialEndTime = System.currentTimeMillis();
-                trialDuration = mTrialEndTime - mTrialFingerStartTime;
+                trialDuration = mTrialEndTime - mTrialStartTime;
                 responseTime = mTrialFingerStartTime - mTrialStartTime;
+                menuTime = mTaskActivityStartTime - mNavigateToListTime;
+                taskTime = mTrialEndTime - mTaskActivityStartTime;
 
                 isCorrect = 0;
 
@@ -183,7 +189,7 @@ public class MainActivity extends Activity{
                         mCorner, mTask, mTaskType, mClose, anglevaluetarget, distancevaluetarget,
                         anglevalueactual, distancevalueactual,
                         isCorrect, isWrongTask, isOvershot, trialDuration,
-                        responseTime, fingerTouches);
+                        responseTime, menuTime, taskTime, fingerTouches);
 
             }
 
@@ -199,6 +205,8 @@ public class MainActivity extends Activity{
             mTask = mNextTask.getTaskInd();
             mTrialStartTime = System.currentTimeMillis();
             mTrialFingerStartTime = 0;
+            mNavigateToListTime = 0;
+            mTaskActivityStartTime = 0;
             mTrialEndTime = 0;
             trialDuration = 0;
             responseTime = 0;
@@ -221,7 +229,6 @@ public class MainActivity extends Activity{
 
             //Go back to result screen and refresh
             mPager.setCurrentItem(0, 0);
-
 
             return false;
         } else

@@ -536,42 +536,40 @@ public abstract class PageFlipModifyAbstract {
 
                 //save the result
                 long currentTimestamp = System.currentTimeMillis();
-                MainActivity.getSharedInstance().mStudyView.mStudy.trialEndTime = currentTimestamp;
+                StudyTwo studyTwo = MainActivity.getSharedInstance().mStudyView.mStudy;
 
-                if(MainActivity.getSharedInstance().mStudyView.mStudy.trialFingerStartTime != 0)
+                studyTwo.trialEndTime = currentTimestamp;
+                if( studyTwo.trialStartTime != 0
+                        && studyTwo.trialFingerStartTime != 0
+                        && studyTwo.trialMenuStartTime != 0
+                        && studyTwo.trialTaskStartTime != 0)
                 {
-                    MainActivity.getSharedInstance().mStudyView.mStudy.trialDuration =
-                            MainActivity.getSharedInstance().mStudyView.mStudy.trialEndTime
-                                    - MainActivity.getSharedInstance().mStudyView.mStudy.trialFingerStartTime;
+                    studyTwo.trialDuration = studyTwo.trialEndTime - studyTwo.trialStartTime;
+                    studyTwo.trialResponseDuration = studyTwo.trialFingerStartTime - studyTwo.trialStartTime;
+                    studyTwo.trialMenuDuration = studyTwo.trialTaskStartTime - studyTwo.trialMenuStartTime;
+                    studyTwo.trialTaskDuration = studyTwo.trialEndTime - studyTwo.trialTaskStartTime;
                 }
-
-                if(MainActivity.getSharedInstance().mStudyView.mStudy.trialStartTime != 0)
-                {
-                    MainActivity.getSharedInstance().mStudyView.mStudy.trialResponseDuration =
-                            MainActivity.getSharedInstance().mStudyView.mStudy.trialFingerStartTime
-                                    - MainActivity.getSharedInstance().mStudyView.mStudy.trialStartTime;
-                }
-
 
                 int mTaskType = MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4 ? 1 : 2;
                 float distancevaluetarget = MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4 ? MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceTargert : MainActivity.getSharedInstance().mStudyView.mPageRender.mContinuousTarget;
                 float distancevalueactual = MainActivity.getSharedInstance().mStudyView.mPageRender.mTask < 4 ? MainActivity.getSharedInstance().mStudyView.mPageRender.mDistanceActual : MainActivity.getSharedInstance().mStudyView.mPageRender.mContinuousActual;
 
-                DataStorage.AddSample(1, MainActivity.getSharedInstance().mStudyView.mStudy.currentTask,
-                        MainActivity.getSharedInstance().mStudyView.mStudy.currentAttempt,
-                        5, currentTimestamp, MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner, MainActivity.getSharedInstance().mStudyView.mPageRender.mTask, mTaskType, MainActivity.getSharedInstance().mStudyView.mPageRender.mClose,
+                DataStorage.AddSample(1, studyTwo.currentTask,
+                        studyTwo.currentAttempt,
+                        5, currentTimestamp, MainActivity.getSharedInstance().mStudyView.mPageRender.mCorner, MainActivity.getSharedInstance().mStudyView.mPageRender.mTask,
+                        mTaskType, MainActivity.getSharedInstance().mStudyView.mPageRender.mClose,
                         MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleTarget, distancevaluetarget,
-
                         MainActivity.getSharedInstance().mStudyView.mPageRender.mAngleActual, distancevalueactual,
-                        MainActivity.getSharedInstance().mStudyView.mStudy.isCorrect,
+                        studyTwo.isCorrect,
 
                         MainActivity.getSharedInstance().mStudyView.mPageRender.isWrongTask,
                         MainActivity.getSharedInstance().mStudyView.mPageRender.isOvershot,
 
-                        MainActivity.getSharedInstance().mStudyView.mStudy.trialDuration,
-                        MainActivity.getSharedInstance().mStudyView.mStudy.trialResponseDuration,
-
-                        MainActivity.getSharedInstance().mStudyView.mStudy.trialFingerTouchTimes
+                        studyTwo.trialDuration,
+                        studyTwo.trialResponseDuration,
+                        studyTwo.trialMenuDuration,
+                        studyTwo.trialTaskDuration,
+                        studyTwo.trialFingerTouchTimes
 
                 );
 

@@ -78,6 +78,11 @@ public class DataSample {
 
     public long responseTime;
     public int fingerTouchTimes;
+    //from menu activated to menu selected
+    public long menuTime;
+    //from task activated to task complete
+    public long taskTime;
+
 
     //response time - from trial start to finger start
     //finger touch time - how many times users taps, times of state 2 - finger touch
@@ -86,7 +91,7 @@ public class DataSample {
                       int _corner, int _task, int _tasktype, int _close,
                       int _angletarget, float _distancetarget, int _angleactual, float _distanceActual,
                       int _isCorrect, int _isWrongTask, int _isOvershoot, long _trialDuration,
-                      long _responsetime, int _fingertouchtime)
+                      long _responsetime, long  _menuTime, long _taskTime, int _fingertouchtime)
     {
         technique = _technique;
         trial = _trial;
@@ -115,6 +120,8 @@ public class DataSample {
         trialDuration = _trialDuration;
 
         responseTime = _responsetime;
+        menuTime = _menuTime;
+        taskTime = _taskTime;
         fingerTouchTimes = _fingertouchtime;
 
     }
@@ -144,7 +151,8 @@ public class DataSample {
                         sample.cornerIndex + "," + sample.task + "," + sample.taskType  + "," +sample.close + "," +
                         sample.angleTarget + "," + String.format("%.2f", sample.distancevaluetarget) + "," + sample.angleActual + "," + String.format("%.2f", sample.distancevalueactual) + "," +
                         sample.isCorrect + "," + sample.numVistedCells  + "," + sample.numOvershoot  + "," +
-                        sample.trialDuration  + "," + sample.responseTime + "," + sample.fingerTouchTimes + "," +
+                        sample.trialDuration  + "," + sample.responseTime + "," +
+                        sample.menuTime + "," + sample.taskTime + "," + sample.fingerTouchTimes + "," +
                         "\r\n");
             }else
             {

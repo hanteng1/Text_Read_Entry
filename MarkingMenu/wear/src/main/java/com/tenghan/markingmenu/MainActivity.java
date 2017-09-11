@@ -80,7 +80,6 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
     }
 
 
-
     @Override
     protected void onResume()
     {

@@ -54,7 +54,7 @@ public class DataStorage {
                                     int _corner, int _task, int _tasktype, int _close,
                                     int _angletarget, float _distancetarget, int _angleactual, float _distanceActual,
                                     int _isCorrect, int _isWrongTask, int _numOvershoot, long _trialDuration,
-                                    long _responsetime, int _fingertouchtime)
+                                    long _responsetime, long  _menuTime, long _taskTime, int _fingertouchtime)
     {
         if(instance != null)
         {
@@ -62,7 +62,7 @@ public class DataStorage {
                     _corner,  _task,  _tasktype,  _close,
                     _angletarget,  _distancetarget,  _angleactual,  _distanceActual,
                     _isCorrect,  _isWrongTask,  _numOvershoot,  _trialDuration,
-                    _responsetime,  _fingertouchtime);
+                    _responsetime, _menuTime, _taskTime,  _fingertouchtime);
             return true;
         }
 
@@ -73,7 +73,7 @@ public class DataStorage {
                     int _corner, int _task, int _tasktype, int _close,
                     int _angletarget, float _distancetarget, int _angleactual, float _distanceActual,
                     int _isCorrect, int _isWrongTask, int _numOvershoot, long _trialDuration,
-                    long _responsetime, int _fingertouchtime)
+                    long _responsetime, long  _menuTime, long _taskTime, int _fingertouchtime)
     {
         if(samples != null)
         {
@@ -81,7 +81,7 @@ public class DataStorage {
                     _corner,  _task,  _tasktype,  _close,
                     _angletarget,  _distancetarget,  _angleactual,  _distanceActual,
                     _isCorrect,  _isWrongTask,  _numOvershoot,  _trialDuration,
-                    _responsetime,  _fingertouchtime);
+                    _responsetime, _menuTime, _taskTime,  _fingertouchtime);
             samples.add(sample);
         }
     }

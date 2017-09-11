@@ -21,7 +21,6 @@
         android:textSize="60sp"
         android:textColor="@color/blue"
         android:gravity="center"
-        android:text="to test"
         />
 
     <jcli.research.com.swipetap.ConTargetView

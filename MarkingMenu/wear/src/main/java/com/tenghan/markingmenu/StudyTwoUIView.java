@@ -92,8 +92,13 @@ public class StudyTwoUIView extends View {
     public long trialDuration;
     public long trialStartTime = 0;
     public long trialResponseDuration = 0;
+    public long trialMenuDuration = 0;
+    public long trialTaskDuration = 0;
+
     public int trialFingerTouchTimes = 0;
     public long trialFingerStartTime = 0;
+    public long trialMenuStartTime = 0;
+    public long trialTaskStartTime = 0;
     public long trialEndTime = 0;
     public int isCorrect;  // 1 - correct, 0 - incorrect
 
@@ -341,6 +346,11 @@ public class StudyTwoUIView extends View {
         trialResponseDuration = 0;
         trialFingerTouchTimes = 0;
         trialFingerStartTime = 0;
+        trialMenuDuration = 0;
+        trialTaskDuration = 0;
+        trialMenuStartTime = 0;
+        trialTaskStartTime = 0;
+
 
         if(currentTask == tasks.size())
         {
@@ -364,6 +374,10 @@ public class StudyTwoUIView extends View {
         trialResponseDuration = 0;
         trialFingerTouchTimes = 0;
         trialFingerStartTime = 0;
+        trialMenuDuration = 0;
+        trialTaskDuration = 0;
+        trialMenuStartTime = 0;
+        trialTaskStartTime = 0;
 
         return tasks.get(currentTask);
     }
@@ -948,12 +962,12 @@ public class StudyTwoUIView extends View {
 
         trialFingerTouchTimes++;
 
-        float distancevaluetarget = mTask < 4 ? mDistanceTargert : mContinuousTarget;
-        DataStorage.AddSample(2, currentTask,
-                currentAttempt,
-                2, currentTimestamp, 0, mTask, mTaskType, mClose,
-                mAngleTarget, distancevaluetarget,
-                -1, -1);
+//        float distancevaluetarget = mTask < 4 ? mDistanceTargert : mContinuousTarget;
+//        DataStorage.AddSample(2, currentTask,
+//                currentAttempt,
+//                2, currentTimestamp, 0, mTask, mTaskType, mClose,
+//                mAngleTarget, distancevaluetarget,
+//                -1, -1);
 
     }
 
@@ -971,6 +985,7 @@ public class StudyTwoUIView extends View {
                 if(mAngleActual == mAngleTarget)
                 {
                     isSubMenuing = true;
+                    trialTaskStartTime = System.currentTimeMillis();
                     isWrongTask = 0;
 
                 }else
@@ -1066,7 +1081,6 @@ public class StudyTwoUIView extends View {
     public void onFingerUp(float x, float y)
     {
 
-
         //check the result
 
         //show the next target
@@ -1106,16 +1120,13 @@ public class StudyTwoUIView extends View {
         float distancevaluetarget = mTask < 4 ? mDistanceTargert : mContinuousTarget;
         float distancevalueactual = mTask < 4 ? mDistanceActual : mContinuousActual;
 
-        if(trialFingerStartTime != 0)
+        if(trialStartTime != 0 && trialFingerStartTime != 0 && trialMenuStartTime != 0 && trialTaskStartTime != 0)
         {
-            trialDuration = trialEndTime - trialFingerStartTime;
-        }
-
-        if(trialStartTime != 0)
-        {
+            trialDuration = trialEndTime - trialStartTime;
             trialResponseDuration = trialFingerStartTime - trialStartTime;
+            trialMenuDuration = trialTaskStartTime - trialMenuStartTime;
+            trialTaskDuration = trialEndTime - trialTaskStartTime;
         }
-
 
         DataStorage.AddSample(2, currentTask, currentAttempt, 5, currentTimestamp,
                 0, mTask, mTaskType, mClose,
@@ -1123,9 +1134,10 @@ public class StudyTwoUIView extends View {
                 isCorrect, isWrongTask, isOvershot,
                 trialDuration,
                 trialResponseDuration,
+                trialMenuDuration,
+                trialTaskDuration,
                 trialFingerTouchTimes
         );
-
 
         isTriggered = false;
         mAngleActual = -1;
@@ -1151,6 +1163,8 @@ public class StudyTwoUIView extends View {
     {
         //menuCenter.set(x, y);
         isTriggered = true;
+        trialMenuStartTime = System.currentTimeMillis();
+
         currentMenuLayer = 0;
         invalidate();
     }
