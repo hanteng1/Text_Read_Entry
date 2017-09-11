@@ -19,6 +19,7 @@ public class ConExpActivity extends Activity {
     private ConExpActivity mSelf;
     private int mCurrentValue;
     private int mTargetValue;
+    private long mActivityStartTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class ConExpActivity extends Activity {
 
         //mCanvasView.setTask(type, targetValue);
         mCanvasView.setTask(task, targetValue);
+        mActivityStartTime = System.currentTimeMillis();
     }
 
     private SeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -68,15 +70,17 @@ public class ConExpActivity extends Activity {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                Intent timeIntent = new Intent();
+                timeIntent.putExtra("time", mActivityStartTime);
                 //Finger up for commitment
                 if(Math.abs(mCurrentValue - mTargetValue) < mTargetValue * 0.1f) {
                     //TODO: record data
                     //correct, go back to the main activity
-                    setResult(RESULT_OK);
+                    setResult(RESULT_OK, timeIntent);
                 } else {
                     //TODO: record data
                     //wrong
-                    setResult(RESULT_CANCELED);
+                    setResult(RESULT_CANCELED, timeIntent);
                 }
                 finish();
             }

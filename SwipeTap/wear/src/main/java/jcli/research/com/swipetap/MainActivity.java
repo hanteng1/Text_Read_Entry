@@ -88,6 +88,9 @@ public class MainActivity extends Activity{
     public long mTrialStartTime;
     public long mTrialFingerStartTime;
     public long mTrialEndTime;
+    public long mNavigateToListTime;
+    public long mTaskActivityStartTime;
+    public long mListClickedTime;
 
     private int taskNum = 5;
     private float reservedDistance = 40;
@@ -125,7 +128,12 @@ public class MainActivity extends Activity{
 
         @Override
         public void onPageSelected(int row, int col) {
-            if(col == 1) Log.d(TAG, "Page 1 selected at: " + String.valueOf(System.currentTimeMillis()));
+            if(col == 1) {
+                long time = System.currentTimeMillis();
+                //Log.d(TAG, "Page 1 selected at: " + time);
+                mNavigateToListTime = time;
+            }
+
         }
 
         @Override
@@ -239,8 +247,9 @@ public class MainActivity extends Activity{
             new WearableListView.ClickListener() {
                 @Override
                 public void onClick(WearableListView.ViewHolder viewHolder) {
-
-                    Log.d(TAG, "Task list clicked at: " + System.currentTimeMillis());
+                    long time = System.currentTimeMillis();
+                    //Log.d(TAG, "Task list clicked at: " + time);
+                    mListClickedTime = time;
                     int indClicked = viewHolder.getAdapterPosition();
                     //Check if the correct option is clicked
                     if(indClicked == mNextTask.getTaskInd()) {
@@ -274,6 +283,8 @@ public class MainActivity extends Activity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == TASK_RESULT) {
+            mTaskActivityStartTime = data.getLongExtra("time", -1);
+            Log.d(TAG, "Task activity started at: " + mTaskActivityStartTime);
             if(fetchTaskAndRelocate(resultCode == RESULT_OK)) {
                 //Study done, do something
             } else {
@@ -375,7 +386,7 @@ public class MainActivity extends Activity{
                         @Override
                         public boolean onTouch(View view, MotionEvent motionEvent) {
                             if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                                Log.d(TAG, "Touch on first page at:" + String.valueOf(System.currentTimeMillis()));
+                                //Log.d(TAG, "Touch on first page at:" + String.valueOf(System.currentTimeMillis()));
                                 mTrialFingerStartTime = System.currentTimeMillis();
                             }
                             return false;

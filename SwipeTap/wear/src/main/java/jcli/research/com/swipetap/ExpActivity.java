@@ -17,6 +17,7 @@ public class ExpActivity extends Activity {
     private List<String> mOptions;
     private int mTargetIndInOptions;
     private ExpActivity mSelf;
+    private long mActivityStartTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class ExpActivity extends Activity {
         optionListView.setAdapter(new ExpOptionListAdapter(this, mOptions));
         optionListView.setClickListener(mOptionClickListener);
 
+        mActivityStartTime = System.currentTimeMillis();
 
     }
 
@@ -54,14 +56,16 @@ public class ExpActivity extends Activity {
         @Override
         public void onClick(WearableListView.ViewHolder viewHolder) {
             //Intent resultIntent = new Intent();
+            Intent timeIntent = new Intent();
+            timeIntent.putExtra("time", mActivityStartTime);
             if(viewHolder.getAdapterPosition() == mTargetIndInOptions) {
                 //TODO: record data
                 //correct, go back to the main activity
-                setResult(RESULT_OK);
+                setResult(RESULT_OK, timeIntent);
             } else {
                 //TODO: record data
                 //wrong
-                setResult(RESULT_CANCELED);
+                setResult(RESULT_CANCELED, timeIntent);
             }
             finish();
         }
