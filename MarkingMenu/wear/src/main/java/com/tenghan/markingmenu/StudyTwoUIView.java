@@ -1154,7 +1154,7 @@ public class StudyTwoUIView extends View {
 
     private boolean isWithin(float targetValue, float actualValue, float ratio)
     {
-        if (Math.abs(actualValue - targetValue) < targetValue * ratio)
+        if (Math.abs(actualValue - targetValue) < mContinuousMax * ratio)
         {
             return true;
         }

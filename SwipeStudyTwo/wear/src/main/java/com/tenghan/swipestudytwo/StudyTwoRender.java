@@ -67,7 +67,7 @@ public class StudyTwoRender extends StudyRender{
 
 
     //for continuous values
-    public float mContinuousMax = maxDistance - reservedDistance ; //120 + 40
+    public float mContinuousMax = maxDistance - reservedDistance ;
     public float mContinuousTarget = -1;
     public float mContinuousActual = -1;
     public float accuracyInterval = 0.1f;  // + -

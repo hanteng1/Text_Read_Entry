@@ -658,7 +658,7 @@ public abstract class PageFlipModifyAbstract {
 
     private boolean isWithin(float targetValue, float actualValue, float ratio)
     {
-        if (Math.abs(actualValue - targetValue) < targetValue * ratio)
+        if (Math.abs(actualValue - targetValue) < MainActivity.getSharedInstance().mStudyView.mPageRender.mContinuousMax * ratio)
         {
             return true;
         }

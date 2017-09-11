@@ -73,7 +73,7 @@ public class ConExpActivity extends Activity {
                 Intent timeIntent = new Intent();
                 timeIntent.putExtra("time", mActivityStartTime);
                 //Finger up for commitment
-                if(Math.abs(mCurrentValue - mTargetValue) < mTargetValue * 0.1f) {
+                if(Math.abs(mCurrentValue - mTargetValue) <  120.0f * 0.1f) {
                     //TODO: record data
                     //correct, go back to the main activity
                     setResult(RESULT_OK, timeIntent);
