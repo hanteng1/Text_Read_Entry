@@ -20,6 +20,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:max="320"
+        android:thumb="@drawable/thumb_img"
         />
 </RelativeLayout>
 
