@@ -42,6 +42,7 @@ public class MainActivity extends Activity{
     private GridViewPager mPager;
     private Button mStartButton;
     private WearableListView mListView;
+    private TextView mTrialCountText;
 
     private static final String[] LETTER_OPTIONS = new String[] {"A", "B", "C", "D", "E"};
     private static final String[] NUMBER_OPTIONS = new String[] {"1", "2", "3", "4", "5"};
@@ -313,6 +314,8 @@ public class MainActivity extends Activity{
         } else {
             renderContinuousTask();
         }
+        //Display the current trial count
+        mTrialCountText.setText("" + (MainActivity.getSharedInstance().mCurrentTrial + 1) + " / 90");
     }
 
 
@@ -352,12 +355,13 @@ public class MainActivity extends Activity{
                     mStartButton = (Button) centerView.findViewById(R.id.start_button);
                     mTargetDisplayTextView = (TextView)centerView.findViewById(R.id.target_display_text);
                     mConTargetView = (ConTargetView)centerView.findViewById(R.id.con_target_view);
+                    mTrialCountText = (TextView) centerView.findViewById(R.id.trial_count_text);
 
-                    if(!TaskManager.getInstance().isFirstTrial()) {
-                        mStartButton.setVisibility(View.GONE);
-                        mTargetDisplayTextView.setText("" + MainActivity.getSharedInstance().mCurrentTrial + " / 90");
-                        mTargetDisplayTextView.setVisibility(View.VISIBLE);
-                    }
+                    //if(!TaskManager.getInstance().isFirstTrial()) {
+                    //    mStartButton.setVisibility(View.GONE);
+                        //mTargetDisplayTextView.setText("" + MainActivity.getSharedInstance().mCurrentTrial + " / 90");
+                    //    mTargetDisplayTextView.setVisibility(View.VISIBLE);
+                    //}
                     
                     mStartButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -372,6 +376,7 @@ public class MainActivity extends Activity{
                         public boolean onTouch(View view, MotionEvent motionEvent) {
                             if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                                 Log.d(TAG, "Touch on first page at:" + String.valueOf(System.currentTimeMillis()));
+                                mTrialFingerStartTime = System.currentTimeMillis();
                             }
                             return false;
                         }
