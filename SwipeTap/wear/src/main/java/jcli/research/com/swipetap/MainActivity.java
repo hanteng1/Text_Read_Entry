@@ -195,13 +195,13 @@ public class MainActivity extends Activity{
             mPager.setCurrentItem(0, 0);
 
 
-            return true;
-        }else
+            return false;
+        } else
         {
             mPager.setCurrentItem(0, 0); //?
             //save the data
             storage.save2();
-            return false;
+            return true;
         }
     }
 
