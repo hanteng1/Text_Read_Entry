@@ -87,7 +87,7 @@ public class MainActivity extends Activity{
         //Go back to result screen and refresh
         mPager.setCurrentItem(0, 0);
         if(mNextTask == null) {
-            //Study done, save another copy of data and quit
+            //TODO: Study done, save another copy of data and quit
             return true;
         } else return false;
     }
