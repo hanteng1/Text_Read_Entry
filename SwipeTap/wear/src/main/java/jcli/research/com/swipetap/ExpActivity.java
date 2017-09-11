@@ -38,7 +38,7 @@ public class ExpActivity extends Activity {
         } else if (task == 1){
             mOptions = Arrays.asList("1", "2", "3", "4", "5");
         } else {
-            mOptions = Arrays.asList("\u25a0", "\u25b2", "\u25cf", "\u2b1f", "\u25ac");
+            mOptions = Arrays.asList("\u25a0", "\u25b2", "\u25cf", "\u25c6", "\u25ac");
         }
         mTargetIndInOptions = target;
         final TextView tv = (TextView)findViewById(R.id.exp_target_text);

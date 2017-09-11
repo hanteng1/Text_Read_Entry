@@ -46,7 +46,7 @@ public class MainActivity extends Activity{
 
     private static final String[] LETTER_OPTIONS = new String[] {"A", "B", "C", "D", "E"};
     private static final String[] NUMBER_OPTIONS = new String[] {"1", "2", "3", "4", "5"};
-    private static final String[] SHAPE_OPTIONS = new String[] {"\u25a0", "\u25b2", "\u25cf", "\u2b1f", "\u25ac"};
+    private static final String[] SHAPE_OPTIONS = new String[] {"\u25a0", "\u25b2", "\u25cf", "\u25c6", "\u25ac"};
 
     private static final int TASK_RESULT = 1;
 
@@ -107,7 +107,7 @@ public class MainActivity extends Activity{
         setContentView(R.layout.activity_main);
         instance = this;
 
-        mNames = Arrays.asList("Letter", "Number", "Shape", "Size", "Colour", "Weight");
+        mNames = Arrays.asList("Letter", "Number", "Icon", "Size", "Colour", "Weight");
 
         mPager = (GridViewPager) findViewById(R.id.pager);
 
