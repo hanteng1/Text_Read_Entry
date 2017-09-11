@@ -7,14 +7,10 @@ package jcli.research.com.swipetap;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Debug;
-import android.provider.ContactsContract;
 import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.GridPagerAdapter;
 import android.support.wearable.view.WearableListView;
 import android.content.Context;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,9 +19,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
-import com.google.android.gms.tasks.Task;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -119,7 +112,7 @@ public class MainActivity extends Activity{
         storage = DataStorage.getInstance();
         storage.clearData();
 
-        fetchTaskAndRelocate(false);
+        fetchTaskAndRelocate(1);
     }
 
     private GridViewPager.OnPageChangeListener mGridPageChangeListener = new GridViewPager.OnPageChangeListener() {
@@ -144,12 +137,13 @@ public class MainActivity extends Activity{
         }
     };
 
-    private boolean fetchTaskAndRelocate(boolean success) {
+    private boolean fetchTaskAndRelocate(int failureState) {
+        //failure 0 -- success 1 -- wrong task result 2 -- wrong task type
         //If the previous trial is successful, get the next task, otherwise get the current one
         //Get the next task
-        if(success) {
+        if(failureState == 0) {
             //record the result
-            if(mTrialStartTime != 0 && mTrialFingerStartTime != 0 && mNavigateToListTime != 0 && mTaskActivityStartTime != 0)
+            if(mTrialStartTime != 0 && mTrialFingerStartTime != 0 && mNavigateToListTime != 0)
             {
                 mTrialEndTime = System.currentTimeMillis();
                 trialDuration = mTrialEndTime - mTrialStartTime;
@@ -158,6 +152,7 @@ public class MainActivity extends Activity{
                 taskTime = mTrialEndTime - mTaskActivityStartTime;
 
                 isCorrect = 1;
+                isWrongTask = 0;
 
                 DataStorage.AddSample(3, mCurrentTrial, mAttemptTimes, 5, mTrialStartTime,
                         mCorner, mTask, mTaskType, mClose, anglevaluetarget, distancevaluetarget,
@@ -175,7 +170,7 @@ public class MainActivity extends Activity{
         } else {
             //record with result
             //dont save the first trial first trial
-            if(mTrialStartTime != 0 && mTrialFingerStartTime != 0 && mNavigateToListTime != 0 && mTaskActivityStartTime != 0)
+            if(mTrialStartTime != 0 && mTrialFingerStartTime != 0 && mNavigateToListTime != 0)
             {
                 mTrialEndTime = System.currentTimeMillis();
                 trialDuration = mTrialEndTime - mTrialStartTime;
@@ -184,6 +179,7 @@ public class MainActivity extends Activity{
                 taskTime = mTrialEndTime - mTaskActivityStartTime;
 
                 isCorrect = 0;
+                isWrongTask = failureState == 1 ? 2 : 1;
 
                 DataStorage.AddSample(3, mCurrentTrial, mAttemptTimes, 5, mTrialStartTime,
                         mCorner, mTask, mTaskType, mClose, anglevaluetarget, distancevaluetarget,
@@ -276,7 +272,8 @@ public class MainActivity extends Activity{
                     } else {
                         //Wrong option clicked, return to task display
                         //TODO: increase error count
-                        mPager.setCurrentItem(0, 0);
+                        // 2 for wrong task type
+                        fetchTaskAndRelocate(2);
                     }
 
                 }
@@ -291,8 +288,8 @@ public class MainActivity extends Activity{
         // Check which request we're responding to
         if (requestCode == TASK_RESULT) {
             mTaskActivityStartTime = data.getLongExtra("time", -1);
-            Log.d(TAG, "Task activity started at: " + mTaskActivityStartTime);
-            if(fetchTaskAndRelocate(resultCode == RESULT_OK)) {
+            //Log.d(TAG, "Task activity started at: " + mTaskActivityStartTime);
+            if(fetchTaskAndRelocate(resultCode == RESULT_OK ? 0 : 1)) {
                 //Study done, do something
             } else {
                 renderTask();
