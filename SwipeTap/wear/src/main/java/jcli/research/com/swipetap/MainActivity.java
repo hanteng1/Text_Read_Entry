@@ -197,11 +197,21 @@ public class MainActivity extends Activity{
             return true;
         }else
         {
+            mPager.setCurrentItem(0, 0); //?
             //save the data
             storage.save2();
             return false;
         }
     }
+
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        storage.save2();
+    }
+
 
     // Handle our Wearable List's click events
     private WearableListView.ClickListener mListClickListener =
@@ -326,6 +336,7 @@ public class MainActivity extends Activity{
 
                     if(!TaskManager.getInstance().isFirstTrial()) {
                         mStartButton.setVisibility(View.GONE);
+                        mTargetDisplayTextView.setText("" + MainActivity.getSharedInstance().mCurrentTrial + " / 90");
                         mTargetDisplayTextView.setVisibility(View.VISIBLE);
                     }
                     
