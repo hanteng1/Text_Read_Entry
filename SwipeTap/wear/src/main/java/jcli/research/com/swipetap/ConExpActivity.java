@@ -17,6 +17,8 @@ public class ConExpActivity extends Activity {
     private SeekBar mSeekBar;
     private ConExpTaskView mCanvasView;
     private ConExpActivity mSelf;
+    private int mCurrentValue;
+    private int mTargetValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,8 @@ public class ConExpActivity extends Activity {
         Intent intent = getIntent();
         int task = intent.getIntExtra("task", -1);
         int targetValue = intent.getIntExtra("value", -1);
+        mTargetValue = (int)(targetValue * 1.2f + 40);
+
         //mCanvasView.setTask(type, targetValue);
         mCanvasView.setTask(task, targetValue);
     }
@@ -41,6 +45,7 @@ public class ConExpActivity extends Activity {
     private SeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            mCurrentValue = (int)(i * 2.0f / 3.0f);
             mCanvasView.updateState(i);
         }
 
@@ -64,7 +69,7 @@ public class ConExpActivity extends Activity {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 //Finger up for commitment
-                if(true) {
+                if(Math.abs(mCurrentValue - mTargetValue) < mTargetValue * 0.1f) {
                     //TODO: record data
                     //correct, go back to the main activity
                     setResult(RESULT_OK);

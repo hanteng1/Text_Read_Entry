@@ -7,6 +7,7 @@ package jcli.research.com.swipetap;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Debug;
 import android.provider.ContactsContract;
 import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.GridPagerAdapter;
@@ -106,6 +107,7 @@ public class MainActivity extends Activity{
 
         //---Assigns an adapter to provide the content for this pager---
         mPager.setAdapter(new ListInGridAdapter(this));
+        mPager.setOnPageChangeListener(mGridPageChangeListener);
         mSelf = this;
 
         storage = DataStorage.getInstance();
@@ -113,6 +115,23 @@ public class MainActivity extends Activity{
 
         fetchTaskAndRelocate(false);
     }
+
+    private GridViewPager.OnPageChangeListener mGridPageChangeListener = new GridViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int i, int i1, float v, float v1, int i2, int i3) {
+            //nothing
+        }
+
+        @Override
+        public void onPageSelected(int row, int col) {
+            if(col == 1) Log.d(TAG, "Page 1 selected at: " + String.valueOf(System.currentTimeMillis()));
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int i) {
+            //nothing
+        }
+    };
 
     private boolean fetchTaskAndRelocate(boolean success) {
         //If the previous trial is successful, get the next task, otherwise get the current one
@@ -220,6 +239,7 @@ public class MainActivity extends Activity{
                 @Override
                 public void onClick(WearableListView.ViewHolder viewHolder) {
 
+                    Log.d(TAG, "Task list clicked at: " + System.currentTimeMillis());
                     int indClicked = viewHolder.getAdapterPosition();
                     //Check if the correct option is clicked
                     if(indClicked == mNextTask.getTaskInd()) {
@@ -321,8 +341,6 @@ public class MainActivity extends Activity{
             return currentColumn;
         }
 
-
-
         //---Return our car image based on the provided row and column---
         @Override
         public Object instantiateItem(ViewGroup viewGroup, int row, int col) {
@@ -349,6 +367,15 @@ public class MainActivity extends Activity{
                         }
                     });
 
+                    centerView.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent motionEvent) {
+                            if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                                Log.d(TAG, "Touch on first page at:" + String.valueOf(System.currentTimeMillis()));
+                            }
+                            return false;
+                        }
+                    });
                     //Set the target display
                     renderTask();
                     viewGroup.addView(centerView);
