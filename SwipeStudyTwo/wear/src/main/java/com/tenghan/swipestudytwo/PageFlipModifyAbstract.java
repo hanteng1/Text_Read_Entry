@@ -539,10 +539,7 @@ public abstract class PageFlipModifyAbstract {
                 StudyTwo studyTwo = MainActivity.getSharedInstance().mStudyView.mStudy;
 
                 studyTwo.trialEndTime = currentTimestamp;
-                if( studyTwo.trialStartTime != 0
-                        && studyTwo.trialFingerStartTime != 0
-                        && studyTwo.trialMenuStartTime != 0
-                        && studyTwo.trialTaskStartTime != 0)
+                if( studyTwo.trialStartTime != 0)
                 {
                     studyTwo.trialDuration = studyTwo.trialEndTime - studyTwo.trialStartTime;
                     studyTwo.trialResponseDuration = studyTwo.trialFingerStartTime - studyTwo.trialStartTime;

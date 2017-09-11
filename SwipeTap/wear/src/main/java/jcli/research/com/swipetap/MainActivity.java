@@ -236,15 +236,6 @@ public class MainActivity extends Activity{
         }
     }
 
-
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-        storage.save2();
-    }
-
-
     // Handle our Wearable List's click events
     private WearableListView.ClickListener mListClickListener =
             new WearableListView.ClickListener() {
