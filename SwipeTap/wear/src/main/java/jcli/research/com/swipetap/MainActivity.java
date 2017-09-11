@@ -21,6 +21,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
+import com.google.android.gms.tasks.Task;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,10 +38,13 @@ public class MainActivity extends Activity{
     private TextView mTargetDisplayTextView;
     private GridViewPager mPager;
     private Button mStartButton;
+    private WearableListView mListView;
 
     private static final String[] LETTER_OPTIONS = new String[] {"A", "B", "C", "D", "E"};
     private static final String[] NUMBER_OPTIONS = new String[] {"1", "2", "3", "4", "5"};
     private static final String[] SHAPE_OPTIONS = new String[] {"\u25a0", "\u25b2", "\u25cf", "\u2b1f", "\u25ac"};
+
+    private static final int TASK_RESULT = 1;
 
     public static MainActivity instance;
     public static MainActivity getSharedInstance()
@@ -68,9 +73,23 @@ public class MainActivity extends Activity{
         mPager.setAdapter(new ListInGridAdapter(this));
         mSelf = this;
 
-        //Get the next task
-        mNextTask = TaskManager.getInstance().getNextTask();
+        fetchTaskAndRelocate(false);
+    }
 
+    private boolean fetchTaskAndRelocate(boolean success) {
+        //If the previous trial is successful, get the next task, otherwise get the current one
+        //Get the next task
+        if(success) {
+            mNextTask = TaskManager.getInstance().getNextTask();
+        } else {
+            mNextTask = TaskManager.getInstance().getCurrentTask();
+        }
+        //Go back to result screen and refresh
+        mPager.setCurrentItem(0, 0);
+        if(mNextTask == null) {
+            //Study done, save another copy of data and quit
+            return true;
+        } else return false;
     }
 
     // Handle our Wearable List's click events
@@ -87,13 +106,13 @@ public class MainActivity extends Activity{
                             Intent disIntent = new Intent(mSelf, ExpActivity.class);
                             disIntent.putExtra("task", mNextTask.getTaskInd());
                             disIntent.putExtra("target", mNextTask.getValue());
-                            startActivity(disIntent);
+                            startActivityForResult(disIntent, TASK_RESULT);
                         } else {
                             //So it is a continuous task
                             Intent conIntent = new Intent(mSelf, ConExpActivity.class);
                             conIntent.putExtra("task", mNextTask.getTaskInd());
                             conIntent.putExtra("value", mNextTask.getValue());
-                            startActivity(conIntent);
+                            startActivityForResult(conIntent, TASK_RESULT);
                         }
                     } else {
                         //Wrong option clicked, return to task display
@@ -108,6 +127,51 @@ public class MainActivity extends Activity{
                 }
             };
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == TASK_RESULT) {
+            if(fetchTaskAndRelocate(resultCode == RESULT_OK)) {
+                //Study done, do something
+            } else {
+                renderTask();
+                //push the option list to the start
+                mListView.scrollToPosition(0);
+            }
+        }
+    }
+
+    private void renderDiscreteTask() {
+        //Is discrete task, set the target display with the actual target text
+        mConTargetView.setVisibility(View.INVISIBLE);
+        mTargetDisplayTextView.setVisibility(View.VISIBLE);
+
+        String targetDisplay;
+        int task = mNextTask.getTaskInd();
+        if(task == 0) {
+            targetDisplay = LETTER_OPTIONS[(int)(mNextTask.getValue() / 20.0f)];
+        } else if(task == 1) {
+            targetDisplay = NUMBER_OPTIONS[(int)(mNextTask.getValue() / 20.0f)];
+        } else targetDisplay = SHAPE_OPTIONS[(int)(mNextTask.getValue() / 20.0f)];
+        mTargetDisplayTextView.setText(targetDisplay);
+    }
+
+    private void renderContinuousTask() {
+        //Is a continuous task, we should draw something then
+        mConTargetView.setTask( mNextTask.getTaskInd() + 1, (int)mNextTask.getValue());
+        mConTargetView.setVisibility(View.VISIBLE);
+        mTargetDisplayTextView.setVisibility(View.INVISIBLE);
+        mConTargetView.invalidate();
+
+    }
+
+    private void renderTask () {
+        if(mNextTask.isDiscrete()) {
+            renderDiscreteTask();
+        } else {
+            renderContinuousTask();
+        }
+    }
 
 
     public class ListInGridAdapter extends GridPagerAdapter {
@@ -135,6 +199,8 @@ public class MainActivity extends Activity{
             return currentColumn;
         }
 
+
+
         //---Return our car image based on the provided row and column---
         @Override
         public Object instantiateItem(ViewGroup viewGroup, int row, int col) {
@@ -159,28 +225,9 @@ public class MainActivity extends Activity{
                             mTargetDisplayTextView.setVisibility(View.VISIBLE);
                         }
                     });
+
                     //Set the target display
-                    if(mNextTask.isDiscrete()) {
-                        //Is discrete task, set the target display with the actual target text
-                        mConTargetView.setVisibility(View.INVISIBLE);
-                        mTargetDisplayTextView.setVisibility(View.VISIBLE);
-
-                        String targetDisplay;
-                        int task = mNextTask.getTaskInd();
-                        if(task == 0) {
-                            targetDisplay = LETTER_OPTIONS[(int)(mNextTask.getValue() / 20.0f)];
-                        } else if(task == 1) {
-                            targetDisplay = NUMBER_OPTIONS[(int)(mNextTask.getValue() / 20.0f)];
-                        } else targetDisplay = SHAPE_OPTIONS[(int)(mNextTask.getValue() / 20.0f)];
-                        mTargetDisplayTextView.setText(targetDisplay);
-                    } else {
-                        //Is a continuous task, we should draw something then
-                        mConTargetView.setTask( mNextTask.getTaskInd() + 1, (int)mNextTask.getValue());
-                        mConTargetView.setVisibility(View.VISIBLE);
-                        mTargetDisplayTextView.setVisibility(View.INVISIBLE);
-                        mConTargetView.invalidate();
-
-                    }
+                    renderTask();
                     viewGroup.addView(centerView);
                     return centerView;
                 case 1:
@@ -190,6 +237,7 @@ public class MainActivity extends Activity{
                     discreteWearableListView.setAdapter(new WearableAdapter(mContext, mNames));
                     discreteWearableListView.setClickListener(mListClickListener);
                     discreteWearableListView.setGreedyTouchMode(true);
+                    mListView = discreteWearableListView;
                     viewGroup.addView(discreteList);
                     return discreteList;
                 default:

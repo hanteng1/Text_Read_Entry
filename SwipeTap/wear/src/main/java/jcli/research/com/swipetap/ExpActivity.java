@@ -16,12 +16,14 @@ public class ExpActivity extends Activity {
     //private TextView mTextView;
     private List<String> mOptions;
     private int mTargetIndInOptions;
+    private ExpActivity mSelf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exp);
 
+        mSelf = this;
         //Get the data passed in
         Intent intent = getIntent();
         int task = intent.getIntExtra("task", -1);
@@ -44,17 +46,24 @@ public class ExpActivity extends Activity {
         optionListView.setAdapter(new ExpOptionListAdapter(this, mOptions));
         optionListView.setClickListener(mOptionClickListener);
 
+
     }
 
     private WearableListView.ClickListener mOptionClickListener = new WearableListView.ClickListener() {
 
         @Override
         public void onClick(WearableListView.ViewHolder viewHolder) {
+            //Intent resultIntent = new Intent();
             if(viewHolder.getAdapterPosition() == mTargetIndInOptions) {
-                //correct
+                //TODO: record data
+                //correct, go back to the main activity
+                setResult(RESULT_OK);
             } else {
+                //TODO: record data
                 //wrong
+                setResult(RESULT_CANCELED);
             }
+            finish();
         }
 
         @Override
