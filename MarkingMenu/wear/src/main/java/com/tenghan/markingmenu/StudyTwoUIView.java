@@ -198,7 +198,7 @@ public class StudyTwoUIView extends View {
         task_shape.add(new PointF[]{new PointF(0, 0), new PointF(1, 0), new PointF(1, 1), new PointF(0, 1), new PointF(0, 0)});
 
         task_shape.add(new PointF[]{new PointF(0.5f, 0), new PointF(1, 1), new PointF(0, 1), new PointF(0.5f, 0)});
-        task_shape.add(new PointF[]{new PointF(0.5f, 0), new PointF(1, 0.5f), new PointF(0.75f, 1), new PointF(0.25f, 1), new PointF(0, 0.5f), new PointF(0.5f, 0)});
+        task_shape.add(new PointF[]{new PointF(0.5f, 0), new PointF(1, 0.5f), new PointF(0.5f, 1), new PointF(0, 0.5f), new PointF(0.5f, 0)});
         task_shape.add(new PointF[]{new PointF(0, 0.25f), new PointF(1, 0.25f), new PointF(1, 0.75f), new PointF(0, 0.75f), new PointF(0, 25f)});
 
         touchPoints = new ArrayList<PointF>();
@@ -1096,6 +1096,7 @@ public class StudyTwoUIView extends View {
                 {
                     obtainNext = false;
                     isCorrect = 0;
+                    isWrongTask = 2;
                 }
             }else
             {
@@ -1107,6 +1108,7 @@ public class StudyTwoUIView extends View {
                 {
                     obtainNext = false;
                     isCorrect = 0;
+                    isWrongTask = 2;
                 }
             }
 
@@ -1120,7 +1122,7 @@ public class StudyTwoUIView extends View {
         float distancevaluetarget = mTask < 4 ? mDistanceTargert : mContinuousTarget;
         float distancevalueactual = mTask < 4 ? mDistanceActual : mContinuousActual;
 
-        if(trialStartTime != 0 && trialFingerStartTime != 0 && trialMenuStartTime != 0 && trialTaskStartTime != 0)
+        if(trialStartTime != 0)
         {
             trialDuration = trialEndTime - trialStartTime;
             trialResponseDuration = trialFingerStartTime - trialStartTime;

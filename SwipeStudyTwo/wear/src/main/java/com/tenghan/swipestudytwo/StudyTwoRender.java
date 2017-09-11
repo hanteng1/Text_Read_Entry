@@ -104,7 +104,7 @@ public class StudyTwoRender extends StudyRender{
         task_shape.add(new PointF[]{new PointF(0, 0), new PointF(1, 0), new PointF(1, 1), new PointF(0, 1), new PointF(0, 0)});
 
         task_shape.add(new PointF[]{new PointF(0.5f, 0), new PointF(1, 1), new PointF(0, 1), new PointF(0.5f, 0)});
-        task_shape.add(new PointF[]{new PointF(0.5f, 0), new PointF(1, 0.5f), new PointF(0.75f, 1), new PointF(0.25f, 1), new PointF(0, 0.5f), new PointF(0.5f, 0)});
+        task_shape.add(new PointF[]{new PointF(0.5f, 0), new PointF(1, 0.5f), new PointF(0.5f, 1), new PointF(0, 0.5f), new PointF(0.5f, 0)});
         task_shape.add(new PointF[]{new PointF(0, 0.25f), new PointF(1, 0.25f), new PointF(1, 0.75f), new PointF(0, 0.75f), new PointF(0, 25f)});
 
     }
