@@ -22,7 +22,7 @@ import android.widget.TextView;
 import java.util.Arrays;
 import java.util.List;
 
-
+//android:theme="@android:style/Theme.DeviceDefault"
 
 public class MainActivity extends Activity{
     public static String TAG = "WatchActivity";
@@ -232,6 +232,10 @@ public class MainActivity extends Activity{
             mPager.setCurrentItem(0, 0); //?
             //save the data
             storage.save2();
+
+            finish();
+            moveTaskToBack(true);
+
             return true;
         }
     }
