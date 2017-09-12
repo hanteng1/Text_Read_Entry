@@ -146,6 +146,52 @@ def create_all_raw():
 				#for row in csv_f:
 
 
+#study two
+def clean_raw_data_2():
+	#change this path based on machine
+	data_dir = "/Users/hanteng/Dropbox/Ring-TextEntry-Flip/study_two/study_two_data"
+	raw_cleaned_data = []
+	cleaned_data = []
+	#state 0 - nothing, 1 - start, 2 - during, 3 - end
+
+	for subdir, dirs, files in os.walk(data_dir):
+		for file in files:
+			if "data_" in file:
+				print(os.path.join(subdir, file))
+				
+				single_file_data = open(os.path.join(subdir, file))
+				user_index = subdir
+
+				if user_index[-2] == '_':
+					user_index = user_index[-1:]
+				elif user_index[-3] == '_':
+					user_index = user_index[-2:]
+				print(user_index)
+				csv_f = csv.reader(single_file_data)
+
+				for row in csv_f:
+					if row[3] == '5':
+						if row[13] == '1':
+							row.insert(0, user_index)
+							raw_cleaned_data.append(row)
+
+	old_row = []
+	for row in raw_cleaned_data:
+		if len(old_row) > 0:
+			if row[2] == old_row[2]:
+				#repeated
+				cleaned_data = cleaned_data[:-1]
+
+		old_row = list(row)
+		cleaned_data.append(row)
+
+
+	with open('/Users/hanteng/Dropbox/Ring-TextEntry-Flip/study_two/study_two_data/cleaned_data.csv', 'w') as csvfile:
+		writer = csv.writer(csvfile)
+		writer.writerow(['user', 'technique', 'trial', 'attempt', 'state', 'timestamp', 'corner', 'task', 'tasktype', 'close', 'angletarget', 'distancetarget', 'angleactual', 'distanceactual', 'iscorrect', 'iswrongtype', 'numovershot', 'duration', 'preparetime', 'menutime', 'tasktime', 'touchcount'])
+		for data in cleaned_data:
+			writer.writerow(data)
+
 
 if __name__ == "__main__":
 
@@ -156,7 +202,9 @@ if __name__ == "__main__":
 
 	if args.step == "0":
 		print("expecting > 0")
-	elif args.step == '1':
-		fix_raw_data()
-	elif args.step == '2':
-		clean_raw_data()
+	# elif args.step == '1':
+	# 	fix_raw_data()
+	# elif args.step == '2':
+	# 	clean_raw_data()
+	elif args.step == '3':
+		clean_raw_data_2()
