@@ -5,12 +5,14 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Handler;
 
 import com.eschao.android.widget.pageflip.modify.PageModify;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -107,7 +109,7 @@ public class DemoPeel2CommandRender  extends DemoRender{
         //set the first page
         if(!pages[0].isFrontTextureSet())
         {
-            loadPage(0);
+            loadPageWithContent(0);
             pages[0].setFrontTexture(mBitmap);
         }
 
@@ -133,6 +135,42 @@ public class DemoPeel2CommandRender  extends DemoRender{
         page.waiting4TextureUpdate = true;
     }
 
+
+
+    //these are drawing textures
+
+    public void loadPageWithContent(int pageIndex)
+    {
+        final int width = mCanvas.getWidth();
+        final int height = mCanvas.getHeight();
+        Paint p = new Paint();
+        p.setFilterBitmap(true);
+
+        // 1. load/draw background bitmap
+        Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
+        Rect rect = new Rect(0, 0, width, height);
+        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
+        background.recycle();
+        background = null;
+
+        // 2. load/draw page number
+        int fontSize = calcFontSize(10);
+        p.setColor(Color.GRAY);
+        p.setStrokeWidth(1);
+        p.setAntiAlias(true);
+        //p.setShadowLayer(5.0f, 8.0f, 8.0f, Color.BLACK);
+        p.setTextSize(fontSize);
+        //String text = Alphabet[number];
+
+        String text = "Meeting at 10:30 AM";
+
+        float textWidth = p.measureText(text);
+
+        PointF textCursor = new PointF();
+        textCursor.set(width / 2 - textWidth / 2, height / 2 );
+
+        mCanvas.drawText(text, textCursor.x, textCursor.y, p);
+    }
 
     public void loadPageWithCommands(int number, String[] commandIds)
     {
@@ -291,16 +329,6 @@ public class DemoPeel2CommandRender  extends DemoRender{
         {
 
         }
-
-    }
-
-    public void loadPageWithFacebook(int fbstate)
-    {
-
-    }
-
-    public void loadPageWithCopyPaste(int itr)
-    {
 
     }
 }

@@ -58,7 +58,7 @@ public abstract class DemoRender extends PageRender{
                 {
                     if(!pages[itrp].isFrontTextureSet())
                     {
-                        loadPage(mPageNo);
+                        loadPageWithContent(mPageNo);
                         pages[itrp].setFrontTexture(mBitmap);
                     }
                 }
@@ -67,76 +67,16 @@ public abstract class DemoRender extends PageRender{
 
             }else
             {
-                // is forward flip
-                if (mPageFlipAbstract.getFlipState() == PageFlipState.FORWARD_FLIP) {
-                    // check if second texture of first page is valid, if not,
-                    // create new one
-                    //if (!page.isSecondTextureSet()) {
-                    //    drawPage(mPageNo + 1);  //the drawpage function is actually just creating texture
-                    //    page.setSecondTexture(mBitmap);
-                    //}
-                }
-                // in backward flip, check first texture of first page is valid
-                //else if (!page.isFirstTextureSet()) {
-                //    loadPage(--mPageNo);
-                //    page.setFirstTexture(mBitmap);  //the texture on the canvas, thus the canvas in the render is used to create textures in the format of bitmap
-                //}
 
-                // draw frame for page flip
-                //mPageFlipAbstract.drawFlipFrame();  //see the difference
-
-                //what about updating the texture here
-                if(MainActivity.getSharedInstance().demoIndex == 1)
+                //peel to command
+                for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
                 {
-                    //peel to command
-                    for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
+                    if(pages[itrp].waiting4TextureUpdate == true)
                     {
-                        if(pages[itrp].waiting4TextureUpdate == true)
-                        {
-                            loadPageWithCommands(itrp, cRIds[itrp]);
-                            pages[itrp].updateFrontTexture(mBitmap);
-
-                        /*
-                        //run on ui thread
-                        MainActivity.getSharedInstance().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                //activate the ui draw view
-                                MainActivity.getSharedInstance().mDemoUIView.activate();
-                            }
-                        });*/
-
-                        }
-                    }
-
-                }else if(MainActivity.getSharedInstance().demoIndex == 2)
-                {
-                    //notification
-                    for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
-                    {
-                        if(pages[itrp].waiting4TextureUpdate == true)
-                        {
-                            loadPageWithFacebook(MainActivity.getSharedInstance().mDemoView.mDemo.facebookState);
-                            pages[itrp].updateFrontTexture(mBitmap);
-
-                        }
-                    }
-                }else if(MainActivity.getSharedInstance().demoIndex == 3)
-                {
-                    //copy and paste
-                    for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
-                    {
-                        if(pages[itrp].waiting4TextureUpdate == true)
-                        {
-                            loadPageWithCopyPaste(itrp);
-                            pages[itrp].updateFrontTexture(mBitmap);
-
-                        }
+                        loadPageWithCommands(itrp, cRIds[itrp]);
+                        pages[itrp].updateFrontTexture(mBitmap);
                     }
                 }
-
-
-                //
                 // Log.d(TAG, "draw flip called");
                 mPageFlipAbstract.drawFlipFrameWithIndex(mPageFlipAbstract.currentPageLock);
             }
@@ -145,17 +85,9 @@ public abstract class DemoRender extends PageRender{
         // draw stationary page without flipping
         else if (mDrawCommand == DRAW_FULL_PAGE) {
 
-            //this is called when animation is finished
-            //reload the pagelock texture
-
-
-            if(MainActivity.getSharedInstance().demoIndex == 1)
-            {
-                int commandPage = MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock + 1;
-                MainActivity.getSharedInstance().mGestureService.reset();
-                MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(commandPage);
-            }
-
+            int commandPage = MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock + 1;
+            MainActivity.getSharedInstance().mGestureService.reset();
+            MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(commandPage);
 
             MainActivity.getSharedInstance().mDemoView.mDemo.releasePageLock();
             //clear the maxtravel
@@ -164,7 +96,7 @@ public abstract class DemoRender extends PageRender{
             for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
             {
                 if (!pages[itrp].isFrontTextureSet()) {
-                    loadPage(itrp);
+                    loadPageWithContent(itrp);
                     pages[itrp].setFrontTexture(mBitmap);
                 }
 
@@ -244,7 +176,6 @@ public abstract class DemoRender extends PageRender{
 
                     //should delete the front page
 
-
                     //mPageNo++;
                 }
 
@@ -263,99 +194,8 @@ public abstract class DemoRender extends PageRender{
         return false;
     }
 
-    public void loadPage(int number) {  //create a new page texture (either first one or second one) when necessary/not set
-        final int width = mCanvas.getWidth();
-        final int height = mCanvas.getHeight();
-        Paint p = new Paint();
-        p.setFilterBitmap(true);
-
-        // 1. load/draw background bitmap
-        Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
-        Rect rect = new Rect(0, 0, width, height);
-        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
-        background.recycle();
-        background = null;
-
-        // 2. load/draw page number
-        int fontSize = calcFontSize(10);
-        p.setColor(Color.GRAY);
-        p.setStrokeWidth(1);
-        p.setAntiAlias(true);
-        //p.setShadowLayer(5.0f, 8.0f, 8.0f, Color.BLACK);
-        p.setTextSize(fontSize);
-        //String text = Alphabet[number];
-
-        String text = "Mr Trump also warned Pakistan that the US would no longer tolerate the country offering \"safe havens\" to extremists, saying the country had \"much to lose\" if it did not side with the Americans.\n" +
-                "\"We have been paying Pakistan billions and billions of dollars - at the same time they are housing the very terrorists that we are fighting,\" he said.\n" +
-                "He also said the US would seek a stronger partnership with India.\n" +
-                "Meanwhile, Mr Trump made it clear he expects his existing allies to support him in his new strategy, telling them he wanted them to raise their countries' contributions \"in line with our own\".";
-
-        ArrayList<String> textList = new ArrayList<String>(Arrays.asList(text.split("\\s+")));
-
-        float textWidth = p.measureText(text);
-        float y = 20;
-
-        PointF textCursor = new PointF();
-        textCursor.set(0, 0);
-
-
-        for(int itrt = 0; itrt < textList.size(); itrt++)
-        {
-            if(textCursor.x + p.measureText(textList.get(itrt)) >  320)
-            {
-                //change to the next line
-                textCursor.x = 0;
-                textCursor.y += 20;
-            }
-
-            mCanvas.drawText(textList.get(itrt), textCursor.x, textCursor.y, p);
-            //Log.d(TAG, "X " + textCursor.x + "  y " + textCursor.y);
-
-            textCursor.x += (p.measureText(textList.get(itrt)) + 10);
-        }
-
-
-        //a image
-
-
-    }
-
-    public void loadBlankPage()
-    {
-        final int width = mCanvas.getWidth();
-        final int height = mCanvas.getHeight();
-        Paint p = new Paint();
-        p.setFilterBitmap(true);
-
-        // 1. load/draw background bitmap
-        Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
-        Rect rect = new Rect(0, 0, width, height);
-        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
-        background.recycle();
-        background = null;
-    }
-
-    public void loadPhotoPage()
-    {
-        final int width = mCanvas.getWidth();
-        final int height = mCanvas.getHeight();
-        Paint p = new Paint();
-        p.setFilterBitmap(true);
-
-        // 1. load/draw background bitmap
-        Bitmap background = LoadBitmapTask.get(mContext).getPhoto();  //get the bitmap in queue
-        Rect rect = new Rect(0, 0, width, height);
-        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
-        background.recycle();
-        background = null;
-    }
-
-
     public abstract void loadPageWithCommands(int number, String[] commandIds);
-
-    public abstract void loadPageWithFacebook(int fbstate);
-
-    public abstract void loadPageWithCopyPaste(int itr);
+    public abstract void loadPageWithContent(int pageindex);
 
     public boolean canFlipForward()
     {

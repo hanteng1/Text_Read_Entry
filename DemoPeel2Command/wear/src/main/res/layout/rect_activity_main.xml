@@ -7,10 +7,10 @@
     tools:context="com.tenghan.demopeel2command.MainActivity"
     tools:deviceIds="wear_square">
 
-    <com.tenghan.swipeflip.DemoView
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:id="@+id/demo_view"/>
 
+    <com.tenghan.demopeel2command.DemoView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/demo_view"/>
 
 </LinearLayout>
