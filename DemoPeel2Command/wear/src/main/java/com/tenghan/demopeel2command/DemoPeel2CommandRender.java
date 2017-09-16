@@ -99,6 +99,8 @@ public class DemoPeel2CommandRender extends DemoRender{
         contact_name.add("Grace");
         contact_name.add("Hwa");
 
+        ResetColorSize();
+
     }
 
     private void generateColor(int num)
@@ -215,7 +217,7 @@ public class DemoPeel2CommandRender extends DemoRender{
     public void ResetColorSize()
     {
         selectedColor = Color.GRAY;
-        selectedSize = 20;
+        selectedSize = calcFontSize(10);
     }
 
     //these are drawing textures
@@ -234,7 +236,7 @@ public class DemoPeel2CommandRender extends DemoRender{
         background = null;
 
         // 2. load/draw page number
-        int fontSize = 20;
+        int fontSize = calcFontSize(10);
         p.setColor(Color.GRAY);
         p.setStrokeWidth(1);
         p.setAntiAlias(true);
@@ -421,9 +423,9 @@ public class DemoPeel2CommandRender extends DemoRender{
                     p.setAntiAlias(true);
                     String text = "Aa";
 
-                    int fontSize = calcFontSize((int)mContinuousActual);
-                    p.setTextSize(fontSize/2);
-                    selectedSize = fontSize/2;
+                    int fontSize = calcFontSize((int) (mContinuousActual / 3));
+                    p.setTextSize(fontSize);
+                    selectedSize = fontSize;
                     float y = p.getTextSize();
                     float x = width - p.measureText(text);
                     mCanvas.drawText(text, x, y, p);

@@ -5,8 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.opengl.GLUtils;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Scroller;
+import android.widget.Toast;
 
 import com.eschao.android.widget.pageflip.FoldBackVertexProgram;
 import com.eschao.android.widget.pageflip.GLPoint;
@@ -128,6 +130,11 @@ public abstract class PageFlipModifyAbstract {
     //for demo copy and paste
     public boolean isDoubleTappingTask;
 
+    //toast handler
+    private Handler toastHandler;
+
+
+
     /**
      * Constructor
      */
@@ -159,6 +166,9 @@ public abstract class PageFlipModifyAbstract {
         mVertexProgram = new VertexProgram();
         mFoldBackVertexProgram = new FoldBackVertexProgram();
         mShadowVertexProgram = new ShadowVertexProgram();
+
+
+        toastHandler = new Handler();
 
     }
 
@@ -515,6 +525,33 @@ public abstract class PageFlipModifyAbstract {
                     {
                         //name
                         //show a prompt
+                        toastHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Context context = MainActivity.getSharedInstance().getApplicationContext();
+                                CharSequence text = "Sending message...!";
+                                int duration = Toast.LENGTH_SHORT;
+                                Toast toast = Toast.makeText(context, text, duration);
+                                toast.show();
+                            }
+                        }, 1000);
+
+                    }else if(demoRender.mTask == 4)
+                    {
+                        //new page
+                        if (originP.x < 0) {
+                            end.x = (int)(diagonalP.x + page.width);
+                        }
+                        else {
+                            end.x = (int)(diagonalP.x - page.width);
+                        }
+                        end.y = (int)(originP.y);
+
+                        mScroller.startScroll(start.x, start.y,
+                                end.x - start.x, end.y - start.y,
+                                duration);
+
+                        return true;
                     }
                 }
             }else if(currentPageLock == 1)
@@ -523,9 +560,6 @@ public abstract class PageFlipModifyAbstract {
                 //show a promit
                 MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(0);
             }
-
-
-
 
         }
 
