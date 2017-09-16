@@ -60,7 +60,7 @@ public class DemoPeel2CommandRender extends DemoRender{
     public int mDistanceActual = -1;
     public float mContinuousActual = -1;
     private float maxAngle = (float)Math.PI / 2;
-    private float maxDistance = 120;
+    private float maxDistance = 150;
     private float reservedDistance = 40;
 
 
@@ -398,8 +398,33 @@ public class DemoPeel2CommandRender extends DemoRender{
 
                 }else if(mTask == 3)
                 {
-                    //choose name
+                    float segAngle = maxAngle / mAngleNumRight;
+                    float segDis = maxDistance / mDistanceNum;
 
+                    //choose name
+                    for(int itr = 0; itr < mDistanceNum; itr++)
+                    {
+                        float targetLength = segDis * (itr + 0.5f) + reservedDistance;
+                        float targetAngle = segAngle * ( mAngleActual + 0.5f) + maxAngle * mCorner;
+                        float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
+                        float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
+
+                        //p.setStyle(Paint.Style.STROKE);
+                        p.setTextSize(calcFontSize(10));
+                        p.setColor(Color.GRAY);
+                        p.setAlpha(100);
+
+                        if(itr == mDistanceActual)
+                        {
+                            p.setTextSize(calcFontSize(30));
+                            p.setAlpha(200);
+                        }
+
+                        String taskText = "" + contact_name.get(itr);
+                        float textWidth = p.measureText(taskText);
+                        float textHeight = p.getTextSize();
+                        mCanvas.drawText(taskText, targetX - textWidth/2, targetY + textHeight/2, p);
+                    }
 
                 }else if(mTask == 4)
                 {

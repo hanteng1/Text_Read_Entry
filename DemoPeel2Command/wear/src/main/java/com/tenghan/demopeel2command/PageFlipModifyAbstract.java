@@ -494,6 +494,11 @@ public abstract class PageFlipModifyAbstract {
         {
             setPageLock();
             return false;
+        }else if(MainActivity.getSharedInstance().mGestureService.gestureState == 3)
+        {
+            //selecting a value
+            //update the first page
+
         }
 
         //indicate this is the flip after finger up
