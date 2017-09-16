@@ -55,6 +55,7 @@ public class DemoPeel2CommandRender  extends DemoRender{
     private int mCorner = 0;
 
     //actual select
+    public int mAngleTarget = -1;
     public int mAngleActual = -1;
     public int mDistanceActual = -1;
     public float mContinuousActual = -1;
@@ -193,15 +194,19 @@ public class DemoPeel2CommandRender  extends DemoRender{
         if(mTask == 1)
         {
             mCorner = 1;
+            mAngleTarget = 0;
         }else if(mTask == 2)
         {
             mCorner = 1;
+            mAngleTarget = 1;
         }else if(mTask == 3)
         {
             mCorner = 0;
+            mAngleTarget = 0;
         }else if(mTask == 4)
         {
             mCorner = 2;
+            mAngleTarget = 0;
         }
 
         mDistanceActual = -1;
@@ -316,6 +321,22 @@ public class DemoPeel2CommandRender  extends DemoRender{
 
         }else if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex > -1)
         {
+            PointF origin = new PointF();
+            if(mCorner == 0)
+            {
+                origin.set(0, 0);
+            }else if(mCorner == 1)
+            {
+                origin.set(width, 0);
+            }else if(mCorner == 2)
+            {
+                origin.set(width, height);
+            }else if(mCorner == 3)
+            {
+                origin.set(0, height);
+            }
+
+
             //draw tasks
             if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0)
             {
@@ -325,12 +346,8 @@ public class DemoPeel2CommandRender  extends DemoRender{
                 //3 - choose name
                 //4 - new page
 
-
-
-
                 if(mTask == 1)
                 {
-
 
                     float segAngle = maxAngle / mAngleNumRight;
                     float segDis = maxDistance / mDistanceNum;
@@ -343,23 +360,27 @@ public class DemoPeel2CommandRender  extends DemoRender{
                         float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
                         float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
 
-                        //p.setStyle(Paint.Style.STROKE);
-                        p.setTextSize(calcFontSize(30));
-                        p.setColor(Color.BLUE);
-                        String taskText = task_alphabet.get(itr);
-                        float textWidth = p.measureText(taskText);
-                        float textHeight = p.getTextSize();
-                        mCanvas.drawText(taskText, targetX - textWidth/2, targetY + textHeight / 2, p);
+                        int color = font_color.get(itr);
+                        float scale = 30;
+                        p.setColor(color);
+                        p.setStyle(Paint.Style.FILL);
+                        mCanvas.drawCircle(targetX, targetY, scale*0.5f, p);
+
                     }
-
-
-
-
 
                 }else if(mTask == 2)
                 {
-                    //choose size
+                    //choose size, continuous, always update
+                    p.setColor(Color.GRAY);
+                    p.setStrokeWidth(1);
+                    p.setAntiAlias(true);
+                    String text = "Aa";
 
+                    int fontSize = calcFontSize((int)MainActivity.getSharedInstance().mGestureService.curDistance);
+                    p.setTextSize(fontSize/2);
+                    float y = p.getTextSize();
+                    float x = width - p.measureText(text);
+                    mCanvas.drawText(text, x, y, p);
 
                 }else if(mTask == 3)
                 {
