@@ -454,20 +454,6 @@ public abstract class PageFlipModifyAbstract {
      */
     public abstract boolean onFingerMove(float touchX, float touchY);
 
-    /**
-     * Setup for auto flip
-     * now its forward flip
-     */
-    public void setAutoFlip()
-    {
-        final PageModify page = mPages[FIRST_PAGE];
-        onFingerDown(mStartTouchP.x, mStartTouchP.y);
-        mFlipState = PageFlipState.BEGIN_FLIP;
-
-        //trigger the finger up event from the MainActivity
-        MainActivity.getSharedInstance().mPageFlipView.autoFingerUp(mStartTouchP.x, mStartTouchP.y);
-
-    }
 
     //page lock
     public void setPageLock()
@@ -503,9 +489,8 @@ public abstract class PageFlipModifyAbstract {
         Point end = new Point(0, 0);
 
         //see the gesture state
-        if(MainActivity.getSharedInstance().activityIndex == 2 &&
-                MainActivity.getSharedInstance().mGestureService.gestureState == 2
-                && enablePageLock == true)
+
+        if(MainActivity.getSharedInstance().mGestureService.gestureState == 2)
         {
             setPageLock();
             return false;

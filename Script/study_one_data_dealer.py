@@ -146,7 +146,7 @@ def create_all_raw():
 				#for row in csv_f:
 
 
-#study two
+#study two for time
 def clean_raw_data_2():
 	#change this path based on machine
 	data_dir = "/Users/hanteng/Dropbox/Ring-TextEntry-Flip/study_two/study_two_data"
@@ -193,6 +193,67 @@ def clean_raw_data_2():
 			writer.writerow(data)
 
 
+
+#study two for error
+def clean_raw_data_2_error():
+	#change this path based on machine
+	data_dir = "/Users/hanteng/Dropbox/Ring-TextEntry-Flip/study_two/study_two_data"
+	raw_cleaned_data = []
+	cleaned_data = []
+	#state 0 - nothing, 1 - start, 2 - during, 3 - end
+
+	for subdir, dirs, files in os.walk(data_dir):
+		for file in files:
+			if "data_" in file:
+				print(os.path.join(subdir, file))
+				
+				single_file_data = open(os.path.join(subdir, file))
+				user_index = subdir
+
+				if user_index[-2] == '_':
+					user_index = user_index[-1:]
+				elif user_index[-3] == '_':
+					user_index = user_index[-2:]
+				print(user_index)
+				csv_f = csv.reader(single_file_data)
+
+				num_error_1 = 0
+				num_error_2 = 0
+
+				for row in csv_f:
+					if row[3] == '5':
+						if row[13] == '1':
+							row.insert(0, user_index)
+							row.append(num_error_1)
+							row.append(num_error_2)
+							raw_cleaned_data.append(row)
+							num_error_1=0
+							num_error_2=0
+						elif row[13] == '0':
+							#calculate record type of error
+							if row[14] == '1':
+								num_error_1+=1
+							elif row[14] == '2':
+								num_error_2+=1
+
+	old_row = []
+	for row in raw_cleaned_data:
+		if len(old_row) > 0:
+			if row[2] == old_row[2]:
+				#repeated
+				cleaned_data = cleaned_data[:-1]
+
+		old_row = list(row)
+		cleaned_data.append(row)
+
+
+	with open('/Users/hanteng/Dropbox/Ring-TextEntry-Flip/study_two/study_two_data/cleaned_data_for_error.csv', 'w') as csvfile:
+		writer = csv.writer(csvfile)
+		writer.writerow(['user', 'technique', 'trial', 'attempt', 'state', 'timestamp', 'corner', 'task', 'tasktype', 'close', 'angletarget', 'distancetarget', 'angleactual', 'distanceactual', 'iscorrect', 'iswrongtype', 'numovershot', 'duration', 'preparetime', 'menutime', 'tasktime', 'touchcount', 'numerror1', 'num_error_2'])
+		for data in cleaned_data:
+			writer.writerow(data)
+
+
 if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser(description='data_dealer --step string')
@@ -208,3 +269,5 @@ if __name__ == "__main__":
 	# 	clean_raw_data()
 	elif args.step == '3':
 		clean_raw_data_2()
+	elif args.step == '4':
+		clean_raw_data_2_error()

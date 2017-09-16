@@ -21,6 +21,10 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
         return instance;
     }
 
+    public DemoView mDemoView;
+    public GestureDetector mGestureDetector;
+    public GestureService mGestureService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +32,9 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
 
         instance = this;
 
+        mDemoView = (DemoView)findViewById(R.id.demo_view);
+        mGestureDetector = new GestureDetector(this, this);
+        mGestureService = new GestureService();
     }
 
     @Override
