@@ -498,6 +498,34 @@ public abstract class PageFlipModifyAbstract {
         {
             //selecting a value
             //update the first page
+            DemoPeel2CommandRender demoRender = MainActivity.getSharedInstance().mDemoView.mPageRender;
+            if(currentPageLock == 0)
+            {
+                if(demoRender.mTask!=0 )
+                {
+                    if(demoRender.mTask == 1)
+                    {
+                        //color
+                        MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(0);
+                    }else if(demoRender.mTask == 2)
+                    {
+                        //size
+                        MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(0);
+                    }else if(demoRender.mTask == 3)
+                    {
+                        //name
+                        //show a prompt
+                    }
+                }
+            }else if(currentPageLock == 1)
+            {
+                //could be reset
+                //show a promit
+                MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(0);
+            }
+
+
+
 
         }
 

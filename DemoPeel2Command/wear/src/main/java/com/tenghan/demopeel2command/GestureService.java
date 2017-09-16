@@ -127,9 +127,9 @@ public class GestureService {
                 //see if movng to stage 3 diretly
                 float[] lastpos = posXY.get(posXY.size() - 1);
                 float movingDistance = calPeelDistance(lastpos);
-                if(movingDistance > 40)
+                if(movingDistance > 80)
                 {
-                    gestureState = 3;  //hold
+                    gestureState = 3;
                 }
             }
 

@@ -67,7 +67,7 @@ public class LoadBitmapTask implements Runnable {
         }
 
         if (b == null) {
-            Log.d(TAG, "Load bitmap instantly!");
+            //Log.d(TAG, "Load bitmap instantly!");
             //b = getRandomBitmap();
             b = getWatchBitmap();
         }
@@ -98,7 +98,7 @@ public class LoadBitmapTask implements Runnable {
 
         // wait for thread stopping
         for (int i = 0; i < 3 && mThread.isAlive(); ++i) {
-            Log.d(TAG, "Waiting thread to stop ...");
+            //Log.d(TAG, "Waiting thread to stop ...");
             try {
                 Thread.sleep(500);
             }
@@ -108,7 +108,7 @@ public class LoadBitmapTask implements Runnable {
         }
 
         if (mThread.isAlive()) {
-            Log.d(TAG, "Thread is still alive after waited 1.5s!");
+            //Log.d(TAG, "Thread is still alive after waited 1.5s!");
         }
     }
 
@@ -187,7 +187,7 @@ public class LoadBitmapTask implements Runnable {
                 int size = mQueue.size();
                 if (size < 1) {
                     for (int i = 0; i < mQueueMaxSize; ++i) {
-                        Log.d(TAG, "Load Queue:" + i + " in background!");
+                        //Log.d(TAG, "Load Queue:" + i + " in background!");
                         mQueue.push(getWatchBitmap());  //prepare the textures in a queue
                     }
                 }

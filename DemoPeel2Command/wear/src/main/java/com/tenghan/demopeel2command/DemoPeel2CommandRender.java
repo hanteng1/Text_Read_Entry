@@ -63,6 +63,10 @@ public class DemoPeel2CommandRender extends DemoRender{
     private float maxDistance = 150;
     private float reservedDistance = 40;
 
+    private int selectedColor;
+    private int selectedSize;
+
+
 
     public String[] commands = {"Contact", "Font", "NewPage", "Empty"};
 
@@ -184,37 +188,18 @@ public class DemoPeel2CommandRender extends DemoRender{
                 loadPageWithCommands(itrp, cRIds[itrp]);
                 pages[itrp].setFrontTexture(mBitmap);
 
-                //loadPage(itrp + 5);
-                //pages[itrp].setBackTexture(mBitmap);
             }
         }
     }
 
 
+
     public void ReloadTexture(int itrp)
     {
-
-        //set based on the task
-        //1 - choose color
-        //2 - choose size
-        //3 - choose name
-        //4 - new page
-
-        /**
-         *    ---------
-         *   |0       1|
-         *   |         |
-         *   |         |
-         *   |3       2|
-         *    ---------
-         */
-
-        //use the actual corner
 
         PageModify page = mPageFlipAbstract.getPages()[itrp];
         page.waiting4TextureUpdate = true;
     }
-
 
     public void ResetValues()
     {
@@ -224,8 +209,14 @@ public class DemoPeel2CommandRender extends DemoRender{
         mAngleActual = -1;
         mDistanceActual = -1;
         mContinuousActual = -1;
+
     }
 
+    public void ResetColorSize()
+    {
+        selectedColor = Color.GRAY;
+        selectedSize = 20;
+    }
 
     //these are drawing textures
     public void loadPageWithContent(int pageIndex)
@@ -243,7 +234,7 @@ public class DemoPeel2CommandRender extends DemoRender{
         background = null;
 
         // 2. load/draw page number
-        int fontSize = calcFontSize(10);
+        int fontSize = 20;
         p.setColor(Color.GRAY);
         p.setStrokeWidth(1);
         p.setAntiAlias(true);
@@ -251,15 +242,61 @@ public class DemoPeel2CommandRender extends DemoRender{
         p.setTextSize(fontSize);
         //String text = Alphabet[number];
 
-        String text = "Meeting at 10:30 AM";
+        String text1 = "Meeting at";
+        String text2 =  "10:30 AM";
 
-        float textWidth = p.measureText(text);
-
+        float textWidth = p.measureText(text1);
         PointF textCursor = new PointF();
-        textCursor.set(width / 2 - textWidth / 2, height / 2 );
+        textCursor.set(width / 2 - textWidth / 2, height / 2 - 10 );
+        mCanvas.drawText(text1, textCursor.x, textCursor.y, p);
 
-        mCanvas.drawText(text, textCursor.x, textCursor.y, p);
+        textWidth = p.measureText(text2);
+        textCursor = new PointF();
+        textCursor.set(width / 2 - textWidth / 2, height / 2 + 10 + p.getTextSize() );
+        mCanvas.drawText(text2, textCursor.x, textCursor.y, p);
+
     }
+
+
+
+    public void loadPageWithChangedContent(int pageIndex)
+    {
+        final int width = mCanvas.getWidth();
+        final int height = mCanvas.getHeight();
+        Paint p = new Paint();
+        p.setFilterBitmap(true);
+
+        // 1. load/draw background bitmap
+        Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
+        Rect rect = new Rect(0, 0, width, height);
+        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
+        background.recycle();
+        background = null;
+
+        // 2. load/draw page number
+        int fontSize = selectedSize;
+        p.setColor(selectedColor);
+        p.setStrokeWidth(1);
+        p.setAntiAlias(true);
+        //p.setShadowLayer(5.0f, 8.0f, 8.0f, Color.BLACK);
+        p.setTextSize(fontSize);
+        //String text = Alphabet[number];
+
+        String text1 = "Meeting at";
+        String text2 =  "10:30 AM";
+
+        float textWidth = p.measureText(text1);
+        PointF textCursor = new PointF();
+        textCursor.set(width / 2 - textWidth / 2, height / 2 - 10 );
+        mCanvas.drawText(text1, textCursor.x, textCursor.y, p);
+
+        textWidth = p.measureText(text2);
+        textCursor = new PointF();
+        textCursor.set(width / 2 - textWidth / 2, height / 2 + 10 + p.getTextSize() );
+        mCanvas.drawText(text2, textCursor.x, textCursor.y, p);
+    }
+
+
 
     public void loadPageWithCommands(int number, String[] commandIds)
     {
@@ -283,10 +320,8 @@ public class DemoPeel2CommandRender extends DemoRender{
             //draw commands
             for(int itrc = 0; itrc < commandIds.length; itrc++)
             {
-                int fontSize = calcFontSize(20);
+                int fontSize = calcFontSize(14);
                 p.setColor(Color.GRAY);
-
-                p.setStrokeWidth(1);
                 p.setAntiAlias(true);
                 p.setTextSize(fontSize);
                 String text = commandIds[itrc];
@@ -302,30 +337,25 @@ public class DemoPeel2CommandRender extends DemoRender{
                  *    ---------
                  */
 
-                float offset = 20.0f;
+                int offset = 3;
                 if(itrc == 0 || itrc == 3)
                 {
                     x = offset;
                 }else
                 {
-                    x = width - offset - textWidth;
+                    x = width - textWidth - offset;
                 }
 
                 if(itrc == 0 || itrc == 1)
                 {
-                    y = offset + p.getTextSize()/2;
+                    y = p.getTextSize() + offset;
                 }else
                 {
                     y = height - offset;
                 }
 
-                mCanvas.save();
-                if(itrc == 0 || itrc == 2)
-                    mCanvas.rotate(-45f, x + textWidth/2, y - p.getTextSize()/2);
-                else if(itrc == 1 || itrc == 3)
-                    mCanvas.rotate(45f, x + textWidth/2, y - p.getTextSize()/2);
                 mCanvas.drawText(text, x, y, p);
-                mCanvas.restore();
+
             }
 
         }else if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex > -1)
@@ -374,6 +404,7 @@ public class DemoPeel2CommandRender extends DemoRender{
                         if(mDistanceActual == itr)
                         {
                             scale = 50;
+                            selectedColor = color;
                         }
 
                         p.setColor(color);
@@ -392,6 +423,7 @@ public class DemoPeel2CommandRender extends DemoRender{
 
                     int fontSize = calcFontSize((int)mContinuousActual);
                     p.setTextSize(fontSize/2);
+                    selectedSize = fontSize/2;
                     float y = p.getTextSize();
                     float x = width - p.measureText(text);
                     mCanvas.drawText(text, x, y, p);

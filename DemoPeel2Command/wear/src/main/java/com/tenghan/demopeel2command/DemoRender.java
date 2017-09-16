@@ -24,8 +24,8 @@ public abstract class DemoRender extends PageRender{
     private final static String TAG = "DemoRender";
 
     //depends on how many pages to support
-    public String[][] cRIds = {{},{"Contact", "Font", "NewPage", "Empty"},
-            {"Copy", "Color", "Paste", "Save"},
+    public String[][] cRIds = {{},{"contact", "font", "new", "."},
+            {".", "reset", ".", "."},
             {"Copy", "Color", "Paste", "Save"},
             {"Copy", "Color", "Paste", "Save"}};
 
@@ -66,8 +66,25 @@ public abstract class DemoRender extends PageRender{
 
             }else
             {
+
+                //normally, this is when finger is up and check if there needs a change
+                if(pages[0].waiting4TextureUpdate == true)
+                {
+
+                    if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0)
+                    {
+                        loadPageWithChangedContent(0);
+
+                    }else if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 1)
+                    {
+                        loadPageWithContent(0);
+                        MainActivity.getSharedInstance().mDemoView.mPageRender.ResetColorSize();
+                    }
+                    pages[0].updateFrontTexture(mBitmap);
+                }
+
                 //peel to command
-                for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
+                for(int itrp = 1; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
                 {
                     if(pages[itrp].waiting4TextureUpdate == true)
                     {
@@ -193,6 +210,7 @@ public abstract class DemoRender extends PageRender{
 
     public abstract void loadPageWithCommands(int number, String[] commandIds);
     public abstract void loadPageWithContent(int pageindex);
+    public abstract void loadPageWithChangedContent(int page);
 
     public boolean canFlipForward()
     {
