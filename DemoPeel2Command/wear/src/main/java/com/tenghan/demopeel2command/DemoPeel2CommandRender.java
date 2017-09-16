@@ -38,6 +38,33 @@ public class DemoPeel2CommandRender  extends DemoRender{
     private int fontSizeAnchor = 1;
     private int fontBandDistance = 10;
 
+    private int mAngleNumRight = 2;
+    private int mAngleNumLeft = 1;
+    private int mDistanceNum = 5;
+
+    //commands
+    private int font_size;
+    private ArrayList<Integer> font_color;
+    private ArrayList<String> contact_name;
+
+    //1 - choose color
+    //2 - choose size
+    //3 - choose name
+    //4 - new page
+    public int mTask = 0;
+    private int mCorner = 0;
+
+    //actual select
+    public int mAngleActual = -1;
+    public int mDistanceActual = -1;
+    public float mContinuousActual = -1;
+    private float maxAngle = (float)Math.PI / 2;
+    private float maxDistance = 120;
+    private float reservedDistance = 40;
+
+
+    public String[] commands = {"Contact", "Font", "NewPage", "Empty"};
+
     public DemoPeel2CommandRender(Context context, PageFlipModifyAbstract pageFlipAbstract,
                                   Handler handler, int pageNo)
     {
@@ -50,6 +77,23 @@ public class DemoPeel2CommandRender  extends DemoRender{
 
         fontSizes = new ArrayList<Integer>();
         generateFontSize(totalFontSize);
+
+        //intial values
+        font_size = 20;
+        font_color = new ArrayList<Integer>();
+        font_color.add(Color.rgb(200, 100, 100));
+        font_color.add(Color.rgb(20, 20, 20));
+        font_color.add(Color.rgb(100, 200, 100));
+        font_color.add(Color.rgb(150, 150, 150));
+        font_color.add(Color.rgb(100, 100, 200));
+
+        contact_name = new ArrayList<String>();
+        contact_name.add("Jason");
+        contact_name.add("Mary");
+        contact_name.add("Eddy");
+        contact_name.add("Grace");
+        contact_name.add("Hwa");
+
     }
 
     private void generateColor(int num)
@@ -131,14 +175,45 @@ public class DemoPeel2CommandRender  extends DemoRender{
 
     public void ReloadTexture(int itrp)
     {
+
+        //set based on the task
+        //1 - choose color
+        //2 - choose size
+        //3 - choose name
+        //4 - new page
+
+        /**
+         *    ---------
+         *   |0       1|
+         *   |         |
+         *   |         |
+         *   |3       2|
+         *    ---------
+         */
+        if(mTask == 1)
+        {
+            mCorner = 1;
+        }else if(mTask == 2)
+        {
+            mCorner = 1;
+        }else if(mTask == 3)
+        {
+            mCorner = 0;
+        }else if(mTask == 4)
+        {
+            mCorner = 2;
+        }
+
+        mDistanceActual = -1;
+        mAngleActual = -1;
+        mContinuousActual = -1;
+
         PageModify page = mPageFlipAbstract.getPages()[itrp];
         page.waiting4TextureUpdate = true;
     }
 
 
-
     //these are drawing textures
-
     public void loadPageWithContent(int pageIndex)
     {
         final int width = mCanvas.getWidth();
@@ -181,13 +256,6 @@ public class DemoPeel2CommandRender  extends DemoRender{
         Paint p = new Paint();
         p.setFilterBitmap(true);
 
-        //color panel
-        Paint panelPaint = new Paint();
-        panelPaint.setAntiAlias(true);
-        panelPaint.setStrokeWidth(0);
-        panelPaint.setColor(Color.RED);
-        panelPaint.setStyle(Paint.Style.FILL);
-
         // 1. load/draw background bitmap
         Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
         Rect rect = new Rect(0, 0, width, height);
@@ -195,19 +263,14 @@ public class DemoPeel2CommandRender  extends DemoRender{
         background.recycle();
         background = null;
 
+
         if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == -1)
         {
-            //3. load/draw commands on corners
+            //draw commands
             for(int itrc = 0; itrc < commandIds.length; itrc++)
             {
                 int fontSize = calcFontSize(20);
-                if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == itrc)
-                {
-                    p.setColor(Color.RED);
-                }else
-                {
-                    p.setColor(Color.GRAY);
-                }
+                p.setColor(Color.RED);
 
                 p.setStrokeWidth(1);
                 p.setAntiAlias(true);
@@ -250,85 +313,96 @@ public class DemoPeel2CommandRender  extends DemoRender{
                 mCanvas.drawText(text, x, y, p);
                 mCanvas.restore();
             }
-        }
 
-
-        //load color texture
-        //this follows the coordinates of android, not opengl
-        //check which page and which command
-        if( MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 1 &&
-                MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 1)
+        }else if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex > -1)
         {
-            float oriX = width - 3;
-            float oriY = 3;
-
-            Path path =new Path();
-            for (int itrc = 0; itrc < presentedColor; itrc++)
+            //draw tasks
+            if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0)
             {
-                path.reset();
 
-                path.moveTo(oriX - (itrc + 5)  * colorBandWidth / sin45, oriY);
-                path.lineTo(oriX - (itrc + 4) * colorBandWidth / sin45, oriY);
-                path.lineTo(oriX, oriY + (itrc + 4) * colorBandWidth / sin45);
-                path.lineTo(oriX, oriY + (itrc + 5) * colorBandWidth / sin45);
-
-                panelPaint.setColor(colorCode.get(itrc + colorAnchor));
-
-                mCanvas.drawPath(path, panelPaint);
-            }
-
-        }
+                //1 - choose color
+                //2 - choose size
+                //3 - choose name
+                //4 - new page
 
 
-        //font texture
-        if (MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0 &&
-                MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 0)
-        {
 
-            p.setColor(Color.GRAY);
-            p.setStrokeWidth(1);
-            p.setAntiAlias(true);
-            String text = "Aa";
-            float y = 0; //= fontBandDistance * 1 * sin45;
-            float x = 0; //= fontBandDistance * 1 * sin45;
 
-            for(int itrf = 0; itrf < (0 + presentedFontSize); itrf++)
+                if(mTask == 1)
+                {
+
+
+                    float segAngle = maxAngle / mAngleNumRight;
+                    float segDis = maxDistance / mDistanceNum;
+
+                    //choose a color on right-top
+                    for(int itr = 0; itr < mDistanceNum; itr++)
+                    {
+                        float targetLength = segDis * (itr + 0.5f) + reservedDistance;
+                        float targetAngle = segAngle * ( mAngleTarget + 0.5f) + maxAngle * mCorner;
+                        float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
+                        float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
+
+                        //p.setStyle(Paint.Style.STROKE);
+                        p.setTextSize(calcFontSize(30));
+                        p.setColor(Color.BLUE);
+                        String taskText = task_alphabet.get(itr);
+                        float textWidth = p.measureText(taskText);
+                        float textHeight = p.getTextSize();
+                        mCanvas.drawText(taskText, targetX - textWidth/2, targetY + textHeight / 2, p);
+                    }
+
+
+
+
+
+                }else if(mTask == 2)
+                {
+                    //choose size
+
+
+                }else if(mTask == 3)
+                {
+                    //choose name
+
+
+                }else if(mTask == 4)
+                {
+                    //none
+                }
+
+
+            }else if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 1)
             {
-                int fontSize = calcFontSize(fontSizes.get(fontSizeAnchor + itrf));
-                p.setTextSize(fontSize);
+                if(mTask == 3)
+                {
+                    //choose a second layer name
 
-                x += (fontBandDistance + p.measureText(text)) * sin45;
-                y += (fontBandDistance + p.measureText(text)) * sin45;
-
-                mCanvas.drawText(text, x - p.measureText(text)/2, y, p);
+                }
             }
-
         }
 
-        //font size zooms
-        //real time update
-        if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0 &&
-                MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 3)
-        {
-            p.setColor(Color.GRAY);
-            p.setStrokeWidth(1);
-            p.setAntiAlias(true);
-            String text = "Aa";
-            float y = height;
-            float x = 0;
 
-            int fontSize = calcFontSize((int)MainActivity.getSharedInstance().mGestureService.curDistance);
-            p.setTextSize(fontSize/2);
-            mCanvas.drawText(text, x, y, p);
 
-        }
 
-        //list scrolling
-        if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0 &&
-                MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 1)
-        {
+//        //font size zooms
+//        //real time update
+//        if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0 &&
+//                MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 3)
+//        {
+//            p.setColor(Color.GRAY);
+//            p.setStrokeWidth(1);
+//            p.setAntiAlias(true);
+//            String text = "Aa";
+//            float y = height;
+//            float x = 0;
+//
+//            int fontSize = calcFontSize((int)MainActivity.getSharedInstance().mGestureService.curDistance);
+//            p.setTextSize(fontSize/2);
+//            mCanvas.drawText(text, x, y, p);
+//
+//        }
 
-        }
 
     }
 }

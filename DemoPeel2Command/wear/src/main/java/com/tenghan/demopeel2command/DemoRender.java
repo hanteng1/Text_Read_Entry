@@ -119,7 +119,6 @@ public abstract class DemoRender extends PageRender{
         msg.what = MSG_ENDED_DRAWING_FRAME;
         msg.arg1 = mDrawCommand;
 
-
         //Log.d(TAG, "send message called");
         mHandler.sendMessage(msg);
     }
