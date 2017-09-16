@@ -9,6 +9,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Handler;
 
+import com.eschao.android.widget.pageflip.GLPoint;
 import com.eschao.android.widget.pageflip.modify.PageModify;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.Random;
  * Created by hanteng on 2017-09-13.
  */
 
-public class DemoPeel2CommandRender  extends DemoRender{
+public class DemoPeel2CommandRender extends DemoRender{
 
     private final static String TAG = "DemoPeel2CommandRender";
 
@@ -52,10 +53,8 @@ public class DemoPeel2CommandRender  extends DemoRender{
     //3 - choose name
     //4 - new page
     public int mTask = 0;
-    private int mCorner = 0;
-
+    public int mCorner = -1;
     //actual select
-    public int mAngleTarget = -1;
     public int mAngleActual = -1;
     public int mDistanceActual = -1;
     public float mContinuousActual = -1;
@@ -147,6 +146,23 @@ public class DemoPeel2CommandRender  extends DemoRender{
         return newValue;
     }
 
+    public void setCorner(GLPoint point)
+    {
+        if(point.x > 0 && point.y > 0)
+        {
+            mCorner = 1;
+        }else if(point.x < 0 && point.y > 0)
+        {
+            mCorner = 0;
+        }else if(point.x < 0 && point.y < 0)
+        {
+            mCorner = 3;
+        }else if(point.x > 0 && point.y < 0)
+        {
+            mCorner = 2;
+        }
+    }
+
     public void LoadTextures(){
         mPageFlipAbstract.deleteUnusedTextures();
         PageModify[] pages = mPageFlipAbstract.getPages();
@@ -191,30 +207,22 @@ public class DemoPeel2CommandRender  extends DemoRender{
          *   |3       2|
          *    ---------
          */
-        if(mTask == 1)
-        {
-            mCorner = 1;
-            mAngleTarget = 0;
-        }else if(mTask == 2)
-        {
-            mCorner = 1;
-            mAngleTarget = 1;
-        }else if(mTask == 3)
-        {
-            mCorner = 0;
-            mAngleTarget = 0;
-        }else if(mTask == 4)
-        {
-            mCorner = 2;
-            mAngleTarget = 0;
-        }
 
-        mDistanceActual = -1;
-        mAngleActual = -1;
-        mContinuousActual = -1;
+        //use the actual corner
 
         PageModify page = mPageFlipAbstract.getPages()[itrp];
         page.waiting4TextureUpdate = true;
+    }
+
+
+    public void ResetValues()
+    {
+        mTask = 0;
+        mCorner = -1;
+
+        mAngleActual = -1;
+        mDistanceActual = -1;
+        mContinuousActual = -1;
     }
 
 
@@ -275,7 +283,7 @@ public class DemoPeel2CommandRender  extends DemoRender{
             for(int itrc = 0; itrc < commandIds.length; itrc++)
             {
                 int fontSize = calcFontSize(20);
-                p.setColor(Color.RED);
+                p.setColor(Color.GRAY);
 
                 p.setStrokeWidth(1);
                 p.setAntiAlias(true);
@@ -321,6 +329,7 @@ public class DemoPeel2CommandRender  extends DemoRender{
 
         }else if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex > -1)
         {
+            //meaning it's state 3 and one corner has been active
             PointF origin = new PointF();
             if(mCorner == 0)
             {
@@ -335,7 +344,6 @@ public class DemoPeel2CommandRender  extends DemoRender{
             {
                 origin.set(0, height);
             }
-
 
             //draw tasks
             if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0)
@@ -356,7 +364,7 @@ public class DemoPeel2CommandRender  extends DemoRender{
                     for(int itr = 0; itr < mDistanceNum; itr++)
                     {
                         float targetLength = segDis * (itr + 0.5f) + reservedDistance;
-                        float targetAngle = segAngle * ( mAngleTarget + 0.5f) + maxAngle * mCorner;
+                        float targetAngle = segAngle * ( mAngleActual + 0.5f) + maxAngle * mCorner;
                         float targetX = origin.x + targetLength * (float)Math.cos(targetAngle);
                         float targetY = origin.y + targetLength * (float)Math.sin(targetAngle);
 
@@ -403,27 +411,108 @@ public class DemoPeel2CommandRender  extends DemoRender{
             }
         }
 
+    }
 
 
+    //determine the current selection and visualizing task
+    public void selectedSegment(int pageindex,  PointF cursor)
+    {
+        final int width = mCanvas.getWidth();
+        final int height = mCanvas.getHeight();
 
-//        //font size zooms
-//        //real time update
-//        if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0 &&
-//                MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 3)
-//        {
-//            p.setColor(Color.GRAY);
-//            p.setStrokeWidth(1);
-//            p.setAntiAlias(true);
-//            String text = "Aa";
-//            float y = height;
-//            float x = 0;
-//
-//            int fontSize = calcFontSize((int)MainActivity.getSharedInstance().mGestureService.curDistance);
-//            p.setTextSize(fontSize/2);
-//            mCanvas.drawText(text, x, y, p);
-//
-//        }
+        PointF origin = new PointF();
+        if(mCorner == 0)
+        {
+            origin.set(0, 0);
+        }else if(mCorner == 1)
+        {
+            origin.set(width, 0);
+        }else if(mCorner == 2)
+        {
+            origin.set(width, height);
+        }else if(mCorner == 3)
+        {
+            origin.set(0, height);
+        }else
+        {
+            return;
+        }
 
+        //first dis
+        float dis = (float)Math.sqrt((cursor.x -  origin.x) * (cursor.x -  origin.x) +
+                (cursor.y - origin.y) * (cursor.y - origin.y)) ;
+
+        float segDis = maxDistance / mDistanceNum;
+        int disSegs = (int) ( (dis - reservedDistance )/ segDis);
+
+        //then angle
+        float ang = 0;
+        if(mCorner == 0 || mCorner == 2)
+        {
+            ang = (float)Math.asin( Math.abs(cursor.y - origin.y)  / Math.abs(dis) );
+        }else
+        {
+            ang = (float)Math.asin( Math.abs(cursor.x - origin.x)  / Math.abs(dis) );
+        }
+
+        float segAngle = 0;
+
+        if(mCorner == 1)
+        {
+            segAngle = maxAngle / mAngleNumRight;
+        }else
+        {
+            segAngle = maxAngle / mAngleNumLeft;
+        }
+
+        int angSegs = (int) (ang / segAngle);
+
+        //determine which task and which angle actual and distanceactual
+        if(angSegs != mAngleActual)
+        {
+            //task update
+            if(mCorner == 1 && angSegs == 1)
+            {
+                //the only continuus change
+                mTask = 2; // choose size
+            }else if(mCorner == 1 && angSegs == 0)
+            {
+                mTask = 1; // choose color
+            }else if(mCorner == 0 && angSegs == 0)
+            {
+                mTask = 3; //choose name
+            }else if(mCorner == 2 && angSegs == 0){
+                mTask = 4; //new page
+            }
+
+            mAngleActual = angSegs;
+
+            //refresh
+            ReloadTexture(pageindex);
+        }
+
+
+        if(mTask == 2){
+
+            if( (2*dis /3) != mContinuousActual  )
+            {
+                mContinuousActual = (2*dis /3);
+                //refresh
+                ReloadTexture(pageindex);
+            }
+
+        }else if(mTask == 1 || mTask == 3)
+        {
+            if(dis >= reservedDistance && disSegs != mDistanceActual)
+            {
+                mAngleActual = angSegs;
+                //refresh
+                ReloadTexture(pageindex);
+            }
+
+        }
 
     }
+
+
 }

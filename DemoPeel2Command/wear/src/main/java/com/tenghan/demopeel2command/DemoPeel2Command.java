@@ -2,6 +2,7 @@ package com.tenghan.demopeel2command;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.util.Log;
 
 import com.eschao.android.widget.pageflip.GLPoint;
@@ -18,6 +19,8 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
 
     //first page as main content, second page as command
     private final static int pageSize = 3;
+
+    public PointF cursor = new PointF();
 
     public DemoPeel2Command(Context context)
     {
@@ -58,6 +61,9 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
             // set OriginP and DiagonalP points
             //page.setOriginAndDiagonalPoints(dy);
             page.setOriginAndDiagonalPoints(dx, dy, mStartTouchP.x, mStartTouchP.y);
+
+            //set corner to render
+            MainActivity.getSharedInstance().mDemoView.mPageRender.setCorner(originP);
 
             //clear the variables
             MainActivity.getSharedInstance().mGestureService.reset();
@@ -210,8 +216,6 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
                 if(travelDis > maxTravelDis)
                 {
                     maxTravelDis = travelDis;
-                    //Log.d(TAG, "max travel " + maxTravelDis);
-
                     singlePageMode = false;
                 }
 
@@ -311,26 +315,80 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
         {
             mPages[currentPageLock].computeKeyVertexesWhenSlope();
             mPages[currentPageLock].computeVertexesWhenSlope();
+
         }else
         {
             for(int itrp = 0; itrp < (currentPageLock + 1); itrp++)
             {
-
-                if (mIsVertical) {
-                    //mPages[itrp].computeKeyVertexesWhenVertical();
-                    //mPages[itrp].computeVertexesWhenVertical();
-                }
-                else if (mIsHorizontal)
-                {
-                    //mPages[itrp].computeKeyVertexesWhenHorizontal();
-                    //mPages[itrp].computeVertexesWhenHorizontal();
-                }
-                else {
-                    mPages[itrp].computeKeyVertexesWhenSlope();
-                    mPages[itrp].computeVertexesWhenSlope();
-                }
-
+                mPages[itrp].computeKeyVertexesWhenSlope();
+                mPages[itrp].computeVertexesWhenSlope();
             }
+        }
+
+        //get the cursor
+        PointF xfoldpc = mPages[currentPageLock].mXFoldPcR;
+        PointF yfoldpc = mPages[currentPageLock].mYFoldPcR;
+
+        GLPoint originer = mPages[currentPageLock].originP;
+        PointF corner = mPages[currentPageLock].mFakeTouchP;
+
+        cursor = calIntersection(originer.x, originer.y, corner.x, corner.y,
+                xfoldpc.x, xfoldpc.y, yfoldpc.x, yfoldpc.y);
+
+        MainActivity.getSharedInstance().mDemoView.mPageRender.selectedSegment(currentPageLock, cursor);
+    }
+
+    private float fromOpenGLX(float x) {
+        return x + getSurfaceWidth() / 2;
+    }
+
+    private float fromOpenGLY(float y) {
+        return getSurfaceHeight() / 2 - y;
+    }
+
+    private PointF calIntersection(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+    {
+        PointF cross = new PointF();
+
+        x1 = fromOpenGLX(x1);
+        y1 = fromOpenGLY(y1);
+        x2 = fromOpenGLX(x2);
+        y2 = fromOpenGLY(y2);
+        x3 = fromOpenGLX(x3);
+        y3 = fromOpenGLY(y3);
+        x4 = fromOpenGLX(x4);
+        y4 = fromOpenGLY(y4);
+
+        if(x1 == x2 || x3 == x4)
+        {
+            return cross;
+        }
+
+        //y = ax + b
+        float a1 = (y2-y1) / (x2 - x1);
+        float b1 = y1 - a1 * x1;
+        float a2 = (y4 - y3) / (x4 - x3);
+        float b2 = y3 - a2*x3;
+
+        //parallel
+        if(a1 == a2)
+        {
+            return cross;
+        }
+
+        float x0 = -(b1-b2) / (a1 - a2);
+
+        if(Math.min(x1, x2) < x0 && x0 < Math.max(x1, x2) &&
+                Math.min(x3, x4) < x0  && x0 < Math.max(x3, x4))
+        {
+            cross.set(x0, a1*x0 + b1);
+
+            //Log.d(TAG, "x " + cross.x + " , y " + cross.y);
+
+            return cross;
+        }else
+        {
+            return cross;
         }
 
     }
