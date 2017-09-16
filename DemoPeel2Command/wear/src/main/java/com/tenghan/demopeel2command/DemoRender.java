@@ -85,8 +85,8 @@ public abstract class DemoRender extends PageRender{
 
             int commandPage = MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock + 1;
             MainActivity.getSharedInstance().mGestureService.reset();
+            MainActivity.getSharedInstance().mDemoView.mPageRender.ResetValues();
             MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(commandPage);
-
             MainActivity.getSharedInstance().mDemoView.mDemo.releasePageLock();
             //clear the maxtravel
             MainActivity.getSharedInstance().mDemoView.mDemo.maxTravelDis = 0;

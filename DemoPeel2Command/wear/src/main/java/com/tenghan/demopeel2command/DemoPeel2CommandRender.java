@@ -398,7 +398,7 @@ public class DemoPeel2CommandRender extends DemoRender{
 
                 }else if(mTask == 3)
                 {
-                    float segAngle = maxAngle / mAngleNumRight;
+                    float segAngle = maxAngle / mAngleNumLeft;
                     float segDis = maxDistance / mDistanceNum;
 
                     //choose name
