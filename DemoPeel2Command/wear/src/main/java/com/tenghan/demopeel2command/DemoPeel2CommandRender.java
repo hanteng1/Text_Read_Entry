@@ -322,7 +322,7 @@ public class DemoPeel2CommandRender extends DemoRender{
             //draw commands
             for(int itrc = 0; itrc < commandIds.length; itrc++)
             {
-                int fontSize = calcFontSize(14);
+                int fontSize = calcFontSize(18);
                 p.setColor(Color.GRAY);
                 p.setAntiAlias(true);
                 p.setTextSize(fontSize);
