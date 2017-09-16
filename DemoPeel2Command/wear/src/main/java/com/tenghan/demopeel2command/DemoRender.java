@@ -67,7 +67,6 @@ public abstract class DemoRender extends PageRender{
 
             }else
             {
-
                 //peel to command
                 for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
                 {

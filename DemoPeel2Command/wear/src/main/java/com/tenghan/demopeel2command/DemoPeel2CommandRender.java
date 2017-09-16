@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.util.Log;
 
 import com.eschao.android.widget.pageflip.GLPoint;
 import com.eschao.android.widget.pageflip.modify.PageModify;
@@ -370,6 +371,11 @@ public class DemoPeel2CommandRender extends DemoRender{
 
                         int color = font_color.get(itr);
                         float scale = 30;
+                        if(mDistanceActual == itr)
+                        {
+                            scale = 50;
+                        }
+
                         p.setColor(color);
                         p.setStyle(Paint.Style.FILL);
                         mCanvas.drawCircle(targetX, targetY, scale*0.5f, p);
@@ -384,7 +390,7 @@ public class DemoPeel2CommandRender extends DemoRender{
                     p.setAntiAlias(true);
                     String text = "Aa";
 
-                    int fontSize = calcFontSize((int)MainActivity.getSharedInstance().mGestureService.curDistance);
+                    int fontSize = calcFontSize((int)mContinuousActual);
                     p.setTextSize(fontSize/2);
                     float y = p.getTextSize();
                     float x = width - p.measureText(text);
@@ -417,6 +423,12 @@ public class DemoPeel2CommandRender extends DemoRender{
     //determine the current selection and visualizing task
     public void selectedSegment(int pageindex,  PointF cursor)
     {
+
+        if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == -1)
+        {
+            return;
+        }
+
         final int width = mCanvas.getWidth();
         final int height = mCanvas.getHeight();
 
@@ -474,10 +486,11 @@ public class DemoPeel2CommandRender extends DemoRender{
             if(mCorner == 1 && angSegs == 1)
             {
                 //the only continuus change
-                mTask = 2; // choose size
+                mTask = 1; // choose color
+
             }else if(mCorner == 1 && angSegs == 0)
             {
-                mTask = 1; // choose color
+                mTask = 2; // choose size
             }else if(mCorner == 0 && angSegs == 0)
             {
                 mTask = 3; //choose name
@@ -505,7 +518,7 @@ public class DemoPeel2CommandRender extends DemoRender{
         {
             if(dis >= reservedDistance && disSegs != mDistanceActual)
             {
-                mAngleActual = angSegs;
+                mDistanceActual = disSegs;
                 //refresh
                 ReloadTexture(pageindex);
             }

@@ -335,7 +335,7 @@ public class DemoPeel2Command extends PageFlipModifyAbstract{
         cursor = calIntersection(originer.x, originer.y, corner.x, corner.y,
                 xfoldpc.x, xfoldpc.y, yfoldpc.x, yfoldpc.y);
 
-        MainActivity.getSharedInstance().mDemoView.mPageRender.selectedSegment(currentPageLock, cursor);
+        MainActivity.getSharedInstance().mDemoView.mPageRender.selectedSegment(currentPageLock + 1, cursor);
     }
 
     private float fromOpenGLX(float x) {
