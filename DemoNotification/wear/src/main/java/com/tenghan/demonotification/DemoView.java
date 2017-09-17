@@ -27,8 +27,7 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
     Handler mHandler;
 
     public PageFlipModifyAbstract mDemo;
-    public DemoPeel2CommandRender mPageRender;
-
+    public DemoNotificationRender mPageRender;
 
     ReentrantLock mDrawLock;
 
@@ -48,13 +47,13 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
 
 
         //for general demo
-        mDemo = new DemoPeel2Command(context);
+        mDemo = new DemoNotification(context);
         setEGLContextClientVersion(2);
         // create render
         mDrawLock = new ReentrantLock();
         // init others
         mPageNo = 1;
-        mPageRender = new DemoPeel2CommandRender(context, mDemo, mHandler, mPageNo);
+        mPageRender = new DemoNotificationRender(context, mDemo, mHandler, mPageNo);
 
 
         // configure render
@@ -186,9 +185,9 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
             int pageNo = mPageRender.getPageNo();
 
 
-            if(!(mPageRender instanceof DemoPeel2CommandRender)){
+            if(!(mPageRender instanceof DemoNotificationRender)){
                 mPageRender.release();
-                mPageRender = new DemoPeel2CommandRender(getContext(),
+                mPageRender = new DemoNotificationRender(getContext(),
                         mDemo,
                         mHandler,
                         pageNo);

@@ -48,7 +48,7 @@ public class DemoNotification extends PageFlipModifyAbstract {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "" + System.currentTimeMillis());
+                //Log.d(TAG, "" + System.currentTimeMillis());
 
                 //start the
                 //set origin

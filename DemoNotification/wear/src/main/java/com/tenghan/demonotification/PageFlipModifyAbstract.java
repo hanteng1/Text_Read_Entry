@@ -60,7 +60,7 @@ public abstract class PageFlipModifyAbstract {
     //change this value based on demos
 
     //0.5 or 1.0
-    private final static float WIDTH_RATIO_OF_RESTORE_FLIP = 1.0f;
+    private final static float WIDTH_RATIO_OF_RESTORE_FLIP = 0.5f;
 
     // pages and index
     public final static int FIRST_PAGE = 0;
@@ -505,63 +505,6 @@ public abstract class PageFlipModifyAbstract {
         {
             setPageLock();
             return false;
-        }else if(MainActivity.getSharedInstance().mGestureService.gestureState == 3)
-        {
-            //selecting a value
-            //update the first page
-            DemoPeel2CommandRender demoRender = MainActivity.getSharedInstance().mDemoView.mPageRender;
-            if(currentPageLock == 0)
-            {
-                if(demoRender.mTask!=0 )
-                {
-                    if(demoRender.mTask == 1)
-                    {
-                        //color
-                        MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(0);
-                    }else if(demoRender.mTask == 2)
-                    {
-                        //size
-                        MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(0);
-                    }else if(demoRender.mTask == 3)
-                    {
-                        //name
-                        //show a prompt
-                        toastHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                Context context = MainActivity.getSharedInstance().getApplicationContext();
-                                CharSequence text = "Sending message...!";
-                                int duration = Toast.LENGTH_SHORT;
-                                Toast toast = Toast.makeText(context, text, duration);
-                                toast.show();
-                            }
-                        }, 1000);
-
-                    }else if(demoRender.mTask == 4)
-                    {
-                        //new page
-                        if (originP.x < 0) {
-                            end.x = (int)(diagonalP.x + page.width);
-                        }
-                        else {
-                            end.x = (int)(diagonalP.x - page.width);
-                        }
-                        end.y = (int)(originP.y);
-
-                        mScroller.startScroll(start.x, start.y,
-                                end.x - start.x, end.y - start.y,
-                                duration);
-
-                        return true;
-                    }
-                }
-            }else if(currentPageLock == 1)
-            {
-                //could be reset
-                //show a promit
-                MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(0);
-            }
-
         }
 
         //indicate this is the flip after finger up

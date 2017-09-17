@@ -4,11 +4,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-public class MainActivity extends WearableActivity implements GestureDetector.OnGestureListener{
+public class MainActivity extends WearableActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
 
     public static String TAG = "WatchActivity";
     public static MainActivity instance;
@@ -28,8 +29,8 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        setContentView(R.layout.rect_activity_main);
+        instance = this;
         mDemoView = (DemoView)findViewById(R.id.demo_view);
         mGestureDetector = new GestureDetector(this, this);
         mGestureService = new GestureService();
@@ -122,6 +123,27 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
         return false;
     }
 
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e)
+    {
+        return true;
+    }
 
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent e)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent e)
+    {
+        Log.d(TAG, "double tap");
+
+        finish();
+        moveTaskToBack(true);
+
+        return true;
+    }
 
 }

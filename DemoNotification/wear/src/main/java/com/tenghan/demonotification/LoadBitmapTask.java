@@ -32,6 +32,14 @@ public class LoadBitmapTask implements Runnable {
     int[][] mPortraitBGs;
     int mWatchBG;
 
+
+
+    //for notification demo
+    int mFacebookGlobal;
+    int mFacebookMsg;
+    int mFacebookCont;
+
+
     public static LoadBitmapTask get(Context context) {
         if (__object == null) {
             __object = new LoadBitmapTask(context);
@@ -54,6 +62,9 @@ public class LoadBitmapTask implements Runnable {
         mPortraitBGs = new int[][] {};
 
         mWatchBG = R.drawable.p2_320;
+        mFacebookGlobal = R.drawable.fb_global;
+        mFacebookMsg = R.drawable.fb_msg;
+        mFacebookCont = R.drawable.fb_cont;
     }
 
     public Bitmap getBitmap() {
@@ -69,6 +80,25 @@ public class LoadBitmapTask implements Runnable {
             //Log.d(TAG, "Load bitmap instantly!");
             //b = getRandomBitmap();
             b = getWatchBitmap();
+        }
+
+        return b;
+    }
+
+    //for notification
+    public Bitmap getFacebook(int tindex)
+    {
+        Bitmap b = null;
+
+        if(tindex == 1)
+        {
+            b = BitmapFactory.decodeResource(mResources, mFacebookMsg);
+        }else if(tindex == 2)
+        {
+            b = BitmapFactory.decodeResource(mResources, mFacebookCont);
+        }else if(tindex == 3)
+        {
+            b = BitmapFactory.decodeResource(mResources, mFacebookGlobal);
         }
 
         return b;

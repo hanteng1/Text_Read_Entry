@@ -2,11 +2,18 @@ package com.tenghan.demonotification;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PointF;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
 
 import com.eschao.android.widget.pageflip.PageFlipState;
 import com.eschao.android.widget.pageflip.modify.PageModify;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by hanteng on 2017-09-17.
@@ -50,7 +57,7 @@ public abstract class DemoRender extends PageRender{
                 {
                     if(!pages[itrp].isFrontTextureSet())
                     {
-                        loadPageWithContent(mPageNo);
+                        loadPage(mPageNo);
                         pages[itrp].setFrontTexture(mBitmap);
                     }
                 }
@@ -60,31 +67,17 @@ public abstract class DemoRender extends PageRender{
             }else
             {
 
-                //normally, this is when finger is up and check if there needs a change
-                if(pages[0].waiting4TextureUpdate == true)
-                {
-
-                    if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 0)
-                    {
-                        loadPageWithChangedContent(0);
-
-                    }else if(MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock == 1)
-                    {
-                        loadPageWithContent(0);
-                        MainActivity.getSharedInstance().mDemoView.mPageRender.ResetColorSize();
-                    }
-                    pages[0].updateFrontTexture(mBitmap);
-                }
-
-                //peel to command
-                for(int itrp = 1; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
+                //notification
+                for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
                 {
                     if(pages[itrp].waiting4TextureUpdate == true)
                     {
-                        loadPageWithCommands(itrp, cRIds[itrp]);
+                        loadPageWithFacebook(MainActivity.getSharedInstance().mDemoView.mDemo.facebookState);
                         pages[itrp].updateFrontTexture(mBitmap);
+
                     }
                 }
+
                 // Log.d(TAG, "draw flip called");
                 mPageFlipAbstract.drawFlipFrameWithIndex(mPageFlipAbstract.currentPageLock);
             }
@@ -93,10 +86,6 @@ public abstract class DemoRender extends PageRender{
         // draw stationary page without flipping
         else if (mDrawCommand == DRAW_FULL_PAGE) {
 
-            int commandPage = MainActivity.getSharedInstance().mDemoView.mDemo.currentPageLock + 1;
-            MainActivity.getSharedInstance().mGestureService.reset();
-            MainActivity.getSharedInstance().mDemoView.mPageRender.ResetValues();
-            MainActivity.getSharedInstance().mDemoView.mPageRender.ReloadTexture(commandPage);
             MainActivity.getSharedInstance().mDemoView.mDemo.releasePageLock();
             //clear the maxtravel
             MainActivity.getSharedInstance().mDemoView.mDemo.maxTravelDis = 0;
@@ -104,7 +93,7 @@ public abstract class DemoRender extends PageRender{
             for(int itrp = 0; itrp < mPageFlipAbstract.PAGE_SIZE; itrp++)
             {
                 if (!pages[itrp].isFrontTextureSet()) {
-                    loadPageWithContent(itrp);
+                    loadPage(itrp);
                     pages[itrp].setFrontTexture(mBitmap);
                 }
 
@@ -201,9 +190,26 @@ public abstract class DemoRender extends PageRender{
         return false;
     }
 
+    public void loadPage(int number) {  //create a new page texture (either first one or second one) when necessary/not set
+        final int width = mCanvas.getWidth();
+        final int height = mCanvas.getHeight();
+        Paint p = new Paint();
+        p.setFilterBitmap(true);
+
+        // 1. load/draw background bitmap
+        Bitmap background = LoadBitmapTask.get(mContext).getBitmap();  //get the bitmap in queue
+        Rect rect = new Rect(0, 0, width, height);
+        mCanvas.drawBitmap(background, null, rect, p); //will this refresh the canvas? since it's using a new rect
+        background.recycle();
+        background = null;
+
+        //a image, check weather
+
+
+    }
+
     public abstract void loadPageWithCommands(int number, String[] commandIds);
-    public abstract void loadPageWithContent(int pageindex);
-    public abstract void loadPageWithChangedContent(int page);
+    public abstract void loadPageWithFacebook(int fbstate);
 
     public boolean canFlipForward()
     {
