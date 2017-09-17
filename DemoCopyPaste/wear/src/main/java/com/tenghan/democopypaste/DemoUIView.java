@@ -117,10 +117,10 @@ public class DemoUIView extends View {
 
             }else
             {
+                touchPaint.setStyle(Paint.Style.FILL);
+                touchPaint.setAlpha(100);
+                canvas.drawRect(boundingLeftTop.x, boundingLeftTop.y, boundingRightBottom.x, boundingRightBottom.y, touchPaint);
 
-//                Log.d(TAG, "draw bitmap");
-
-//                canvas.drawBitmap(resultBitmap, boundingLeftTop.x, boundingLeftTop.y, touchPaint);
             }
 
             //if finger up
@@ -192,22 +192,22 @@ public class DemoUIView extends View {
         //crop the bitmap, using the drawing path if possible
         //save it for later work
         //https://stackoverflow.com/questions/8993292/cutting-a-multipoint-ploygon-out-of-bitmap-and-placing-it-on-transparency
-        Path cropPath = new Path();
-
-        if(touchPoints.size() > 1)
-        {
-            cropPath.moveTo(touchPoints.get(0).x - boundingLeftTop.x, touchPoints.get(0).y - boundingLeftTop.y);
-            for(int itrp =1; itrp < touchPoints.size(); itrp++)
-            {
-                cropPath.lineTo(touchPoints.get(1).x - boundingLeftTop.x, touchPoints.get(1).y - boundingLeftTop.y);
-            }
-
-            inputPaint.setStyle(Paint.Style.FILL);
-            inputPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-            cropPath.setFillType(Path.FillType.INVERSE_EVEN_ODD);
-
-            mCanvas.drawPath(cropPath, inputPaint);
-        }
+//        Path cropPath = new Path();
+//
+//        if(touchPoints.size() > 1)
+//        {
+//            cropPath.moveTo(touchPoints.get(0).x - boundingLeftTop.x, touchPoints.get(0).y - boundingLeftTop.y);
+//            for(int itrp =1; itrp < touchPoints.size(); itrp++)
+//            {
+//                cropPath.lineTo(touchPoints.get(1).x - boundingLeftTop.x, touchPoints.get(1).y - boundingLeftTop.y);
+//            }
+//
+//            inputPaint.setStyle(Paint.Style.FILL);
+//            inputPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+//            cropPath.setFillType(Path.FillType.INVERSE_EVEN_ODD);
+//
+//            mCanvas.drawPath(cropPath, inputPaint);
+//        }
 
 
         //get the cropped first page
@@ -225,6 +225,9 @@ public class DemoUIView extends View {
         inputPaint.setStyle(Paint.Style.FILL);
         mCanvas.drawRect(boundingLeftTop.x, boundingLeftTop.y, boundingRightBottom.x, boundingRightBottom.y, inputPaint);
 
+        //inputPaint.setStyle(Paint.Style.STROKE);
+        //inputPaint.setStrokeWidth(2);
+        //mCanvas.drawRect(boundingLeftTop.x, boundingLeftTop.y, boundingRightBottom.x, boundingRightBottom.y, inputPaint);
 
         //push it to the page render and reload the texture
         MainActivity.getSharedInstance().mDemoView.mPageRender.setCropImage(cropOriginBitmap, resultBitmap, boundingLeftTop);

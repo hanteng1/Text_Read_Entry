@@ -97,12 +97,15 @@ public class DemoCopyPasteRender extends DemoRender {
 //                    Bitmap intermediaBitmap = Bitmap.createBitmap(mCanvas.getWidth(), mCanvas.getHeight(),
 //                            Bitmap.Config.ARGB_8888);
 //                    mCanvas.setBitmap(intermediaBitmap);
-                    mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                   // mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
                     mCanvas.drawBitmap(croppedFirstPage, 0, 0, p);
 //
 //                    mBitmap = intermediaBitmap;
 //
 //                    mCanvas.setBitmap(mBitmap);
+                }else if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == 1)
+                {
+                    mCanvas.drawBitmap(croppedFirstPage, 0, 0, p);
                 }
             }
 
@@ -116,7 +119,6 @@ public class DemoCopyPasteRender extends DemoRender {
             background.recycle();
             background = null;
 
-
             //second page
             //draw the cropped bitmap
             if(isCropReady == true)
@@ -125,7 +127,7 @@ public class DemoCopyPasteRender extends DemoRender {
                 if(MainActivity.getSharedInstance().mGestureService.activiatedCommandIndex == -1)
                 {
                     //load with commands
-                    String commandIds[] = new String[] {"Cut", "Copy", "Unknow", "Unknown"};
+                    String commandIds[] = new String[] {"cut", "copy", ".", "."};
 
                     for(int itrc = 0; itrc < 4; itrc++)
                     {
@@ -164,13 +166,7 @@ public class DemoCopyPasteRender extends DemoRender {
                             y = height - offset;
                         }
 
-                        mCanvas.save();
-                        if(itrc == 0 || itrc == 2)
-                            mCanvas.rotate(-45f, x + textWidth/2, y - p.getTextSize()/2);
-                        else if(itrc == 1 || itrc == 3)
-                            mCanvas.rotate(45f, x + textWidth/2, y - p.getTextSize()/2);
                         mCanvas.drawText(text, x, y, p);
-                        mCanvas.restore();
                     }
                 }else {
                     mCanvas.drawBitmap(cropBitmap, cropAnchor.x, cropAnchor.y, p);

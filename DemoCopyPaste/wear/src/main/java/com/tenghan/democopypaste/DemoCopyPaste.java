@@ -2,6 +2,7 @@ package com.tenghan.democopypaste;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
 
 import com.eschao.android.widget.pageflip.GLPoint;
 import com.eschao.android.widget.pageflip.PageFlipState;
@@ -110,6 +111,8 @@ public class DemoCopyPaste extends PageFlipModifyAbstract{
                 mFlipState == PageFlipState.RESTORE_FLIP) {
 
             MainActivity.getSharedInstance().mGestureService.handleData(new float[]{touchX, touchY});
+
+            MainActivity.getSharedInstance().mDemoUIView.setVisibility(View.INVISIBLE);
 
             //temporary solution
             if(Math.abs(dy) <= 0.1f)
