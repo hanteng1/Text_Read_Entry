@@ -1,4 +1,4 @@
-package com.tenghan.swipeflip;
+package com.tenghan.democopypaste;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 
 import com.eschao.android.widget.pageflip.PageFlipException;
 
@@ -16,7 +15,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * Created by hanteng on 2017-08-18.
+ * Created by hanteng on 2017-09-17.
  */
 
 public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
@@ -27,17 +26,7 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
     int mDuration;
     Handler mHandler;
 
-
     public PageFlipModifyAbstract mDemo;
-
-
-
-    //this needs to be optimized
-
-//    public DemoPeel2CommandRender mPageRender;
-
-//    public DemoNotificationRender mPageRender;
-
     public DemoCopyPasteRender mPageRender;
 
 
@@ -59,39 +48,13 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
 
 
         //for general demo
-//        mDemo = new DemoPeel2Command(context);
-//        setEGLContextClientVersion(2);
-//        // create render
-//        mPageNo = mDemo.PAGE_SIZE;  //need to change, should equal to Page_Size in mPageFlip
-//        mDrawLock = new ReentrantLock();
-//        // init others
-//        mPageNo = 1;
-//        mPageRender = new DemoPeel2CommandRender(context, mDemo, mHandler, mPageNo);
-
-
-        //for notification demo
-//        mDemo = new DemoNotification(context);
-//        setEGLContextClientVersion(2);
-//        // create render
-//        mPageNo = mDemo.PAGE_SIZE;  //need to change, should equal to Page_Size in mPageFlip
-//        mDrawLock = new ReentrantLock();
-//        // init others
-//        mPageNo = 1;
-//        mPageRender = new DemoNotificationRender(context, mDemo, mHandler, mPageNo);
-
-
-
-        //for copyandpaste demo
         mDemo = new DemoCopyPaste(context);
         setEGLContextClientVersion(2);
         // create render
-        mPageNo = mDemo.PAGE_SIZE;  //need to change, should equal to Page_Size in mPageFlip
         mDrawLock = new ReentrantLock();
         // init others
         mPageNo = 1;
         mPageRender = new DemoCopyPasteRender(context, mDemo, mHandler, mPageNo);
-
-
 
 
         // configure render
@@ -162,7 +125,6 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
             MainActivity.getSharedInstance().mDemoUIView.isdrawing = false;
 
             mDemo.isDoubleTappingTask = false;
-
             return;
         }
 
@@ -225,27 +187,6 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
 
             int pageNo = mPageRender.getPageNo();
 
-//
-//            if(!(mPageRender instanceof DemoPeel2CommandRender)){
-//                mPageRender.release();
-//                mPageRender = new DemoPeel2CommandRender(getContext(),
-//                        mDemo,
-//                        mHandler,
-//                        pageNo);
-//            }
-
-
-
-//
-//            if(!(mPageRender instanceof DemoNotificationRender)){
-//                mPageRender.release();
-//                mPageRender = new DemoNotificationRender(getContext(),
-//                        mDemo,
-//                        mHandler,
-//                        pageNo);
-//            }
-//
-
 
             if(!(mPageRender instanceof DemoCopyPasteRender)){
                 mPageRender.release();
@@ -254,10 +195,6 @@ public class DemoView extends GLSurfaceView implements GLSurfaceView.Renderer {
                         mHandler,
                         pageNo);
             }
-
-
-
-
 
             mPageRender.onSurfaceChanged(width, height);
 

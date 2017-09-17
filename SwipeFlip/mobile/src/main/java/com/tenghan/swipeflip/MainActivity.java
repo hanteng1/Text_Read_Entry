@@ -315,7 +315,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 MainActivity.getSharedInstance().mDemoUIView.isdrawing = true;
                 mDemoUIView.onDoubleTap(e.getX() - offsetx, e.getY() - offsety);
 
-
                 isDoubleTapping = false;
             }else
             {
