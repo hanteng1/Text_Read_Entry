@@ -59,7 +59,7 @@ public abstract class PageFlipModifyAbstract {
     //change this value based on demos
 
     //0.5 or 1.0
-    private final static float WIDTH_RATIO_OF_RESTORE_FLIP = 1.0f;
+    private final static float WIDTH_RATIO_OF_RESTORE_FLIP = 0.5f;
 
     // pages and index
     public final static int FIRST_PAGE = 0;
