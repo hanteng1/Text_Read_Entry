@@ -117,9 +117,8 @@ public class DemoUIView extends View {
 
             }else
             {
-                touchPaint.setStyle(Paint.Style.FILL);
                 touchPaint.setAlpha(100);
-                canvas.drawRect(boundingLeftTop.x, boundingLeftTop.y, boundingRightBottom.x, boundingRightBottom.y, touchPaint);
+                canvas.drawPath(touchPath, touchPaint);
 
             }
 
@@ -183,47 +182,56 @@ public class DemoUIView extends View {
 
 
 
-        //find the countour, use bounding box for now
-        Bitmap croppoedBitmap = Bitmap.createBitmap(resultBitmap, (int)boundingLeftTop.x, (int)boundingLeftTop.y,
-                (int)(boundingRightBottom.x - boundingLeftTop.x), (int)(boundingRightBottom.y - boundingLeftTop.y));
 
-        resultBitmap = croppoedBitmap;
+        //find the countour, use bounding box for now
+//        Bitmap croppoedBitmap = Bitmap.createBitmap(resultBitmap, (int)boundingLeftTop.x, (int)boundingLeftTop.y,
+//                (int)(boundingRightBottom.x - boundingLeftTop.x), (int)(boundingRightBottom.y - boundingLeftTop.y));
+//
+//        resultBitmap = croppoedBitmap;
 
         //crop the bitmap, using the drawing path if possible
         //save it for later work
         //https://stackoverflow.com/questions/8993292/cutting-a-multipoint-ploygon-out-of-bitmap-and-placing-it-on-transparency
-//        Path cropPath = new Path();
-//
-//        if(touchPoints.size() > 1)
-//        {
-//            cropPath.moveTo(touchPoints.get(0).x - boundingLeftTop.x, touchPoints.get(0).y - boundingLeftTop.y);
-//            for(int itrp =1; itrp < touchPoints.size(); itrp++)
-//            {
-//                cropPath.lineTo(touchPoints.get(1).x - boundingLeftTop.x, touchPoints.get(1).y - boundingLeftTop.y);
-//            }
-//
-//            inputPaint.setStyle(Paint.Style.FILL);
-//            inputPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-//            cropPath.setFillType(Path.FillType.INVERSE_EVEN_ODD);
-//
-//            mCanvas.drawPath(cropPath, inputPaint);
-//        }
+        Path cropPath = new Path();
+
+        if(touchPoints.size() > 1)
+        {
+            cropPath.moveTo(touchPoints.get(0).x, touchPoints.get(0).y);
+            for(int itrp =1; itrp < touchPoints.size(); itrp++)
+            {
+                cropPath.lineTo(touchPoints.get(itrp).x, touchPoints.get(itrp).y);
+            }
+
+            cropPath.setFillType(Path.FillType.INVERSE_EVEN_ODD);
+
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
+            paint.setStrokeWidth(20);
+            paint.setColor(Color.GREEN);
+            paint.setAlpha(150);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeJoin(Paint.Join.ROUND);
+
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+
+            mCanvas.drawPath(cropPath, paint);
+        }
 
 
         //get the cropped first page
-        mCanvas = new Canvas();
-        mCanvas.setBitmap(cropOriginBitmap);
-
-        //draw thee background
-        background = LoadBitmapTask.get(mContext).getPhoto();
-        rect = new Rect(0, 0, screenWidth, screenHeight);
-        mCanvas.drawBitmap(background, null, rect, inputPaint);
-        background.recycle();
-        background = null;
-
-        inputPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        inputPaint.setStyle(Paint.Style.FILL);
-        mCanvas.drawRect(boundingLeftTop.x, boundingLeftTop.y, boundingRightBottom.x, boundingRightBottom.y, inputPaint);
+//        mCanvas = new Canvas();
+//        mCanvas.setBitmap(cropOriginBitmap);
+//
+//        //draw thee background
+//        background = LoadBitmapTask.get(mContext).getPhoto();
+//        rect = new Rect(0, 0, screenWidth, screenHeight);
+//        mCanvas.drawBitmap(background, null, rect, inputPaint);
+//        background.recycle();
+//        background = null;
+//
+//        inputPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+//        inputPaint.setStyle(Paint.Style.FILL);
+//        mCanvas.drawRect(boundingLeftTop.x, boundingLeftTop.y, boundingRightBottom.x, boundingRightBottom.y, inputPaint);
 
         //inputPaint.setStyle(Paint.Style.STROKE);
         //inputPaint.setStrokeWidth(2);

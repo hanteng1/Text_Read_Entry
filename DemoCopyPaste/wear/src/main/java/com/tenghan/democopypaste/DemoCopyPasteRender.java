@@ -169,7 +169,7 @@ public class DemoCopyPasteRender extends DemoRender {
                         mCanvas.drawText(text, x, y, p);
                     }
                 }else {
-                    mCanvas.drawBitmap(cropBitmap, cropAnchor.x, cropAnchor.y, p);
+                    mCanvas.drawBitmap(cropBitmap, 0, 0, p);
                 }
             }
 
