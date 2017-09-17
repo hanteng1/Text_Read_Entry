@@ -38,6 +38,7 @@ public class LoadBitmapTask implements Runnable {
     int mFacebookGlobal;
     int mFacebookMsg;
     int mFacebookCont;
+    int mWeather;
 
 
     public static LoadBitmapTask get(Context context) {
@@ -65,6 +66,7 @@ public class LoadBitmapTask implements Runnable {
         mFacebookGlobal = R.drawable.fb_global;
         mFacebookMsg = R.drawable.fb_msg;
         mFacebookCont = R.drawable.fb_cont;
+        mWeather = R.drawable.weather;
     }
 
     public Bitmap getBitmap() {
@@ -99,6 +101,9 @@ public class LoadBitmapTask implements Runnable {
         }else if(tindex == 3)
         {
             b = BitmapFactory.decodeResource(mResources, mFacebookGlobal);
+        }else if(tindex == 4)
+        {
+            b = BitmapFactory.decodeResource(mResources, mWeather);
         }
 
         return b;

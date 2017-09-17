@@ -204,7 +204,10 @@ public abstract class DemoRender extends PageRender{
         background = null;
 
         //a image, check weather
-
+        Bitmap weather = LoadBitmapTask.get(mContext).getFacebook(4);
+        mCanvas.drawBitmap(weather, null, rect, p);
+        weather.recycle();
+        weather = null;
 
     }
 

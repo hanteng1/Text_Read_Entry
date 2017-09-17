@@ -170,27 +170,13 @@ public class DemoNotification extends PageFlipModifyAbstract {
 
             Log.d(TAG, "start x " + start.x + ", start y " + start.y);
 
-            //this is to peel the whole page over
-
-//            // compute end.x
-//            // left page in double page mode
-//            if (originP.x < 0) {
-//                end.x = (int)(diagonalP.x + page.width);
-//            }
-//            // right page in double page mode
-//            else {
-//                end.x = (int)(diagonalP.x - page.width);
-//            }
-//            end.y = (int)(originP.y);
-//
-
             //this is to peel just a corner
 
             if (originP.x < 0) {
-                end.x = (int)(originP.x + page.width * 0.25f);
+                end.x = (int)(originP.x + page.width * 0.18f);
             }
             else {
-                end.x = (int)(originP.x - page.width * 0.25f);
+                end.x = (int)(originP.x - page.width * 0.18f);
             }
 
             // compute start.y
