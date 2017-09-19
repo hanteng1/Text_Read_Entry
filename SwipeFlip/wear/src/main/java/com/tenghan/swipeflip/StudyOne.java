@@ -551,11 +551,11 @@ public class StudyOne extends PageFlipModifyAbstract{
         PointF corner = mPages[FIRST_PAGE].mFakeTouchP;
 
 //        //translate to canvas cordinate
-//        MainActivity.getSharedInstance().mDemoUIView.peelOne.set(fromOpenGLX(xfoldpc.x), fromOpenGLY(xfoldpc.y));
-//        MainActivity.getSharedInstance().mDemoUIView.peelTwo.set(fromOpenGLX(yfoldpc.x), fromOpenGLY(yfoldpc.y));
-//        MainActivity.getSharedInstance().mDemoUIView.origin.set(fromOpenGLX(originer.x), fromOpenGLY(originer.y));
-//        MainActivity.getSharedInstance().mDemoUIView.corner.set(fromOpenGLX(corner.x), fromOpenGLY(corner.y));
-//        MainActivity.getSharedInstance().mDemoUIView.invalidate();
+        MainActivity.getSharedInstance().mDemoUIView.peelOne.set(fromOpenGLX(xfoldpc.x), fromOpenGLY(xfoldpc.y));
+        MainActivity.getSharedInstance().mDemoUIView.peelTwo.set(fromOpenGLX(yfoldpc.x), fromOpenGLY(yfoldpc.y));
+        MainActivity.getSharedInstance().mDemoUIView.origin.set(fromOpenGLX(originer.x), fromOpenGLY(originer.y));
+        MainActivity.getSharedInstance().mDemoUIView.corner.set(fromOpenGLX(corner.x), fromOpenGLY(corner.y));
+        MainActivity.getSharedInstance().mDemoUIView.invalidate();
 
         if(conditions.get(currentCondition)[0] < 4)
         {

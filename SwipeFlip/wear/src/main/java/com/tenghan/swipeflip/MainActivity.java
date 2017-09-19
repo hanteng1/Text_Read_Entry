@@ -15,6 +15,8 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
 
     public StudyView mStudyView;
 
+    public DemoUIView mDemoUIView;
+
     public GestureDetector mGestureDetector;
     public GestureService mGestureService;
 
@@ -60,6 +62,8 @@ public class MainActivity extends WearableActivity implements GestureDetector.On
         activityIndex = 3;
         mStudyView = (StudyView)findViewById(R.id.watch_study_view);
         mGestureDetector = new GestureDetector(this, this);
+
+        mDemoUIView = (DemoUIView)findViewById(R.id.demo_ui_view);
 
     }
 
